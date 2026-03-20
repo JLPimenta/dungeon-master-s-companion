@@ -55,5 +55,16 @@ Os componentes da ficha serão construídos mobile-first:
 6. **Capacitor setup + `capacitorStorageService.ts` + detecção de plataforma**
 7. Testes no dispositivo físico/emulador
 
+## Futuro — Tela de Configuração (/settings)
+
+Página onde o jogador poderá definir regras da mesa que alterem dinamicamente os cálculos e campos da ficha. Exemplos:
+- Fórmula de itens sintonizados (padrão: bônus de proficiência)
+- Regras de descanso (curto/longo)
+- Variantes de encumbrance
+- Campos obrigatórios customizados
+- Regras homebrew que afetem atributos/perícias
+
+Essa funcionalidade será integrada aos Campos Personalizáveis (US11) existentes.
+
 O passo 6 é independente — pode ser feito a qualquer momento após o passo 2, pois só troca a implementação do service.
 
