@@ -1,0 +1,85 @@
+import { useState } from 'react';
+import type { CharacterSheet, CampaignNote } from '@/types/character';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Input } from '@/components/ui/input';
+import { Textarea } from '@/components/ui/textarea';
+import { Button } from '@/components/ui/button';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Plus, Trash2 } from 'lucide-react';
+
+interface Props {
+  sheet: CharacterSheet;
+  onChange: (patch: Partial<CharacterSheet>) => void;
+}
+
+const CATEGORIES = [
+  { value: 'npcs' as const, label: 'NPCs' },
+  { value: 'locations' as const, label: 'Locais' },
+  { value: 'events' as const, label: 'Eventos' },
+  { value: 'general' as const, label: 'Geral' },
+];
+
+export function CampaignNotes({ sheet, onChange }: Props) {
+  const [filter, setFilter] = useState<string>('all');
+
+  const addNote = () => {
+    const note: CampaignNote = { id: crypto.randomUUID(), category: 'general', title: '', content: '' };
+    onChange({ campaignNotes: [...sheet.campaignNotes, note] });
+  };
+
+  const updateNote = (idx: number, patch: Partial<CampaignNote>) => {
+    const campaignNotes = [...sheet.campaignNotes];
+    campaignNotes[idx] = { ...campaignNotes[idx], ...patch };
+    onChange({ campaignNotes });
+  };
+
+  const removeNote = (idx: number) => {
+    onChange({ campaignNotes: sheet.campaignNotes.filter((_, i) => i !== idx) });
+  };
+
+  const filtered = filter === 'all' ? sheet.campaignNotes : sheet.campaignNotes.filter(n => n.category === filter);
+
+  return (
+    <Card className="border-primary/20">
+      <CardHeader className="flex flex-row items-center justify-between pb-3 pt-4 px-4">
+        <CardTitle className="text-sm text-primary">Notas da Campanha</CardTitle>
+        <div className="flex gap-2">
+          <Select value={filter} onValueChange={setFilter}>
+            <SelectTrigger className="h-7 w-24 text-xs"><SelectValue /></SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">Todas</SelectItem>
+              {CATEGORIES.map(c => <SelectItem key={c.value} value={c.value}>{c.label}</SelectItem>)}
+            </SelectContent>
+          </Select>
+          <Button variant="ghost" size="sm" onClick={addNote} className="h-7 gap-1 text-xs">
+            <Plus className="h-3 w-3" /> Nova Nota
+          </Button>
+        </div>
+      </CardHeader>
+      <CardContent className="space-y-3 px-4 pb-4">
+        {filtered.length === 0 ? (
+          <p className="py-4 text-center text-sm text-muted-foreground">Nenhuma nota ainda.</p>
+        ) : (
+          filtered.map(note => {
+            const idx = sheet.campaignNotes.findIndex(n => n.id === note.id);
+            return (
+              <div key={note.id} className="rounded-md border border-border/50 p-3 space-y-2">
+                <div className="flex gap-2 items-center">
+                  <Select value={note.category} onValueChange={v => updateNote(idx, { category: v as CampaignNote['category'] })}>
+                    <SelectTrigger className="h-7 w-24 text-xs"><SelectValue /></SelectTrigger>
+                    <SelectContent>{CATEGORIES.map(c => <SelectItem key={c.value} value={c.value}>{c.label}</SelectItem>)}</SelectContent>
+                  </Select>
+                  <Input placeholder="Título" value={note.title} onChange={e => updateNote(idx, { title: e.target.value })} className="h-7 text-xs" />
+                  <Button variant="ghost" size="icon" className="h-7 w-7 shrink-0 text-muted-foreground hover:text-destructive" onClick={() => removeNote(idx)}>
+                    <Trash2 className="h-3 w-3" />
+                  </Button>
+                </div>
+                <Textarea value={note.content} onChange={e => updateNote(idx, { content: e.target.value })} placeholder="Conteúdo…" className="min-h-[60px] text-xs" />
+              </div>
+            );
+          })
+        )}
+      </CardContent>
+    </Card>
+  );
+}
