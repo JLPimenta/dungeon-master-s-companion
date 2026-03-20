@@ -1,59 +1,43 @@
 
 
-# Plano Atualizado - D&D 5.5 Character Sheet Manager
+# Plano: Gerar documentos .docx
 
-## Web (sem alterações)
+## Resposta sobre NestJS + Vercel
 
-Mantém tudo já aprovado: tema medieval escuro, dashboard com cards, ficha completa, localStorage, service layer com Repository Pattern, cálculos automáticos, compartilhamento, fullscreen, notas e campos personalizáveis.
+Sim, a arquitetura atual do frontend suporta integração com NestJS perfeitamente. A camada de serviço (`CharacterService` interface) foi projetada exatamente para isso -- basta criar um `apiService.ts` que implemente a mesma interface usando `fetch` apontando para os endpoints NestJS. Zero mudança nos componentes React.
 
-## Mobile - Capacitor (Nova Seção)
+## Nota para o futuro
 
-Como o projeto já é React + Vite, usaremos **Capacitor** para empacotar o app como nativo (iOS e Android). Isso evita reescrever em Flutter ou React Native — o mesmo código React roda como app nativo com acesso a APIs do dispositivo.
+**Tela de Configuração**: Registrado. Futuramente, criar uma página `/settings` onde o jogador poderá definir regras da mesa (ex: fórmula de itens sintonizados, regras de descanso, variantes de encumbrance, etc.) que alterem dinamicamente os cálculos e campos da ficha.
 
-### Por que Capacitor e não React Native?
+## Documentos a gerar (2 arquivos .docx)
 
-- Zero reescrita: o mesmo código React/Vite vira app nativo
-- Acesso completo a APIs nativas (filesystem, câmera, etc.)
-- Publicável na App Store e Google Play
-- Quando migrar para backend, basta trocar o service — funciona igual no mobile
+### Documento 1: Design System Guide
+Dados extraídos do `index.css` e `tailwind.config.ts`:
+- **Fontes**: Cinzel (headings), Crimson Text (body)
+- **Paleta de cores** (HSL → HEX): Background `#171c24`, Foreground `#cec4b2`, Primary/Gold `#daa520`, Accent/Red `#8a2a2a`, Card `#1e2430`, Border `#534a2e`, Muted `#252b35`, Input `#2b3140`
+- **Radius**: 0.375rem (6px)
+- **Spacing patterns**, component structure, typography scale
 
-### Persistência no Mobile
+### Documento 2: Documentação Funcional (US01-US11)
+Seguindo o formato do PDF modelo (História de Usuário, Premissas, Critérios de Aceite, campos detalhados):
+- **US01** - Tela Inicial (dashboard, cards, grid responsivo)
+- **US02** - Criar Ficha de Jogador (dialog, nome obrigatório, redirecionamento)
+- **US03** - Cabeçalho, Atributos & Perícias (campos do header, 6 atributos, 18 perícias, cálculos automáticos)
+- **US04** - Informações Gerais (CA, PV, Iniciativa, Deslocamento, Dado de Vida, Salvaguarda contra Morte, Inspiração)
+- **US05** - Armas e Truques de Dano (tabela dinâmica com nome, bônus, dano, tipo, notas)
+- **US06** - Características e Traços (features de classe, traços de espécie, talentos, treinamento em equipamentos)
+- **US07** - Conjuração (atributo, CD, slots 1-9, lista ilimitada de magias)
+- **US08** - Inventário (equipamento, itens sintonizados com escala por proficiência, moedas)
+- **US09** - Personalidade e História (texto livre, alinhamento, idiomas)
+- **US10** - Notas da Campanha (notas categorizadas: NPCs, Locais, Eventos, Geral)
+- **US11** - Campos Personalizáveis (campos label/valor para regras da casa)
 
-A service layer já planejada (Repository Pattern) facilita isso:
+## Implementação técnica
 
-```text
-CharacterService (interface)
-├── localStorageService.ts   ← Web (localStorage)
-├── capacitorStorageService.ts ← Mobile (Capacitor Preferences/Filesystem)
-└── apiService.ts            ← Futuro (Spring Boot / NestJS)
-```
+Usarei `docx-js` (npm) para gerar ambos os .docx com formatação profissional (headings, tabelas, listas), seguindo o estilo do documento modelo. Os arquivos serão salvos em `/mnt/documents/`.
 
-No mobile, usaremos **@capacitor/preferences** (key-value) ou **@capacitor/filesystem** (JSON files) para persistência local no dispositivo. A escolha será feita automaticamente com detecção de plataforma (`Capacitor.isNativePlatform()`).
-
-### Responsividade
-
-Os componentes da ficha serão construídos mobile-first:
-- Dashboard: 1 coluna em telas pequenas, grid em telas maiores
-- Ficha: seções empilhadas verticalmente no mobile, layout multi-coluna no desktop
-- Inputs e botões com tamanho adequado para toque
-
-### Setup Capacitor (passo final do MVP)
-
-1. Instalar `@capacitor/core`, `@capacitor/cli`, `@capacitor/ios`, `@capacitor/android`, `@capacitor/preferences`
-2. `npx cap init` com config apontando para o preview do Lovable (hot-reload)
-3. Criar `capacitorStorageService.ts` implementando `CharacterService`
-4. Criar util `getPlatformService()` que retorna o service correto por plataforma
-5. Para testar no dispositivo: export para GitHub → `npm install` → `npx cap add android/ios` → `npx cap sync` → `npx cap run`
-
-### Ordem de Implementação Atualizada
-
-1. Tipos, cálculos, service layer (interface) e tema medieval
-2. `localStorageService.ts` + Dashboard (cards, criar, excluir)
-3. Ficha - Página 1 (cabeçalho, atributos, combate, perícias, armas)
-4. Ficha - Página 2 (magias, inventário, itens sintonizados, moedas)
-5. Extras (notas, campos personalizáveis, compartilhar, fullscreen)
-6. **Capacitor setup + `capacitorStorageService.ts` + detecção de plataforma**
-7. Testes no dispositivo físico/emulador
-
-O passo 6 é independente — pode ser feito a qualquer momento após o passo 2, pois só troca a implementação do service.
+Arquivos gerados:
+1. `/mnt/documents/design_system_guide.docx`
+2. `/mnt/documents/documentacao_funcional.docx`
 
