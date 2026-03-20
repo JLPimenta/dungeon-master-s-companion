@@ -1,0 +1,62 @@
+import type { CharacterSheet, AbilityKey } from '@/types/character';
+import { ABILITY_ABBR } from '@/types/character';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Input } from '@/components/ui/input';
+import { Checkbox } from '@/components/ui/checkbox';
+import { getModifier, formatModifier } from '@/utils/calculations';
+
+interface Props {
+  sheet: CharacterSheet;
+  onChange: (patch: Partial<CharacterSheet>) => void;
+}
+
+const ABILITY_KEYS: AbilityKey[] = ['strength', 'dexterity', 'constitution', 'intelligence', 'wisdom', 'charisma'];
+
+export function AbilityScores({ sheet, onChange }: Props) {
+  const handleValue = (key: AbilityKey, value: number) => {
+    onChange({
+      abilities: { ...sheet.abilities, [key]: { ...sheet.abilities[key], value } },
+    });
+  };
+
+  const handleProficient = (key: AbilityKey, proficient: boolean) => {
+    onChange({
+      abilities: { ...sheet.abilities, [key]: { ...sheet.abilities[key], proficient } },
+    });
+  };
+
+  return (
+    <Card className="border-primary/20">
+      <CardHeader className="pb-3 pt-4 px-4">
+        <CardTitle className="text-sm text-primary">Atributos</CardTitle>
+      </CardHeader>
+      <CardContent className="space-y-3 px-4 pb-4">
+        {ABILITY_KEYS.map(key => {
+          const mod = getModifier(sheet.abilities[key].value);
+          return (
+            <div key={key} className="flex items-center gap-2">
+              <span className="w-10 text-xs font-semibold text-muted-foreground">{ABILITY_ABBR[key]}</span>
+              <Input
+                type="number"
+                min={1}
+                max={30}
+                value={sheet.abilities[key].value}
+                onChange={e => handleValue(key, Number(e.target.value) || 10)}
+                className="h-9 w-14 text-center"
+              />
+              <span className="w-10 text-center text-sm font-bold text-primary">
+                {formatModifier(mod)}
+              </span>
+              <Checkbox
+                checked={sheet.abilities[key].proficient}
+                onCheckedChange={(c) => handleProficient(key, !!c)}
+                title="Salvaguarda"
+              />
+              <span className="text-xs text-muted-foreground">Salv.</span>
+            </div>
+          );
+        })}
+      </CardContent>
+    </Card>
+  );
+}
