@@ -35,7 +35,7 @@ export function HeaderSection({ sheet, onChange }: Props) {
                   </span>
 
                       {(sheet.class || sheet.level) && (
-                          <span className="flex items-center gap-1 text-sm text-muted-foreground mt-0.5 sm:mt-0 sm:ml-0">
+                          <span className="flex items-center gap-1 text-muted-foreground mt-0.5 sm:mt-0 sm:ml-0">
                       {sheet.class && (
                           <>
                             <span className="hidden sm:inline px-2 text-border">|</span>
@@ -129,7 +129,7 @@ export function HeaderSection({ sheet, onChange }: Props) {
                   />
                 </div>
 
-                <div className="col-span-2 sm:col-span-1 flex items-end lg:col-span-1">
+                <div className="col-span-2 sm:col-span-1 flex items-end lg:col-span-2">
                   <div className="flex h-10 w-full items-center justify-center rounded-md border border-primary/30 bg-primary/10 text-sm font-semibold text-primary">
                     Bônus de Proficiência +{profBonus}
                   </div>

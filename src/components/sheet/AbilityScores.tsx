@@ -4,6 +4,8 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Checkbox } from '@/components/ui/checkbox';
 import { getModifier, formatModifier } from '@/utils/calculations';
+import {Tooltip, TooltipContent, TooltipTrigger} from "@/components/ui/tooltip.tsx";
+import {HelpCircle} from "lucide-react";
 
 interface Props {
   sheet: CharacterSheet;
@@ -28,7 +30,19 @@ export function AbilityScores({ sheet, onChange }: Props) {
   return (
     <Card className="border-primary/20">
       <CardHeader className="pb-3 pt-4 px-4">
-        <CardTitle className="text-lg text-primary">Atributos</CardTitle>
+          <CardTitle className="text-lg text-primary align-items center flex gap-1 ">
+              <span>Atributos</span>
+              <Tooltip delayDuration={100}>
+                  <TooltipTrigger asChild className="flex items-center gap-1 text-sm text-muted-foreground">
+                      <HelpCircle className="h-4 w-4" />
+                  </TooltipTrigger>
+                  <TooltipContent>
+                      <p>
+                          Salvaguarda = Modificador de Atributo + Bônus de Proficiência
+                      </p>
+                  </TooltipContent>
+              </Tooltip>
+          </CardTitle>
       </CardHeader>
       <CardContent className="space-y-3 px-4 pb-4">
         {ABILITY_KEYS.map(key => {
