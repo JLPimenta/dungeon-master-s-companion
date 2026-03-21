@@ -3,7 +3,7 @@ import { ABILITY_ABBR } from '@/types/character';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Checkbox } from '@/components/ui/checkbox';
-import { getModifier, formatModifier } from '@/utils/calculations';
+import { getModifier, formatModifier, getSkillBonus, getProficiencyBonus } from '@/utils/calculations';
 import {Tooltip, TooltipContent, TooltipTrigger} from "@/components/ui/tooltip.tsx";
 import {HelpCircle} from "lucide-react";
 
@@ -27,6 +27,8 @@ export function AbilityScores({ sheet, onChange }: Props) {
     });
   };
 
+  const profBonus = getProficiencyBonus(sheet.level);
+
   return (
     <Card className="border-primary/20">
       <CardHeader className="pb-3 pt-4 px-4">
@@ -47,6 +49,12 @@ export function AbilityScores({ sheet, onChange }: Props) {
       <CardContent className="space-y-3 px-4 pb-4">
         {ABILITY_KEYS.map(key => {
           const mod = getModifier(sheet.abilities[key].value);
+          const saveBonus = getSkillBonus(
+            sheet.abilities[key].value,
+            sheet.abilities[key].proficient,
+            false,
+            profBonus
+          );
           return (
             <div key={key} className="flex items-center gap-2">
               <span className="w-12 text-sm font-semibold text-muted-foreground">{ABILITY_ABBR[key]}</span>
@@ -67,7 +75,8 @@ export function AbilityScores({ sheet, onChange }: Props) {
                 title="Salvaguarda"
                 className="h-5 w-5"
               />
-              <span className="text-sm text-muted-foreground">Salv.</span>
+                <span className="text-sm text-muted-foreground">Salv.</span>
+                <span className="w-10 text-center text-sm font-bold text-primary">({formatModifier(saveBonus)})</span>
             </div>
           );
         })}
