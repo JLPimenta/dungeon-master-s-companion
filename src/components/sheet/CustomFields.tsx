@@ -28,9 +28,9 @@ export function CustomFields({ sheet, onChange }: Props) {
   return (
     <Card className="border-primary/20">
       <CardHeader className="flex flex-row items-center justify-between pb-3 pt-4 px-4">
-        <CardTitle className="text-sm text-primary">Campos Personalizáveis</CardTitle>
-        <Button variant="ghost" size="sm" onClick={addField} className="h-7 gap-1 text-xs">
-          <Plus className="h-3 w-3" /> Adicionar Campo
+        <CardTitle className="text-lg text-primary">Campos Personalizáveis</CardTitle>
+        <Button variant="ghost" size="sm" onClick={addField} className="h-8 gap-1 text-sm">
+          <Plus className="h-4 w-4" /> Adicionar Campo
         </Button>
       </CardHeader>
       <CardContent className="space-y-2 px-4 pb-4">
@@ -40,11 +40,11 @@ export function CustomFields({ sheet, onChange }: Props) {
           </p>
         ) : (
           sheet.customFields.map((field, i) => (
-            <div key={field.id} className="grid grid-cols-[1fr_1fr_32px] gap-2 items-center">
-              <Input placeholder="Nome do campo" value={field.label} onChange={e => updateField(i, { label: e.target.value })} className="h-8 text-xs" />
-              <Input placeholder="Valor" value={field.value} onChange={e => updateField(i, { value: e.target.value })} className="h-8 text-xs" />
-              <Button variant="ghost" size="icon" className="h-8 w-8 text-muted-foreground hover:text-destructive" onClick={() => removeField(i)}>
-                <Trash2 className="h-3 w-3" />
+            <div key={field.id} className="grid grid-cols-[1fr_1fr_36px] gap-2 items-center">
+              <Input placeholder="Nome do campo" value={field.label} onChange={e => updateField(i, { label: e.target.value })} className="h-9 text-sm" />
+              <Input placeholder="Valor" value={field.value} onChange={e => updateField(i, { value: e.target.value })} className="h-9 text-sm" />
+              <Button variant="ghost" size="icon" className="h-9 w-9 text-muted-foreground hover:text-destructive" onClick={() => removeField(i)}>
+                <Trash2 className="h-4 w-4" />
               </Button>
             </div>
           ))

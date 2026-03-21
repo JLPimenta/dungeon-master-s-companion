@@ -28,21 +28,21 @@ export function AbilityScores({ sheet, onChange }: Props) {
   return (
     <Card className="border-primary/20">
       <CardHeader className="pb-3 pt-4 px-4">
-        <CardTitle className="text-sm text-primary">Atributos</CardTitle>
+        <CardTitle className="text-lg text-primary">Atributos</CardTitle>
       </CardHeader>
       <CardContent className="space-y-3 px-4 pb-4">
         {ABILITY_KEYS.map(key => {
           const mod = getModifier(sheet.abilities[key].value);
           return (
             <div key={key} className="flex items-center gap-2">
-              <span className="w-10 text-xs font-semibold text-muted-foreground">{ABILITY_ABBR[key]}</span>
+              <span className="w-12 text-sm font-semibold text-muted-foreground">{ABILITY_ABBR[key]}</span>
               <Input
                 type="number"
                 min={1}
                 max={30}
                 value={sheet.abilities[key].value}
                 onChange={e => handleValue(key, Number(e.target.value) || 10)}
-                className="h-9 w-14 text-center"
+                className="h-10 w-16 text-center"
               />
               <span className="w-10 text-center text-sm font-bold text-primary">
                 {formatModifier(mod)}
@@ -51,8 +51,9 @@ export function AbilityScores({ sheet, onChange }: Props) {
                 checked={sheet.abilities[key].proficient}
                 onCheckedChange={(c) => handleProficient(key, !!c)}
                 title="Salvaguarda"
+                className="h-5 w-5"
               />
-              <span className="text-xs text-muted-foreground">Salv.</span>
+              <span className="text-sm text-muted-foreground">Salv.</span>
             </div>
           );
         })}
