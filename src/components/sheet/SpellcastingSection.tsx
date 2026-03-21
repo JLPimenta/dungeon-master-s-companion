@@ -9,10 +9,9 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Plus, Trash2 } from 'lucide-react';
 import {
   getAbilityModifier,
-  getProficiencyBonus,
   getSpellSaveDC,
   getSpellAttackBonus,
-  formatModifier,
+  formatModifier, getEffectiveProficiencyBonus,
 } from '@/utils/calculations';
 
 interface Props {
@@ -27,7 +26,7 @@ const LEVEL_LABELS: Record<number, string> = {
 };
 
 export function SpellcastingSection({ sheet, onChange }: Props) {
-  const profBonus = getProficiencyBonus(sheet.level);
+  const profBonus = getEffectiveProficiencyBonus(sheet);
   const abilityMod = sheet.spellcastingAbility
       ? getAbilityModifier(sheet, sheet.spellcastingAbility)
       : 0;
@@ -276,10 +275,6 @@ export function SpellcastingSection({ sheet, onChange }: Props) {
                                           </Button>
                                         </div>
                                       </div>
-
-                                      {/* ── Desktop: single-row grid ──
-                                cols: [círculo | nome | tempo | alcance | conc | ritual | notas | ×] */}
-                                      {/* h-7 → h-9, text-xs → text-sm, text-[10px] → text-xs */}
                                       <div className="hidden md:grid md:grid-cols-[80px_1fr_96px_96px_auto_auto_1fr_36px] gap-1.5 items-center">
                                         <Select
                                             value={String(spell.level)}

@@ -1,11 +1,12 @@
+import { useState } from 'react';
 import type { CharacterSheet } from '@/types/character';
 import { Card, CardContent } from '@/components/ui/card';
 import { Collapsible, CollapsibleTrigger, CollapsibleContent } from '@/components/ui/collapsible';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { getProficiencyBonus } from '@/utils/calculations';
-import { useState } from 'react';
+import { getEffectiveProficiencyBonus } from '@/utils/calculations';
 import { ChevronDown } from 'lucide-react';
+import { BonusInput } from '@/components/ui/bonus-input';
 
 interface Props {
   sheet: CharacterSheet;
@@ -13,13 +14,25 @@ interface Props {
 }
 
 export function HeaderSection({ sheet, onChange }: Props) {
-  const profBonus = getProficiencyBonus(sheet.level);
+  const profBonus = getEffectiveProficiencyBonus(sheet);
+  const profBonusExtra = sheet.bonuses?.proficiencyBonus ?? 0;
   const [isOpen, setIsOpen] = useState(true);
+
+  const handleProfBonusExtra = (value: number) => {
+    onChange({
+      bonuses: {
+        ...sheet.bonuses,
+        proficiencyBonus: value,
+      },
+    });
+  };
 
   return (
       <Card className="border-primary/20">
         <CardContent className="px-4 pt-4 pb-4">
           <Collapsible open={isOpen} onOpenChange={setIsOpen}>
+
+            {/* ── Collapsed trigger — resumo em uma linha ── */}
             {!isOpen && (
                 <CollapsibleTrigger asChild>
                   <button
@@ -35,7 +48,7 @@ export function HeaderSection({ sheet, onChange }: Props) {
                   </span>
 
                       {(sheet.class || sheet.level) && (
-                          <span className="flex items-center gap-1 text-muted-foreground mt-0.5 sm:mt-0 sm:ml-0">
+                          <span className="flex items-center gap-1 text-sm text-muted-foreground mt-0.5 sm:mt-0 sm:ml-0">
                       {sheet.class && (
                           <>
                             <span className="hidden sm:inline px-2 text-border">|</span>
@@ -51,6 +64,7 @@ export function HeaderSection({ sheet, onChange }: Props) {
                     </span>
                       )}
                     </div>
+
                     <div className="flex items-center gap-2 ml-auto flex-shrink-0">
                   <span className="rounded-sm border border-primary/30 bg-primary/10 px-2 py-0.5 text-sm font-semibold text-primary whitespace-nowrap">
                     Proficiência: +{profBonus}
@@ -61,7 +75,9 @@ export function HeaderSection({ sheet, onChange }: Props) {
                 </CollapsibleTrigger>
             )}
 
+            {/* ── Conteúdo expansível ── */}
             <CollapsibleContent>
+              {/* Botão de colapso — visível só quando aberto */}
               {isOpen && (
                   <div className="flex justify-end mb-2">
                     <button
@@ -76,6 +92,8 @@ export function HeaderSection({ sheet, onChange }: Props) {
               )}
 
               <div className="grid grid-cols-2 gap-3 sm:grid-cols-4 lg:grid-cols-7">
+
+                {/* Nome */}
                 <div className="col-span-2 lg:col-span-2">
                   <Label className="text-sm text-muted-foreground">Nome</Label>
                   <Input
@@ -86,11 +104,13 @@ export function HeaderSection({ sheet, onChange }: Props) {
                   />
                 </div>
 
+                {/* Classe */}
                 <div className="col-span-1 lg:col-span-1">
                   <Label className="text-sm text-muted-foreground">Classe</Label>
-                  <Input value={sheet.class} onChange={e => onChange({ class: e.target.value })} className="mt-1" />
+                  <Input value={sheet.class} onChange={e => onChange({ class: e.target.value })} className="mt-1 text-sm" />
                 </div>
 
+                {/* Nível */}
                 <div className="col-span-1 lg:col-span-1">
                   <Label className="text-sm text-muted-foreground">Nível</Label>
                   <Input
@@ -99,25 +119,29 @@ export function HeaderSection({ sheet, onChange }: Props) {
                       max={20}
                       value={sheet.level}
                       onChange={e => onChange({ level: Number(e.target.value) || 1 })}
-                      className="mt-1"
+                      className="mt-1 text-sm"
                   />
                 </div>
 
+                {/* Espécie */}
                 <div className="col-span-1 lg:col-span-1">
                   <Label className="text-sm text-muted-foreground">Espécie</Label>
-                  <Input value={sheet.species} onChange={e => onChange({ species: e.target.value })} className="mt-1" />
+                  <Input value={sheet.species} onChange={e => onChange({ species: e.target.value })} className="mt-1 text-sm" />
                 </div>
 
+                {/* Subclasse */}
                 <div className="col-span-1 lg:col-span-1">
                   <Label className="text-sm text-muted-foreground">Subclasse</Label>
-                  <Input value={sheet.subclass} onChange={e => onChange({ subclass: e.target.value })} className="mt-1" />
+                  <Input value={sheet.subclass} onChange={e => onChange({ subclass: e.target.value })} className="mt-1 text-sm" />
                 </div>
 
+                {/* Antecedente */}
                 <div className="col-span-1 lg:col-span-1">
                   <Label className="text-sm text-muted-foreground">Antecedente</Label>
-                  <Input value={sheet.background} onChange={e => onChange({ background: e.target.value })} className="mt-1" />
+                  <Input value={sheet.background} onChange={e => onChange({ background: e.target.value })} className="mt-1 text-sm" />
                 </div>
 
+                {/* XP */}
                 <div className="col-span-1 lg:col-span-1">
                   <Label className="text-sm text-muted-foreground">XP</Label>
                   <Input
@@ -125,15 +149,27 @@ export function HeaderSection({ sheet, onChange }: Props) {
                       min={0}
                       value={sheet.xp}
                       onChange={e => onChange({ xp: Number(e.target.value) || 0 })}
-                      className="mt-1"
+                      className="mt-1 text-sm"
                   />
                 </div>
 
-                <div className="col-span-2 sm:col-span-1 flex items-end lg:col-span-2">
-                  <div className="flex h-10 w-full items-center justify-center rounded-md border border-primary/30 bg-primary/10 text-sm font-semibold text-primary">
+                {/*
+                Bônus de Proficiência
+                [badge com total efetivo] [BonusInput — bônus extra de item/antecedente]
+              */}
+                <div className="col-span-2 sm:col-span-1 flex items-end gap-1.5 lg:col-span-2">
+                  <div className="flex h-10 flex-1 items-center justify-center rounded-md border border-primary/30 bg-primary/10 text-sm font-semibold text-primary">
                     Bônus de Proficiência +{profBonus}
                   </div>
+                  <BonusInput
+                      value={profBonusExtra}
+                      onChange={handleProfBonusExtra}
+                      title="Bônus adicional no Bônus de Proficiência (item, antecedente…)"
+                      heightClass="h-10"
+                      widthClass="w-12"
+                  />
                 </div>
+
               </div>
             </CollapsibleContent>
           </Collapsible>

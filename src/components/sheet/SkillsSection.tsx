@@ -2,20 +2,34 @@ import type { CharacterSheet, AbilityKey } from '@/types/character';
 import { ABILITY_ABBR } from '@/types/character';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Checkbox } from '@/components/ui/checkbox';
-import { getSkillBonus, getProficiencyBonus, formatModifier, getPassivePerception } from '@/utils/calculations';
+import { BonusInput } from '@/components/ui/bonus-input';
+import {
+  getSkillBonus,
+  getEffectiveProficiencyBonus,
+  getPassivePerception,
+  formatModifier,
+} from '@/utils/calculations';
 
 interface Props {
   sheet: CharacterSheet;
   onChange: (patch: Partial<CharacterSheet>) => void;
 }
 
+const ABILITY_ORDER: AbilityKey[] = [
+  'strength', 'dexterity', 'constitution',
+  'intelligence', 'wisdom', 'charisma',
+];
+
 export function SkillsSection({ sheet, onChange }: Props) {
-  const profBonus = getProficiencyBonus(sheet.level);
-  const perception = sheet.skills.find(s => s.name === 'Percepção');
+  const profBonus = getEffectiveProficiencyBonus(sheet);
+
+  const perceptionSkill = sheet.skills.find(s => s.name === 'Percepção');
+  const perceptionBonus = sheet.bonuses?.skills?.['Percepção'] ?? 0;
   const passivePerc = getPassivePerception(
-    sheet.abilities.wisdom.value,
-    perception?.proficient ?? false,
-    profBonus
+      sheet.abilities.wisdom.value,
+      perceptionSkill?.proficient ?? false,
+      profBonus,
+      perceptionBonus,
   );
 
   const toggleProficiency = (idx: number) => {
@@ -30,63 +44,94 @@ export function SkillsSection({ sheet, onChange }: Props) {
     onChange({ skills });
   };
 
-  return (
-    <Card className="border-primary/20">
-      <CardHeader className="flex flex-row items-center justify-between pb-2 pt-4 px-4">
-        <CardTitle className="text-lg text-primary">Perícias</CardTitle>
-        <span className="text-sm text-muted-foreground">Percepção Passiva: {passivePerc}</span>
-      </CardHeader>
-      <CardContent className="space-y-1 px-4 pb-4 text-sm">
-        {(() => {
-          const abilityOrder: AbilityKey[] = ['strength', 'dexterity', 'constitution', 'intelligence', 'wisdom', 'charisma'];
-          const groups = abilityOrder.map(key => ({
-            key,
-            abbr: ABILITY_ABBR[key],
-            skills: sheet.skills.filter(s => s.ability === key),
-          }));
+  const handleSkillBonus = (skillName: string, value: number) => {
+    onChange({
+      bonuses: {
+        ...sheet.bonuses,
+        skills: { ...(sheet.bonuses?.skills ?? {}), [skillName]: value },
+      },
+    });
+  };
 
-          return groups.map((group, gi) => {
-            if (group.skills.length === 0) return null;
-            return (
-              <div key={group.key} className={"pt-2" + (gi > 0 ? ' border-t border-muted-foreground/10' : '')}>
-                <div className="flex items-baseline gap-2 mb-1">
-                  <span className="text-sm font-mono text-muted-foreground w-10">{group.abbr}</span>
-                </div>
+  const groups = ABILITY_ORDER.map(key => ({
+    key,
+    abbr: ABILITY_ABBR[key],
+    skills: sheet.skills.filter(s => s.ability === key),
+  })).filter(g => g.skills.length > 0);
+
+  return (
+      <Card className="border-primary/20">
+        <CardHeader className="flex flex-row items-center justify-between pb-2 pt-4 px-4">
+          <CardTitle className="text-lg text-primary">Perícias</CardTitle>
+          <span className="text-xs text-muted-foreground">Percepção Passiva: {passivePerc}</span>
+        </CardHeader>
+
+        <CardContent className="px-4 pb-4 text-sm">
+          {groups.map((group, gi) => (
+              <div
+                  key={group.key}
+                  className={gi > 0 ? 'pt-2 mt-2 border-t border-muted-foreground/10' : 'pt-0'}
+              >
+                {/* Label do atributo */}
+                <span className="mb-1 block font-mono text-sm text-muted-foreground">
+              {group.abbr}
+            </span>
+
                 <div className="space-y-1">
-                  {group.skills.map((skill) => {
-                    const bonus = getSkillBonus(
-                      sheet.abilities[skill.ability].value,
-                      skill.proficient,
-                      skill.expertise,
-                      profBonus
+                  {group.skills.map(skill => {
+                    const globalIdx = sheet.skills.findIndex(
+                        s => s.name === skill.name && s.ability === skill.ability,
                     );
-                    const globalIndex = sheet.skills.findIndex(s => s.name === skill.name && s.ability === skill.ability);
+                    const extraBonus = sheet.bonuses?.skills?.[skill.name] ?? 0;
+                    const bonus = getSkillBonus(
+                        sheet.abilities[skill.ability].value,
+                        skill.proficient,
+                        skill.expertise,
+                        profBonus,
+                        extraBonus,
+                    );
+
                     return (
-                      <div key={skill.name} className="flex items-center gap-2 text-sm">
-                        <Checkbox
-                          checked={skill.proficient}
-                          onCheckedChange={() => toggleProficiency(globalIndex)}
-                          className="h-5 w-5"
-                        />
-                        <Checkbox
-                          checked={skill.expertise}
-                          onCheckedChange={() => toggleExpertise(globalIndex)}
-                          className="h-5 w-5"
-                          title="Expertise"
-                        />
-                        <span className="w-8 text-right font-mono font-bold text-primary">
-                          {formatModifier(bonus)}
-                        </span>
-                        <span className="text-foreground">{skill.name}</span>
-                      </div>
+                        <div key={skill.name} className="flex items-center gap-1.5">
+                          {/* Proficiência */}
+                          <Checkbox
+                              checked={skill.proficient}
+                              onCheckedChange={() => toggleProficiency(globalIdx)}
+                              className="h-4 w-4"
+                              title="Proficiente"
+                          />
+                          {/* Expertise */}
+                          <Checkbox
+                              checked={skill.expertise}
+                              onCheckedChange={() => toggleExpertise(globalIdx)}
+                              className="h-4 w-4"
+                              title="Expertise"
+                          />
+
+                          {/* Bônus total calculado (já inclui o bônus manual) */}
+                          <span className="w-8 text-right font-mono text-sm font-bold text-primary">
+                      {formatModifier(bonus)}
+                    </span>
+
+                          {/* Bônus manual de item ou antecedente */}
+                          <BonusInput
+                              value={extraBonus}
+                              onChange={v => handleSkillBonus(skill.name, v)}
+                              title={`Bônus extra em ${skill.name} (item, antecedente…)`}
+                              widthClass="w-9"
+                              heightClass="h-7"
+                              textClass="text-xs"
+                          />
+
+                          {/* Nome da perícia */}
+                          <span className="text-sm text-foreground">{skill.name}</span>
+                        </div>
                     );
                   })}
                 </div>
               </div>
-            );
-          });
-        })()}
-      </CardContent>
-    </Card>
+          ))}
+        </CardContent>
+      </Card>
   );
 }

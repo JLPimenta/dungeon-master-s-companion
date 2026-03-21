@@ -30,6 +30,24 @@ export const ABILITY_ABBR: Record<AbilityKey, string> = {
   charisma: 'CAR',
 };
 
+/**
+ * Bônus manuais para campos calculados (somente leitura).
+ * Usados para itens mágicos, antecedentes e outras fontes externas
+ * que modificam valores derivados sem alterar os atributos base.
+ *
+ * Exemplos:
+ *   - Manto da Proteção: savingThrows.strength = 1, .dexterity = 1 … (todos +1)
+ *   - Antecedente Criminoso: initiative = proficiencyBonus calculado externamente → initiative = 3
+ *   - Orbe sintonizado: proficiencyBonus = 2
+ *   - Botas de Velocidade: skills.Furtividade = 2
+ */
+export interface CharacterBonuses {
+  proficiencyBonus: number;
+  initiative: number;
+  savingThrows: Partial<Record<AbilityKey, number>>;
+  skills: Partial<Record<string, number>>;
+}
+
 export interface Weapon {
   id: string;
   name: string;
@@ -71,11 +89,11 @@ export interface AttunedItem {
 }
 
 export interface Coins {
-  cp: number; // cobre
-  sp: number; // prata
-  ep: number; // electrum
-  gp: number; // ouro
-  pp: number; // platina
+  cp: number;
+  sp: number;
+  ep: number;
+  gp: number;
+  pp: number;
 }
 
 export interface CampaignNote {
@@ -166,7 +184,7 @@ export interface CharacterSheet {
   // Spellcasting
   spellcastingAbility: AbilityKey | '';
   spells: Spell[];
-  spellSlots: Record<number, SpellSlots>; // 1-9
+  spellSlots: Record<number, SpellSlots>;
 
   // Inventory
   inventory: InventoryItem[];
@@ -183,7 +201,17 @@ export interface CharacterSheet {
 
   // Custom Fields
   customFields: CustomField[];
+
+  // Manual bonuses for computed (read-only) fields
+  bonuses: CharacterBonuses;
 }
+
+const DEFAULT_BONUSES: CharacterBonuses = {
+  proficiencyBonus: 0,
+  initiative: 0,
+  savingThrows: {},
+  skills: {},
+};
 
 export function createDefaultCharacter(name: string): CharacterSheet {
   const now = new Date().toISOString();
@@ -243,5 +271,6 @@ export function createDefaultCharacter(name: string): CharacterSheet {
     languages: '',
     campaignNotes: [],
     customFields: [],
+    bonuses: { ...DEFAULT_BONUSES, savingThrows: {}, skills: {} },
   };
 }
