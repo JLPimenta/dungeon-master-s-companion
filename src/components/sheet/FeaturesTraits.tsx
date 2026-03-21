@@ -29,49 +29,49 @@ export function FeaturesTraits({ sheet, onChange }: Props) {
   return (
     <Card className="border-primary/20">
       <CardHeader className="pb-3 pt-4 px-4">
-        <CardTitle className="text-sm text-primary">Características e Traços</CardTitle>
+        <CardTitle className="text-lg text-primary">Características e Traços</CardTitle>
       </CardHeader>
       <CardContent className="space-y-4 px-4 pb-4">
         {/* Class features */}
         <div>
           <div className="flex items-center justify-between mb-2">
-            <Label className="text-xs text-muted-foreground">Características de Classe</Label>
-            <Button variant="ghost" size="sm" onClick={addFeature} className="h-6 gap-1 text-xs">
-              <Plus className="h-3 w-3" /> Adicionar
+            <Label className="text-sm text-muted-foreground">Características de Classe</Label>
+            <Button variant="ghost" size="sm" onClick={addFeature} className="h-8 gap-1 text-sm">
+              <Plus className="h-4 w-4" /> Adicionar
             </Button>
           </div>
           {sheet.classFeatures.map((f, i) => (
             <div key={i} className="mb-1.5 flex gap-2">
-              <Input value={f} onChange={e => updateFeature(i, e.target.value)} className="h-8 text-xs" />
-              <Button variant="ghost" size="icon" className="h-8 w-8 shrink-0 text-muted-foreground hover:text-destructive" onClick={() => removeFeature(i)}>
-                <Trash2 className="h-3 w-3" />
+              <Input value={f} onChange={e => updateFeature(i, e.target.value)} className="h-9 text-sm" />
+              <Button variant="ghost" size="icon" className="h-9 w-9 shrink-0 text-muted-foreground hover:text-destructive" onClick={() => removeFeature(i)}>
+                <Trash2 className="h-4 w-4" />
               </Button>
             </div>
           ))}
         </div>
 
         <div>
-          <Label className="text-xs text-muted-foreground">Traços de Espécie</Label>
+          <Label className="text-sm text-muted-foreground">Traços de Espécie</Label>
           <Textarea value={sheet.speciesTraits} onChange={e => onChange({ speciesTraits: e.target.value })} className="mt-1 min-h-[60px] text-sm" />
         </div>
 
         <div>
-          <Label className="text-xs text-muted-foreground">Talentos</Label>
+          <Label className="text-sm text-muted-foreground">Talentos</Label>
           <Textarea value={sheet.feats} onChange={e => onChange({ feats: e.target.value })} className="mt-1 min-h-[60px] text-sm" />
         </div>
 
         <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
           <div>
-            <Label className="text-xs text-muted-foreground">Armaduras</Label>
-            <Input value={sheet.armorTraining} onChange={e => onChange({ armorTraining: e.target.value })} className="mt-1 h-8 text-xs" />
+            <Label className="text-sm text-muted-foreground">Armaduras</Label>
+            <Input value={sheet.armorTraining} onChange={e => onChange({ armorTraining: e.target.value })} className="mt-1 h-9 text-sm" />
           </div>
           <div>
-            <Label className="text-xs text-muted-foreground">Armas</Label>
-            <Input value={sheet.weaponTraining} onChange={e => onChange({ weaponTraining: e.target.value })} className="mt-1 h-8 text-xs" />
+            <Label className="text-sm text-muted-foreground">Armas</Label>
+            <Input value={sheet.weaponTraining} onChange={e => onChange({ weaponTraining: e.target.value })} className="mt-1 h-9 text-sm" />
           </div>
           <div>
-            <Label className="text-xs text-muted-foreground">Ferramentas</Label>
-            <Input value={sheet.toolTraining} onChange={e => onChange({ toolTraining: e.target.value })} className="mt-1 h-8 text-xs" />
+            <Label className="text-sm text-muted-foreground">Ferramentas</Label>
+            <Input value={sheet.toolTraining} onChange={e => onChange({ toolTraining: e.target.value })} className="mt-1 h-9 text-sm" />
           </div>
         </div>
       </CardContent>

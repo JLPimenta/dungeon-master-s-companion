@@ -64,27 +64,27 @@ export function InventorySection({ sheet, onChange }: Props) {
   return (
       <Card className="border-primary/20">
         <CardHeader className="pb-3 pt-4 px-4">
-          <CardTitle className="text-sm text-primary">Inventário</CardTitle>
+          <CardTitle className="text-lg text-primary">Inventário</CardTitle>
         </CardHeader>
 
-        <CardContent className="space-y-6 px-4 pb-4">
+        <CardContent className="space-y-5 px-4 pb-4">
 
           {/* ════════════════════════════ Equipment ════════════════════════════ */}
           <section>
             <div className="mb-2 flex items-center justify-between">
               <Label className="text-xs text-muted-foreground">Equipamento</Label>
               <Button variant="ghost" size="sm" onClick={addItem} className="h-7 gap-1 text-xs shrink-0">
-                <Plus className="h-3 w-3" /> Adicionar
+                <Plus className="h-4 w-4" /> Adicionar
               </Button>
             </div>
 
             {sheet.inventory.length > 0 && (
                 /* Column headers — md+ only */
                 <div className="mb-1 hidden md:grid md:grid-cols-[1fr_64px_64px_1fr_32px] gap-2 px-1">
-                  <Label className="text-xs text-muted-foreground">Item</Label>
-                  <Label className="text-xs text-muted-foreground">Qtd</Label>
-                  <Label className="text-xs text-muted-foreground">Peso (lb)</Label>
-                  <Label className="text-xs text-muted-foreground">Notas</Label>
+                  <Label className="text-sm text-muted-foreground">Item</Label>
+                  <Label className="text-sm text-muted-foreground">Qtd</Label>
+                  <Label className="text-sm text-muted-foreground">Peso (lb)</Label>
+                  <Label className="text-sm text-muted-foreground">Notas</Label>
                   <span />
                 </div>
             )}
@@ -191,7 +191,7 @@ export function InventorySection({ sheet, onChange }: Props) {
           {/* ════════════════════════ Attuned items ════════════════════════ */}
           <section>
             <div className="mb-2 flex items-center justify-between">
-              <Label className="text-xs text-muted-foreground">
+              <Label className="text-sm text-muted-foreground">
                 Itens Sintonizados ({sheet.attunedItems.length}/{maxAttune})
               </Label>
               <Button
@@ -201,7 +201,7 @@ export function InventorySection({ sheet, onChange }: Props) {
                   disabled={sheet.attunedItems.length >= maxAttune}
                   className="h-7 gap-1 text-xs shrink-0"
               >
-                <Plus className="h-3 w-3" /> Adicionar
+                <Plus className="h-4 w-4" /> Adicionar
               </Button>
             </div>
 

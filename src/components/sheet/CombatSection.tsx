@@ -25,71 +25,71 @@ export function CombatSection({ sheet, onChange }: Props) {
       <CardContent className="px-4 pb-4">
         <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
           <div>
-            <Label className="text-muted-foreground">CA</Label>
-            <Input type="number" value={sheet.armorClass} onChange={e => onChange({ armorClass: Number(e.target.value) || 0 })} className="mt-1 h-9" />
+            <Label className="text-sm text-muted-foreground">CA</Label>
+            <Input type="number" value={sheet.armorClass} onChange={e => onChange({ armorClass: Number(e.target.value) || 0 })} className="mt-1 h-10" />
           </div>
           <div>
-            <Label className="text-muted-foreground">Iniciativa</Label>
-            <div className="mt-1 flex h-9 items-center rounded-md border border-input bg-input/30 px-3 text-sm font-bold text-primary">
+            <Label className="text-sm text-muted-foreground">Iniciativa</Label>
+            <div className="mt-1 flex h-10 items-center rounded-md border border-input bg-input/30 px-3 text-sm font-bold text-primary">
               {formatModifier(initBonus)}
             </div>
           </div>
           <div>
-            <Label className="text-muted-foreground">Deslocamento</Label>
-            <Input  type="number" value={sheet.speed} onChange={e => onChange({ speed: Number(e.target.value) || 0 })} className="mt-1 h-9" />
+            <Label className="text-sm text-muted-foreground">Deslocamento</Label>
+            <Input type="number" value={sheet.speed} onChange={e => onChange({ speed: Number(e.target.value) || 0 })} className="mt-1 h-10" />
           </div>
           <div>
-            <Label className="text-muted-foreground">Tamanho</Label>
-            <Input value={sheet.size} onChange={e => onChange({ size: e.target.value })} className="mt-1 h-9" />
+            <Label className="text-sm text-muted-foreground">Tamanho</Label>
+            <Input value={sheet.size} onChange={e => onChange({ size: e.target.value })} className="mt-1 h-10" />
           </div>
         </div>
 
         {/* Hit Points */}
         <div className="mt-4 grid grid-cols-3 gap-3">
           <div>
-            <Label className="text-muted-foreground">PV Atual</Label>
-            <Input type="number" value={sheet.hitPoints.current} onChange={e => onChange({ hitPoints: { ...sheet.hitPoints, current: Number(e.target.value) || 0 } })} className="mt-1 h-9" />
+            <Label className="text-sm text-muted-foreground">PV Atual</Label>
+            <Input type="number" value={sheet.hitPoints.current} onChange={e => onChange({ hitPoints: { ...sheet.hitPoints, current: Number(e.target.value) || 0 } })} className="mt-1 h-10" />
           </div>
           <div>
-            <Label className="text-muted-foreground">PV Máx</Label>
-            <Input type="number" value={sheet.hitPoints.max} onChange={e => onChange({ hitPoints: { ...sheet.hitPoints, max: Number(e.target.value) || 0 } })} className="mt-1 h-9" />
+            <Label className="text-sm text-muted-foreground">PV Máx</Label>
+            <Input type="number" value={sheet.hitPoints.max} onChange={e => onChange({ hitPoints: { ...sheet.hitPoints, max: Number(e.target.value) || 0 } })} className="mt-1 h-10" />
           </div>
           <div>
-            <Label className=" text-muted-foreground">PV Temp</Label>
-            <Input type="number" value={sheet.hitPoints.temp} onChange={e => onChange({ hitPoints: { ...sheet.hitPoints, temp: Number(e.target.value) || 0 } })} className="mt-1 h-9" />
+            <Label className="text-sm text-muted-foreground">PV Temp</Label>
+            <Input type="number" value={sheet.hitPoints.temp} onChange={e => onChange({ hitPoints: { ...sheet.hitPoints, temp: Number(e.target.value) || 0 } })} className="mt-1 h-10" />
           </div>
         </div>
 
         {/* Hit Dice */}
         <div className="mt-4 grid grid-cols-2 gap-3">
           <div>
-            <Label className=" text-muted-foreground">Dado de Vida (total)</Label>
-            <Input value={sheet.hitDice.total} onChange={e => onChange({ hitDice: { ...sheet.hitDice, total: e.target.value } })} className="mt-1 h-9" />
+            <Label className="text-sm text-muted-foreground">Dado de Vida (total)</Label>
+            <Input value={sheet.hitDice.total} onChange={e => onChange({ hitDice: { ...sheet.hitDice, total: e.target.value } })} className="mt-1 h-10" />
           </div>
           <div>
-            <Label className=" text-muted-foreground">Dados Usados</Label>
-            <Input type="number" min={0} value={sheet.hitDice.used} onChange={e => onChange({ hitDice: { ...sheet.hitDice, used: Number(e.target.value) || 0 } })} className="mt-1 h-9" />
+            <Label className="text-sm text-muted-foreground">Dados Usados</Label>
+            <Input type="number" min={0} value={sheet.hitDice.used} onChange={e => onChange({ hitDice: { ...sheet.hitDice, used: Number(e.target.value) || 0 } })} className="mt-1 h-10" />
           </div>
         </div>
 
         {/* Death saves */}
         <div className="mt-4">
-          <Label className=" text-muted-foreground">Salvaguarda contra Morte</Label>
+          <Label className="text-sm text-muted-foreground">Salvaguarda contra Morte</Label>
           <div className="mt-2 flex gap-6">
             <div className="flex items-center gap-2">
-              <span className="text-xs text-muted-foreground">Sucesso</span>
+              <span className="text-sm text-muted-foreground">Sucesso</span>
               {[0, 1, 2].map(i => (
                 <Checkbox key={i} checked={sheet.deathSaves.successes > i}
                   onCheckedChange={() => setDeathSave('successes', sheet.deathSaves.successes > i ? i : i + 1)}
-                  className="h-4 w-4" />
+                  className="h-5 w-5" />
               ))}
             </div>
             <div className="flex items-center gap-2">
-              <span className="text-xs text-muted-foreground">Falha</span>
+              <span className="text-sm text-muted-foreground">Falha</span>
               {[0, 1, 2].map(i => (
                 <Checkbox key={i} checked={sheet.deathSaves.failures > i}
                   onCheckedChange={() => setDeathSave('failures', sheet.deathSaves.failures > i ? i : i + 1)}
-                  className="h-4 w-4" />
+                  className="h-5 w-5" />
               ))}
             </div>
           </div>
@@ -97,7 +97,7 @@ export function CombatSection({ sheet, onChange }: Props) {
 
         {/* Heroic Inspiration */}
         <div className="mt-4 flex items-center gap-2">
-          <Checkbox checked={sheet.heroicInspiration} onCheckedChange={c => onChange({ heroicInspiration: !!c })} />
+          <Checkbox checked={sheet.heroicInspiration} onCheckedChange={c => onChange({ heroicInspiration: !!c })} className="h-5 w-5" />
           <span className="text-sm">Inspiração Heroica</span>
         </div>
       </CardContent>

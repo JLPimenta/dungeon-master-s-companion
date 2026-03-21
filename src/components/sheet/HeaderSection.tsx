@@ -26,7 +26,6 @@ export function HeaderSection({ sheet, onChange }: Props) {
                       type="button"
                       className="w-full flex items-center gap-3 rounded-md border border-primary/30 bg-transparent px-4 py-3 text-left hover:bg-primary/5 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 focus:ring-offset-background transition-colors"
                   >
-                    {/* Name + meta inline for md+, stacked for mobile */}
                     <div className="min-w-0 flex-1 flex flex-col sm:flex-row sm:items-center sm:gap-0">
                   <span
                       className="font-semibold text-base text-foreground truncate"
@@ -35,7 +34,6 @@ export function HeaderSection({ sheet, onChange }: Props) {
                     {sheet.name || 'Sem Nome'}
                   </span>
 
-                      {/* Meta: class and level */}
                       {(sheet.class || sheet.level) && (
                           <span className="flex items-center gap-1 text-sm text-muted-foreground mt-0.5 sm:mt-0 sm:ml-0">
                       {sheet.class && (
@@ -54,7 +52,7 @@ export function HeaderSection({ sheet, onChange }: Props) {
                       )}
                     </div>
                     <div className="flex items-center gap-2 ml-auto flex-shrink-0">
-                  <span className="rounded-sm border border-primary/30 bg-primary/10 px-2 py-0.5 text-xs font-semibold text-primary whitespace-nowrap">
+                  <span className="rounded-sm border border-primary/30 bg-primary/10 px-2 py-0.5 text-sm font-semibold text-primary whitespace-nowrap">
                     Proficiência: +{profBonus}
                   </span>
                       <ChevronDown className="h-4 w-4 text-muted-foreground transition-transform duration-200" />
@@ -77,11 +75,9 @@ export function HeaderSection({ sheet, onChange }: Props) {
                   </div>
               )}
 
-              {/*
-            */}
               <div className="grid grid-cols-2 gap-3 sm:grid-cols-4 lg:grid-cols-7">
                 <div className="col-span-2 lg:col-span-2">
-                  <Label className="text-muted-foreground">Nome</Label>
+                  <Label className="text-sm text-muted-foreground">Nome</Label>
                   <Input
                       value={sheet.name}
                       onChange={e => onChange({ name: e.target.value })}
@@ -90,15 +86,13 @@ export function HeaderSection({ sheet, onChange }: Props) {
                   />
                 </div>
 
-                {/* Classe */}
                 <div className="col-span-1 lg:col-span-1">
-                  <Label className="text-muted-foreground">Classe</Label>
+                  <Label className="text-sm text-muted-foreground">Classe</Label>
                   <Input value={sheet.class} onChange={e => onChange({ class: e.target.value })} className="mt-1" />
                 </div>
 
-                {/* Nível */}
                 <div className="col-span-1 lg:col-span-1">
-                  <Label className="text-muted-foreground">Nível</Label>
+                  <Label className="text-sm text-muted-foreground">Nível</Label>
                   <Input
                       type="number"
                       min={1}
@@ -109,27 +103,23 @@ export function HeaderSection({ sheet, onChange }: Props) {
                   />
                 </div>
 
-                {/* Espécie */}
                 <div className="col-span-1 lg:col-span-1">
-                  <Label className="text-muted-foreground">Espécie</Label>
+                  <Label className="text-sm text-muted-foreground">Espécie</Label>
                   <Input value={sheet.species} onChange={e => onChange({ species: e.target.value })} className="mt-1" />
                 </div>
 
-                {/* Subclasse */}
                 <div className="col-span-1 lg:col-span-1">
-                  <Label className="text-muted-foreground">Subclasse</Label>
+                  <Label className="text-sm text-muted-foreground">Subclasse</Label>
                   <Input value={sheet.subclass} onChange={e => onChange({ subclass: e.target.value })} className="mt-1" />
                 </div>
 
-                {/* Antecedente */}
                 <div className="col-span-1 lg:col-span-1">
-                  <Label className="text-muted-foreground">Antecedente</Label>
+                  <Label className="text-sm text-muted-foreground">Antecedente</Label>
                   <Input value={sheet.background} onChange={e => onChange({ background: e.target.value })} className="mt-1" />
                 </div>
 
-                {/* XP */}
                 <div className="col-span-1 lg:col-span-1">
-                  <Label className="text-muted-foreground">XP</Label>
+                  <Label className="text-sm text-muted-foreground">XP</Label>
                   <Input
                       type="number"
                       min={0}
@@ -139,9 +129,8 @@ export function HeaderSection({ sheet, onChange }: Props) {
                   />
                 </div>
 
-                {/* Bônus de Proficiência (display only) */}
                 <div className="col-span-2 sm:col-span-1 flex items-end lg:col-span-1">
-                  <div className="flex h-10 w-full items-center justify-center rounded-md border border-primary/30 bg-primary/10 text-xs font-semibold text-primary">
+                  <div className="flex h-10 w-full items-center justify-center rounded-md border border-primary/30 bg-primary/10 text-sm font-semibold text-primary">
                     Bônus de Proficiência +{profBonus}
                   </div>
                 </div>
