@@ -42,17 +42,17 @@ export function CampaignNotes({ sheet, onChange }: Props) {
   return (
     <Card className="border-primary/20">
       <CardHeader className="flex flex-row items-center justify-between pb-3 pt-4 px-4">
-        <CardTitle className="text-sm text-primary">Notas da Campanha</CardTitle>
+        <CardTitle className="text-lg text-primary">Notas da Campanha</CardTitle>
         <div className="flex gap-2">
           <Select value={filter} onValueChange={setFilter}>
-            <SelectTrigger className="h-7 w-24 text-xs"><SelectValue /></SelectTrigger>
+            <SelectTrigger className="h-8 w-28 text-sm"><SelectValue /></SelectTrigger>
             <SelectContent>
               <SelectItem value="all">Todas</SelectItem>
               {CATEGORIES.map(c => <SelectItem key={c.value} value={c.value}>{c.label}</SelectItem>)}
             </SelectContent>
           </Select>
-          <Button variant="ghost" size="sm" onClick={addNote} className="h-7 gap-1 text-xs">
-            <Plus className="h-3 w-3" /> Nova Nota
+          <Button variant="ghost" size="sm" onClick={addNote} className="h-8 gap-1 text-sm">
+            <Plus className="h-4 w-4" /> Nova Nota
           </Button>
         </div>
       </CardHeader>
@@ -66,15 +66,15 @@ export function CampaignNotes({ sheet, onChange }: Props) {
               <div key={note.id} className="rounded-md border border-border/50 p-3 space-y-2">
                 <div className="flex gap-2 items-center">
                   <Select value={note.category} onValueChange={v => updateNote(idx, { category: v as CampaignNote['category'] })}>
-                    <SelectTrigger className="h-7 w-24 text-xs"><SelectValue /></SelectTrigger>
+                    <SelectTrigger className="h-9 w-28 text-sm"><SelectValue /></SelectTrigger>
                     <SelectContent>{CATEGORIES.map(c => <SelectItem key={c.value} value={c.value}>{c.label}</SelectItem>)}</SelectContent>
                   </Select>
-                  <Input placeholder="Título" value={note.title} onChange={e => updateNote(idx, { title: e.target.value })} className="h-7 text-xs" />
-                  <Button variant="ghost" size="icon" className="h-7 w-7 shrink-0 text-muted-foreground hover:text-destructive" onClick={() => removeNote(idx)}>
-                    <Trash2 className="h-3 w-3" />
+                  <Input placeholder="Título" value={note.title} onChange={e => updateNote(idx, { title: e.target.value })} className="h-9 text-sm" />
+                  <Button variant="ghost" size="icon" className="h-9 w-9 shrink-0 text-muted-foreground hover:text-destructive" onClick={() => removeNote(idx)}>
+                    <Trash2 className="h-4 w-4" />
                   </Button>
                 </div>
-                <Textarea value={note.content} onChange={e => updateNote(idx, { content: e.target.value })} placeholder="Conteúdo…" className="min-h-[60px] text-xs" />
+                <Textarea value={note.content} onChange={e => updateNote(idx, { content: e.target.value })} placeholder="Conteúdo…" className="min-h-[60px] text-sm" />
               </div>
             );
           })
