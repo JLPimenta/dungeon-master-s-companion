@@ -40,16 +40,17 @@ export function CreateCharacterDialog({ open, onOpenChange, onConfirm, loading }
               id="char-name"
               value={name}
               onChange={e => setName(e.target.value)}
-              placeholder="Ex: Thalion Escudo de Ferro"
+              placeholder="Ex: Thorin Escudo de Carvalho"
               autoFocus
+              tabIndex={1}
               className="mt-2"
             />
           </div>
           <DialogFooter>
-            <Button type="button" variant="outline" onClick={() => handleOpenChange(false)}>
+            <Button type="button" variant="outline" onClick={() => handleOpenChange(false)} tabIndex={3}>
               Cancelar
             </Button>
-            <Button type="submit" disabled={!name.trim() || loading}>
+            <Button type="submit" disabled={!name.trim() || loading} tabIndex={2}>
               {loading ? 'Criando…' : 'Criar'}
             </Button>
           </DialogFooter>

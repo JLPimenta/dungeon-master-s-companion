@@ -20,7 +20,7 @@ export function CombatSection({ sheet, onChange }: Props) {
   return (
     <Card className="border-primary/20">
       <CardHeader className="pb-3 pt-4 px-4">
-        <CardTitle className="text-sm text-primary">Combate</CardTitle>
+        <CardTitle className="text-sm text-primary">Informações Gerais</CardTitle>
       </CardHeader>
       <CardContent className="px-4 pb-4">
         <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
@@ -36,7 +36,7 @@ export function CombatSection({ sheet, onChange }: Props) {
           </div>
           <div>
             <Label className="text-xs text-muted-foreground">Deslocamento</Label>
-            <Input type="number" value={sheet.speed} onChange={e => onChange({ speed: Number(e.target.value) || 0 })} className="mt-1 h-9" />
+            <Input  type="number" value={sheet.speed} onChange={e => onChange({ speed: Number(e.target.value) || 0 })} className="mt-1 h-9" />
           </div>
           <div>
             <Label className="text-xs text-muted-foreground">Tamanho</Label>
