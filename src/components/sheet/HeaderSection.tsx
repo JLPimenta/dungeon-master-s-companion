@@ -81,7 +81,7 @@ export function HeaderSection({ sheet, onChange }: Props) {
             */}
               <div className="grid grid-cols-2 gap-3 sm:grid-cols-4 lg:grid-cols-7">
                 <div className="col-span-2 lg:col-span-2">
-                  <Label className="text-xs text-muted-foreground">Nome</Label>
+                  <Label className="text-muted-foreground">Nome</Label>
                   <Input
                       value={sheet.name}
                       onChange={e => onChange({ name: e.target.value })}
@@ -92,13 +92,13 @@ export function HeaderSection({ sheet, onChange }: Props) {
 
                 {/* Classe */}
                 <div className="col-span-1 lg:col-span-1">
-                  <Label className="text-xs text-muted-foreground">Classe</Label>
+                  <Label className="text-muted-foreground">Classe</Label>
                   <Input value={sheet.class} onChange={e => onChange({ class: e.target.value })} className="mt-1" />
                 </div>
 
                 {/* Nível */}
                 <div className="col-span-1 lg:col-span-1">
-                  <Label className="text-xs text-muted-foreground">Nível</Label>
+                  <Label className="text-muted-foreground">Nível</Label>
                   <Input
                       type="number"
                       min={1}
@@ -111,25 +111,25 @@ export function HeaderSection({ sheet, onChange }: Props) {
 
                 {/* Espécie */}
                 <div className="col-span-1 lg:col-span-1">
-                  <Label className="text-xs text-muted-foreground">Espécie</Label>
+                  <Label className="text-muted-foreground">Espécie</Label>
                   <Input value={sheet.species} onChange={e => onChange({ species: e.target.value })} className="mt-1" />
                 </div>
 
                 {/* Subclasse */}
                 <div className="col-span-1 lg:col-span-1">
-                  <Label className="text-xs text-muted-foreground">Subclasse</Label>
+                  <Label className="text-muted-foreground">Subclasse</Label>
                   <Input value={sheet.subclass} onChange={e => onChange({ subclass: e.target.value })} className="mt-1" />
                 </div>
 
                 {/* Antecedente */}
                 <div className="col-span-1 lg:col-span-1">
-                  <Label className="text-xs text-muted-foreground">Antecedente</Label>
+                  <Label className="text-muted-foreground">Antecedente</Label>
                   <Input value={sheet.background} onChange={e => onChange({ background: e.target.value })} className="mt-1" />
                 </div>
 
                 {/* XP */}
                 <div className="col-span-1 lg:col-span-1">
-                  <Label className="text-xs text-muted-foreground">XP</Label>
+                  <Label className="text-muted-foreground">XP</Label>
                   <Input
                       type="number"
                       min={0}

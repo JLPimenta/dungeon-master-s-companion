@@ -28,7 +28,7 @@ export function AbilityScores({ sheet, onChange }: Props) {
   return (
     <Card className="border-primary/20">
       <CardHeader className="pb-3 pt-4 px-4">
-        <CardTitle className="text-sm text-primary">Atributos</CardTitle>
+        <CardTitle className="text-lg text-primary">Atributos</CardTitle>
       </CardHeader>
       <CardContent className="space-y-3 px-4 pb-4">
         {ABILITY_KEYS.map(key => {

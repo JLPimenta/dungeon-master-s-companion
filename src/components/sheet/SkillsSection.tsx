@@ -33,7 +33,7 @@ export function SkillsSection({ sheet, onChange }: Props) {
   return (
     <Card className="border-primary/20">
       <CardHeader className="flex flex-row items-center justify-between pb-2 pt-4 px-4">
-        <CardTitle className="text-sm text-primary">Perícias</CardTitle>
+        <CardTitle className="text-lg text-primary">Perícias</CardTitle>
         <span className="text-sm md:text-xs text-muted-foreground">Percepção Passiva: {passivePerc}</span>
       </CardHeader>
       <CardContent className="space-y-1 px-4 pb-4 text-sm md:text-xs">
