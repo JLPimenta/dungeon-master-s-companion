@@ -36,8 +36,7 @@ export function useSaveCharacter() {
   const qc = useQueryClient();
   return useMutation({
     mutationFn: (sheet: CharacterSheet) => service.update(sheet),
-    onSuccess: (saved) => {
-      qc.setQueryData([...QUERY_KEY, saved.id], saved);
+    onSuccess: () => {
       qc.invalidateQueries({ queryKey: QUERY_KEY });
     },
   });
