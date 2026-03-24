@@ -13,10 +13,10 @@ export default defineConfig(({ mode }) => ({
     },
     proxy: {
       '/api': {
-        target: 'http://localhost:3001',
+        target: import.meta.env.VITE_API_URL,
         changeOrigin: true,
         secure: false,
-      }
+      },
     }
   },
   plugins: [react(), mode === "development" && componentTagger()].filter(Boolean),
