@@ -1,11 +1,17 @@
 import {CharacterService} from "@/services/characterService.ts";
 import {CharacterSheet} from "@/types/character.ts";
+import {getAuthToken} from "@/services/apiAuthService.ts";
 
 const BASE_URL = import.meta.env.VITE_API_URL
 
 async function request<T>(path: string, options?: RequestInit): Promise<T> {
+    const token = getAuthToken();
+    const headers: Record<string, string> = {
+        'Content-Type': 'application/json',
+        ...(token ? { Authorization: `Bearer ${token}` } : {}),
+    };
     const response = await fetch(`${BASE_URL}${path}`, {
-        headers: {'Content-Type': 'application/json'}, ...options
+        ...options, headers
     })
 
     if (!response.ok) {

@@ -25,7 +25,16 @@ export const localStorageService: CharacterService = {
     return readAll().find(s => s.id === id) ?? null;
   },
 
-  async save(sheet: CharacterSheet) {
+  async create(sheet: CharacterSheet) {
+    const sheets = readAll();
+    const now = new Date().toISOString();
+    const created = { ...sheet, createdAt: now, updatedAt: now };
+    sheets.push(created);
+    writeAll(sheets);
+    return created;
+  },
+
+  async update(sheet: CharacterSheet) {
     const sheets = readAll();
     const updated = { ...sheet, updatedAt: new Date().toISOString() };
     const idx = sheets.findIndex(s => s.id === sheet.id);
