@@ -25,7 +25,9 @@ export default function CharacterSheetPage() {
   const [local, setLocal] = useState<CharacterSheetType | null>(null);
   const [isFullscreen, setIsFullscreen] = useState(false);
   const debounceRef = useRef<ReturnType<typeof setTimeout>>();
-  const isDirtyRef = useRef(false)
+  const isDirtyRef = useRef(false);
+  const pendingRef = useRef(false);
+  const lastSavedRef = useRef<CharacterSheetType | null>(null);
 
   useEffect(() => {
     if (sheet && !isDirtyRef.current) setLocal(sheet);
@@ -38,12 +40,17 @@ export default function CharacterSheetPage() {
       const next = { ...prev, ...patch };
       clearTimeout(debounceRef.current);
       debounceRef.current = setTimeout(() => {
-        saveMutation.mutate(next, {
-          onSettled: () => {
-            isDirtyRef.current = false
-          }
-        });
-      }, 500);
+        if (!pendingRef.current) {
+          pendingRef.current = true;
+          saveMutation.mutate(next, {
+            onSettled: () => {
+              pendingRef.current = false;
+              lastSavedRef.current = next;
+              isDirtyRef.current = false;
+            }
+          });
+        }
+      }, 1000);
       return next;
     });
   }, [saveMutation]);
