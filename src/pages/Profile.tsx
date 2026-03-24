@@ -1,0 +1,225 @@
+import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { useAuth } from '@/hooks/useAuth';
+import { useToast } from '@/hooks/use-toast';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Separator } from '@/components/ui/separator';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from '@/components/ui/alert-dialog';
+import { ArrowLeft, Trash2 } from 'lucide-react';
+
+export default function Profile() {
+  const { user, updateProfile, changePassword, deleteAccount, logout } = useAuth();
+  const navigate = useNavigate();
+  const { toast } = useToast();
+
+  const [name, setName] = useState(user?.name ?? '');
+  const [saving, setSaving] = useState(false);
+
+  const [currentPassword, setCurrentPassword] = useState('');
+  const [newPassword, setNewPassword] = useState('');
+  const [confirmNewPassword, setConfirmNewPassword] = useState('');
+  const [changingPassword, setChangingPassword] = useState(false);
+
+  const [deleting, setDeleting] = useState(false);
+
+  const handleSaveProfile = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setSaving(true);
+    try {
+      await updateProfile({ name });
+      toast({ title: 'Perfil atualizado com sucesso!' });
+    } catch (err: any) {
+      toast({ title: 'Erro', description: err.message, variant: 'destructive' });
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  const handleChangePassword = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (newPassword !== confirmNewPassword) {
+      toast({ title: 'Erro', description: 'As senhas não coincidem.', variant: 'destructive' });
+      return;
+    }
+    if (newPassword.length < 6) {
+      toast({ title: 'Erro', description: 'A senha deve ter pelo menos 6 caracteres.', variant: 'destructive' });
+      return;
+    }
+    setChangingPassword(true);
+    try {
+      await changePassword(currentPassword, newPassword);
+      toast({ title: 'Senha alterada com sucesso!' });
+      setCurrentPassword('');
+      setNewPassword('');
+      setConfirmNewPassword('');
+    } catch (err: any) {
+      toast({ title: 'Erro', description: err.message, variant: 'destructive' });
+    } finally {
+      setChangingPassword(false);
+    }
+  };
+
+  const handleDeleteAccount = async () => {
+    setDeleting(true);
+    try {
+      await deleteAccount();
+      toast({ title: 'Conta excluída.' });
+      navigate('/login');
+    } catch (err: any) {
+      toast({ title: 'Erro', description: err.message, variant: 'destructive' });
+      setDeleting(false);
+    }
+  };
+
+  const handleLogout = async () => {
+    await logout();
+    navigate('/login');
+  };
+
+  return (
+    <div className="min-h-screen bg-background p-4 md:p-8">
+      <div className="mx-auto max-w-2xl space-y-6">
+        <div className="flex items-center gap-4">
+          <Button variant="ghost" size="icon" onClick={() => navigate('/')}>
+            <ArrowLeft className="h-5 w-5" />
+          </Button>
+          <h1
+            className="text-2xl font-bold text-foreground"
+            style={{ fontFamily: 'var(--font-heading)' }}
+          >
+            Meu Perfil
+          </h1>
+        </div>
+
+        {/* Profile Info */}
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-lg">Informações Pessoais</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <form onSubmit={handleSaveProfile} className="space-y-4">
+              <div className="space-y-2">
+                <Label htmlFor="name">Nome</Label>
+                <Input
+                  id="name"
+                  value={name}
+                  onChange={e => setName(e.target.value)}
+                  required
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="email">Email</Label>
+                <Input
+                  id="email"
+                  value={user?.email ?? ''}
+                  disabled
+                  className="opacity-60"
+                />
+                <p className="text-xs text-muted-foreground">O email não pode ser alterado.</p>
+              </div>
+              <Button type="submit" disabled={saving}>
+                {saving ? 'Salvando...' : 'Salvar Alterações'}
+              </Button>
+            </form>
+          </CardContent>
+        </Card>
+
+        {/* Change Password */}
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-lg">Alterar Senha</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <form onSubmit={handleChangePassword} className="space-y-4">
+              <div className="space-y-2">
+                <Label htmlFor="currentPassword">Senha Atual</Label>
+                <Input
+                  id="currentPassword"
+                  type="password"
+                  value={currentPassword}
+                  onChange={e => setCurrentPassword(e.target.value)}
+                  required
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="newPassword">Nova Senha</Label>
+                <Input
+                  id="newPassword"
+                  type="password"
+                  placeholder="Mínimo 6 caracteres"
+                  value={newPassword}
+                  onChange={e => setNewPassword(e.target.value)}
+                  required
+                  minLength={6}
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="confirmNewPassword">Confirmar Nova Senha</Label>
+                <Input
+                  id="confirmNewPassword"
+                  type="password"
+                  value={confirmNewPassword}
+                  onChange={e => setConfirmNewPassword(e.target.value)}
+                  required
+                />
+              </div>
+              <Button type="submit" disabled={changingPassword}>
+                {changingPassword ? 'Alterando...' : 'Alterar Senha'}
+              </Button>
+            </form>
+          </CardContent>
+        </Card>
+
+        <Separator />
+
+        {/* Actions */}
+        <div className="flex items-center justify-between">
+          <Button variant="outline" onClick={handleLogout}>
+            Sair da Conta
+          </Button>
+
+          <AlertDialog>
+            <AlertDialogTrigger asChild>
+              <Button variant="destructive" className="gap-2">
+                <Trash2 className="h-4 w-4" />
+                Excluir Minha Conta
+              </Button>
+            </AlertDialogTrigger>
+            <AlertDialogContent>
+              <AlertDialogHeader>
+                <AlertDialogTitle>Tem certeza?</AlertDialogTitle>
+                <AlertDialogDescription>
+                  Esta ação é irreversível. Todos os seus dados, incluindo fichas de personagem,
+                  serão permanentemente excluídos.
+                </AlertDialogDescription>
+              </AlertDialogHeader>
+              <AlertDialogFooter>
+                <AlertDialogCancel>Cancelar</AlertDialogCancel>
+                <AlertDialogAction
+                  onClick={handleDeleteAccount}
+                  disabled={deleting}
+                  className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                >
+                  {deleting ? 'Excluindo...' : 'Sim, excluir minha conta'}
+                </AlertDialogAction>
+              </AlertDialogFooter>
+            </AlertDialogContent>
+          </AlertDialog>
+        </div>
+      </div>
+    </div>
+  );
+}
