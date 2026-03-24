@@ -25,18 +25,24 @@ export default function CharacterSheetPage() {
   const [local, setLocal] = useState<CharacterSheetType | null>(null);
   const [isFullscreen, setIsFullscreen] = useState(false);
   const debounceRef = useRef<ReturnType<typeof setTimeout>>();
+  const isDirtyRef = useRef(false)
 
   useEffect(() => {
-    if (sheet) setLocal(sheet);
+    if (sheet && !isDirtyRef.current) setLocal(sheet);
   }, [sheet]);
 
   const update = useCallback((patch: Partial<CharacterSheetType>) => {
+    isDirtyRef.current = true;
     setLocal(prev => {
       if (!prev) return prev;
       const next = { ...prev, ...patch };
       clearTimeout(debounceRef.current);
       debounceRef.current = setTimeout(() => {
-        saveMutation.mutate(next);
+        saveMutation.mutate(next, {
+          onSettled: () => {
+            isDirtyRef.current = false
+          }
+        });
       }, 500);
       return next;
     });
