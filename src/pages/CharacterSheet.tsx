@@ -14,8 +14,28 @@ import {PersonalitySection} from '@/components/sheet/PersonalitySection';
 import {CampaignNotes} from '@/components/sheet/CampaignNotes';
 import {CustomFields} from '@/components/sheet/CustomFields';
 import {Button} from '@/components/ui/button';
-import {ArrowLeft, Maximize, Minimize, Share2} from 'lucide-react';
+import {ArrowLeft, Check, Loader2, Maximize, Minimize, Share2} from 'lucide-react';
 import {toast} from 'sonner';
+
+type SaveStatus = 'idle' | 'saving' | 'saved';
+
+function SaveIndicator({status}: {status: SaveStatus}) {
+    if (status === 'idle') return null;
+    if (status === 'saving') {
+        return (
+            <span className="flex items-center gap-1.5 text-sm text-muted-foreground">
+                <Loader2 className="h-3.5 w-3.5 animate-spin"/>
+                Salvando...
+            </span>
+        );
+    }
+    return (
+        <span className="flex items-center gap-1.5 text-sm text-green-500">
+            <Check className="h-3.5 w-3.5"/>
+            Salvo!
+        </span>
+    );
+}
 
 export default function CharacterSheetPage() {
     const {id} = useParams<{ id: string }>();
@@ -24,14 +44,27 @@ export default function CharacterSheetPage() {
     const saveMutation = useSaveCharacter();
     const [local, setLocal] = useState<CharacterSheetType | null>(null);
     const [isFullscreen, setIsFullscreen] = useState(false);
+    const [saveStatus, setSaveStatus] = useState<SaveStatus>('idle');
     const debounceRef = useRef<ReturnType<typeof setTimeout>>();
     const isDirtyRef = useRef(false);
     const pendingRef = useRef(false);
     const lastSavedRef = useRef<CharacterSheetType | null>(null);
+    const savedTimerRef = useRef<ReturnType<typeof setTimeout>>();
 
     useEffect(() => {
         if (sheet && !isDirtyRef.current) setLocal(sheet);
     }, [sheet]);
+
+    // Warn before unloading while a save is in-flight
+    useEffect(() => {
+        const handler = (e: BeforeUnloadEvent) => {
+            if (pendingRef.current) {
+                e.preventDefault();
+            }
+        };
+        window.addEventListener('beforeunload', handler);
+        return () => window.removeEventListener('beforeunload', handler);
+    }, []);
 
     const update = useCallback((patch: Partial<CharacterSheetType>) => {
         isDirtyRef.current = true;
@@ -42,18 +75,22 @@ export default function CharacterSheetPage() {
             debounceRef.current = setTimeout(() => {
                 if (!pendingRef.current) {
                     pendingRef.current = true;
+                    setSaveStatus('saving');
                     saveMutation.mutate(next, {
-                        onSettled: () => {
-                            pendingRef.current = false;
+                        onSuccess: () => {
                             lastSavedRef.current = next;
                             isDirtyRef.current = false;
+                            setSaveStatus('saved');
+                            clearTimeout(savedTimerRef.current);
+                            savedTimerRef.current = setTimeout(() => setSaveStatus('idle'), 5000);
                         },
-
+                        onSettled: () => {
+                            pendingRef.current = false;
+                        },
                         onError: (err) => {
                             toast.error(`Erro ao salvar: ${err.message}`);
-                            if (lastSavedRef.current) {
-                                setLocal(lastSavedRef.current);
-                            }
+                            setSaveStatus('idle');
+                            if (lastSavedRef.current) setLocal(lastSavedRef.current);
                         }
                     });
                 }
@@ -74,8 +111,7 @@ export default function CharacterSheetPage() {
 
     const handleShare = () => {
         if (!local) return;
-        const encoded = btoa(encodeURIComponent(JSON.stringify(local)));
-        const url = `${window.location.origin}/character/shared?data=${encoded}`;
+        const url = `${window.location.origin}/character/shared/${local.id}`;
         navigator.clipboard.writeText(url);
         toast.success('Link copiado para a área de transferência!');
     };
@@ -101,9 +137,12 @@ export default function CharacterSheetPage() {
         <div className="min-h-screen px-4 py-6 md:px-8">
             {/* Toolbar */}
             <div className="mx-auto mb-6 flex max-w-6xl items-center justify-between">
-                <Button variant="ghost" onClick={() => navigate('/')} className="gap-2">
-                    <ArrowLeft className="h-4 w-4"/> Voltar
-                </Button>
+                <div className="flex items-center gap-3">
+                    <Button variant="ghost" onClick={() => navigate('/')} className="gap-2">
+                        <ArrowLeft className="h-4 w-4"/> Voltar
+                    </Button>
+                    <SaveIndicator status={saveStatus}/>
+                </div>
                 <div className="flex gap-2">
                     <Button variant="outline" size="icon" onClick={handleShare} title="Compartilhar">
                         <Share2 className="h-4 w-4"/>

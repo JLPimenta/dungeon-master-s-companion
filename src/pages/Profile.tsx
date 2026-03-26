@@ -7,6 +7,9 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
+import { PasswordStrengthIndicator, isPasswordStrong } from '@/components/auth/PasswordStrengthIndicator';
+import { LogoutDialog } from '@/components/auth/LogoutDialog';
+
 import {
   AlertDialog,
   AlertDialogAction,
@@ -21,7 +24,7 @@ import {
 import { ArrowLeft, Trash2 } from 'lucide-react';
 
 export default function Profile() {
-  const { user, updateProfile, changePassword, deleteAccount, logout } = useAuth();
+  const { user, updateProfile, changePassword, deleteAccount } = useAuth();
   const navigate = useNavigate();
   const { toast } = useToast();
 
@@ -50,12 +53,12 @@ export default function Profile() {
 
   const handleChangePassword = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (newPassword !== confirmNewPassword) {
-      toast({ title: 'Erro', description: 'As senhas não coincidem.', variant: 'destructive' });
+    if (!isPasswordStrong(newPassword)) {
+      toast({ title: 'Senha fraca', description: 'A nova senha não atende todos os requisitos.', variant: 'destructive' });
       return;
     }
-    if (newPassword.length < 6) {
-      toast({ title: 'Erro', description: 'A senha deve ter pelo menos 6 caracteres.', variant: 'destructive' });
+    if (newPassword !== confirmNewPassword) {
+      toast({ title: 'Erro', description: 'As senhas não coincidem.', variant: 'destructive' });
       return;
     }
     setChangingPassword(true);
@@ -84,10 +87,7 @@ export default function Profile() {
     }
   };
 
-  const handleLogout = async () => {
-    await logout();
-    navigate('/login');
-  };
+
 
   return (
     <div className="min-h-screen bg-background p-4 md:p-8">
@@ -159,12 +159,12 @@ export default function Profile() {
                 <Input
                   id="newPassword"
                   type="password"
-                  placeholder="Mínimo 6 caracteres"
+                  placeholder="Crie uma senha forte"
                   value={newPassword}
                   onChange={e => setNewPassword(e.target.value)}
                   required
-                  minLength={6}
                 />
+                <PasswordStrengthIndicator password={newPassword} />
               </div>
               <div className="space-y-2">
                 <Label htmlFor="confirmNewPassword">Confirmar Nova Senha</Label>
@@ -187,9 +187,11 @@ export default function Profile() {
 
         {/* Actions */}
         <div className="flex items-center justify-between">
-          <Button variant="outline" onClick={handleLogout}>
-            Sair da Conta
-          </Button>
+          <LogoutDialog>
+            <Button variant="outline">
+              Sair da Conta
+            </Button>
+          </LogoutDialog>
 
           <AlertDialog>
             <AlertDialogTrigger asChild>

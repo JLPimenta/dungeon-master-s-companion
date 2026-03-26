@@ -1,10 +1,12 @@
+import {useState} from 'react';
 import type {AttunedItem, CharacterSheet, Coins, InventoryItem} from '@/types/character';
 import {Card, CardContent, CardHeader, CardTitle} from '@/components/ui/card';
 import {Input} from '@/components/ui/input';
 import {Button} from '@/components/ui/button';
 import {Label} from '@/components/ui/label';
-import {Plus, Trash2} from 'lucide-react';
+import {ChevronDown, ChevronUp, Plus, Trash2} from 'lucide-react';
 import {getAttunementSlots, getEffectiveProficiencyBonus} from '@/utils/calculations';
+import {useIsMobile} from '@/hooks/use-mobile';
 
 interface Props {
     sheet: CharacterSheet;
@@ -16,6 +18,8 @@ const COIN_LABELS: Record<keyof Coins, string> = {
 };
 
 export function InventorySection({sheet, onChange}: Props) {
+    const isMobile = useIsMobile();
+    const [collapsed, setCollapsed] = useState(isMobile);
     const profBonus = getEffectiveProficiencyBonus(sheet)
     const maxAttune = getAttunementSlots(profBonus);
 
@@ -64,9 +68,19 @@ export function InventorySection({sheet, onChange}: Props) {
     return (
         <Card className="border-primary/20">
             <CardHeader className="pb-3 pt-4 px-4">
-                <CardTitle className="text-lg text-primary">Inventário</CardTitle>
+                <button
+                    type="button"
+                    onClick={() => setCollapsed(c => !c)}
+                    className="flex w-full items-center justify-between"
+                >
+                    <CardTitle className="text-lg text-primary">Inventário</CardTitle>
+                    <span className="text-muted-foreground md:hidden">
+                        {collapsed ? <ChevronDown className="h-4 w-4"/> : <ChevronUp className="h-4 w-4"/>}
+                    </span>
+                </button>
             </CardHeader>
 
+            {(!collapsed || !isMobile) && (
             <CardContent className="space-y-6 px-4 pb-4">
 
                 {/* ════════════════════════════ Equipment ════════════════════════════ */}
@@ -296,6 +310,7 @@ export function InventorySection({sheet, onChange}: Props) {
                 </section>
 
             </CardContent>
+            )}
         </Card>
     );
 }

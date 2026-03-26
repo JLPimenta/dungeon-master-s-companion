@@ -1,6 +1,8 @@
+import { useState } from 'react';
 import type { CharacterSheet, CustomField } from '@/types/character';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
+import { Textarea } from '@/components/ui/textarea';
 import { Button } from '@/components/ui/button';
 import { Plus, Trash2 } from 'lucide-react';
 
@@ -33,19 +35,36 @@ export function CustomFields({ sheet, onChange }: Props) {
           <Plus className="h-4 w-4" /> Adicionar Campo
         </Button>
       </CardHeader>
-      <CardContent className="space-y-2 px-4 pb-4">
+      <CardContent className="space-y-3 px-4 pb-4">
         {sheet.customFields.length === 0 ? (
           <p className="py-4 text-center text-sm text-muted-foreground">
             Adicione campos para regras da casa ou informações extras.
           </p>
         ) : (
           sheet.customFields.map((field, i) => (
-            <div key={field.id} className="grid grid-cols-[1fr_1fr_36px] gap-2 items-center">
-              <Input placeholder="Nome do campo" value={field.label} onChange={e => updateField(i, { label: e.target.value })} className="h-9 text-sm" />
-              <Input placeholder="Valor" value={field.value} onChange={e => updateField(i, { value: e.target.value })} className="h-9 text-sm" />
-              <Button variant="ghost" size="icon" className="h-9 w-9 text-muted-foreground hover:text-destructive" onClick={() => removeField(i)}>
-                <Trash2 className="h-4 w-4" />
-              </Button>
+            <div key={field.id} className="rounded-md border border-border/40 p-3">
+              <div className="mb-2 flex items-center gap-2">
+                <Input
+                  placeholder="Nome do campo"
+                  value={field.label}
+                  onChange={e => updateField(i, { label: e.target.value })}
+                  className="h-9 text-sm"
+                />
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="h-9 w-9 shrink-0 text-muted-foreground hover:text-destructive"
+                  onClick={() => removeField(i)}
+                >
+                  <Trash2 className="h-4 w-4" />
+                </Button>
+              </div>
+              <Textarea
+                placeholder="Valor"
+                value={field.value}
+                onChange={e => updateField(i, { value: e.target.value })}
+                className="min-h-[72px] resize-y text-sm"
+              />
             </div>
           ))
         )}

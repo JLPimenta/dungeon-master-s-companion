@@ -1,5 +1,6 @@
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import ReCAPTCHA from 'react-google-recaptcha';
 import { AuthLayout } from '@/components/auth/AuthLayout';
 import { GoogleSignInButton } from '@/components/auth/GoogleSignInButton';
 import { Button } from '@/components/ui/button';
@@ -13,18 +14,26 @@ export default function Login() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
+  const [captchaToken, setCaptchaToken] = useState<string | null>(null);
+  const recaptchaRef = useRef<ReCAPTCHA>(null);
   const { login, loginWithGoogle } = useAuth();
   const navigate = useNavigate();
   const { toast } = useToast();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!captchaToken) {
+      toast({ title: 'Confirmação necessária', description: 'Por favor, confirme que você não é um robô.', variant: 'destructive' });
+      return;
+    }
     setLoading(true);
     try {
-      await login({ email, password });
+      await login({ email, password, captchaToken });
       navigate('/');
     } catch (err: any) {
       toast({ title: 'Erro ao entrar', description: err.message, variant: 'destructive' });
+      recaptchaRef.current?.reset();
+      setCaptchaToken(null);
     } finally {
       setLoading(false);
     }
@@ -32,7 +41,6 @@ export default function Login() {
 
   const handleGoogle = async () => {
     try {
-      // In a real implementation, the Google Sign-In SDK would provide the credential
       await loginWithGoogle('');
       navigate('/');
     } catch (err: any) {
@@ -75,7 +83,18 @@ export default function Login() {
           />
         </div>
 
-        <Button type="submit" className="w-full" disabled={loading}>
+        {/* reCAPTCHA */}
+        <div className="flex justify-center">
+          <ReCAPTCHA
+            ref={recaptchaRef}
+            sitekey={import.meta.env.VITE_RECAPTCHA_SITE_KEY}
+            onChange={setCaptchaToken}
+            onExpired={() => setCaptchaToken(null)}
+            theme="dark"
+          />
+        </div>
+
+        <Button type="submit" className="w-full" disabled={loading || !captchaToken}>
           {loading ? 'Entrando...' : 'Entrar'}
         </Button>
 

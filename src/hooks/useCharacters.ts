@@ -3,10 +3,10 @@ import { getCharacterService } from '@/services/serviceProvider';
 import type { CharacterSheet } from '@/types/character';
 import { createDefaultCharacter } from '@/types/character';
 
-const service = getCharacterService();
 const QUERY_KEY = ['characters'];
 
 export function useCharacters() {
+  const service = getCharacterService();
   return useQuery({
     queryKey: QUERY_KEY,
     queryFn: () => service.getAll(),
@@ -14,6 +14,7 @@ export function useCharacters() {
 }
 
 export function useCharacter(id: string | undefined) {
+  const service = getCharacterService();
   return useQuery({
     queryKey: [...QUERY_KEY, id],
     queryFn: () => (id ? service.getById(id) : null),
@@ -22,6 +23,7 @@ export function useCharacter(id: string | undefined) {
 }
 
 export function useCreateCharacter() {
+  const service = getCharacterService();
   const qc = useQueryClient();
   return useMutation({
     mutationFn: (name: string) => {
@@ -33,6 +35,7 @@ export function useCreateCharacter() {
 }
 
 export function useSaveCharacter() {
+  const service = getCharacterService();
   const qc = useQueryClient();
   return useMutation({
     mutationFn: (sheet: CharacterSheet) => service.update(sheet),
@@ -46,6 +49,7 @@ export function useSaveCharacter() {
 }
 
 export function useDeleteCharacter() {
+  const service = getCharacterService();
   const qc = useQueryClient();
   return useMutation({
     mutationFn: (id: string) => service.delete(id),

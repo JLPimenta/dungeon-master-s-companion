@@ -21,9 +21,11 @@ async function request<T>(path: string, options?: RequestInit): Promise<T> {
         throw new Error(Array.isArray(message) ? message.join(', ') : message)
     }
 
-    if (response.status === 204) return undefined as T
+    if (response.status === 204) return undefined as T;
 
-    return response.json()
+    const text = await response.text();
+    if (!text) return undefined as T;
+    return JSON.parse(text) as T;
 }
 
 export const apiService: CharacterService = {

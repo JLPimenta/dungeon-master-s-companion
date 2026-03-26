@@ -10,10 +10,12 @@ export interface User {
 export interface AuthCredentials {
   email: string;
   password: string;
+  captchaToken?: string;
 }
 
 export interface RegisterData extends AuthCredentials {
   name: string;
+  captchaToken?: string;
 }
 
 export interface AuthResponse {

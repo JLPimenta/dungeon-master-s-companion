@@ -1,7 +1,9 @@
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import ReCAPTCHA from 'react-google-recaptcha';
 import { AuthLayout } from '@/components/auth/AuthLayout';
 import { GoogleSignInButton } from '@/components/auth/GoogleSignInButton';
+import { PasswordStrengthIndicator, isPasswordStrong } from '@/components/auth/PasswordStrengthIndicator';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -15,23 +17,29 @@ export default function Register() {
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [loading, setLoading] = useState(false);
+  const [captchaToken, setCaptchaToken] = useState<string | null>(null);
+  const recaptchaRef = useRef<ReCAPTCHA>(null);
   const { register, loginWithGoogle } = useAuth();
   const navigate = useNavigate();
   const { toast } = useToast();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!isPasswordStrong(password)) {
+      toast({ title: 'Senha fraca', description: 'A senha não atende todos os requisitos.', variant: 'destructive' });
+      return;
+    }
     if (password !== confirmPassword) {
       toast({ title: 'Erro', description: 'As senhas não coincidem.', variant: 'destructive' });
       return;
     }
-    if (password.length < 6) {
-      toast({ title: 'Erro', description: 'A senha deve ter pelo menos 6 caracteres.', variant: 'destructive' });
+    if (!captchaToken) {
+      toast({ title: 'Confirmação necessária', description: 'Por favor, confirme que você não é um robô.', variant: 'destructive' });
       return;
     }
     setLoading(true);
     try {
-      await register({ name, email, password });
+      await register({ name, email, password, captchaToken });
       const isApi = import.meta.env.VITE_USE_API === 'true';
       if (isApi) {
         navigate('/confirm-email', { state: { email } });
@@ -40,6 +48,8 @@ export default function Register() {
       }
     } catch (err: any) {
       toast({ title: 'Erro ao criar conta', description: err.message, variant: 'destructive' });
+      recaptchaRef.current?.reset();
+      setCaptchaToken(null);
     } finally {
       setLoading(false);
     }
@@ -85,12 +95,12 @@ export default function Register() {
           <Input
             id="password"
             type="password"
-            placeholder="Mínimo 6 caracteres"
+            placeholder="Crie uma senha forte"
             value={password}
             onChange={e => setPassword(e.target.value)}
             required
-            minLength={6}
           />
+          <PasswordStrengthIndicator password={password} />
         </div>
 
         <div className="space-y-2">
@@ -105,7 +115,22 @@ export default function Register() {
           />
         </div>
 
-        <Button type="submit" className="w-full" disabled={loading}>
+        {/* reCAPTCHA */}
+        <div className="flex justify-center">
+          <ReCAPTCHA
+            ref={recaptchaRef}
+            sitekey={import.meta.env.VITE_RECAPTCHA_SITE_KEY}
+            onChange={setCaptchaToken}
+            onExpired={() => setCaptchaToken(null)}
+            theme="dark"
+          />
+        </div>
+
+        <Button
+          type="submit"
+          className="w-full"
+          disabled={loading || !isPasswordStrong(password) || !captchaToken}
+        >
           {loading ? 'Criando conta...' : 'Criar Conta'}
         </Button>
 
