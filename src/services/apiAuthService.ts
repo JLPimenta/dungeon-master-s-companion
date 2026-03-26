@@ -57,10 +57,10 @@ export const apiAuthService: AuthService = {
     return res;
   },
 
-  async loginWithGoogle(credential: string): Promise<AuthResponse> {
+  async loginWithGoogle(credential: string, acceptTerms?: boolean): Promise<AuthResponse> {
     const res = await authRequest<AuthResponse>('/auth/google', {
       method: 'POST',
-      body: JSON.stringify({ credential }),
+      body: JSON.stringify({ credential, acceptTerms: acceptTerms ?? false }),
     });
     setAuthToken(res.token);
     return res;

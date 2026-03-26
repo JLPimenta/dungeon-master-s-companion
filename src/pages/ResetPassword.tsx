@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Link, useSearchParams, useNavigate } from 'react-router-dom';
 import { AuthLayout } from '@/components/auth/AuthLayout';
+import { PasswordStrengthIndicator, isPasswordStrong } from '@/components/auth/PasswordStrengthIndicator';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -23,8 +24,8 @@ export default function ResetPassword() {
       toast({ title: 'Erro', description: 'As senhas não coincidem.', variant: 'destructive' });
       return;
     }
-    if (password.length < 6) {
-      toast({ title: 'Erro', description: 'A senha deve ter pelo menos 6 caracteres.', variant: 'destructive' });
+    if (!isPasswordStrong(password)) {
+      toast({ title: 'Senha fraca', description: 'A senha não atende todos os requisitos.', variant: 'destructive' });
       return;
     }
     setLoading(true);
@@ -62,12 +63,12 @@ export default function ResetPassword() {
           <Input
             id="password"
             type="password"
-            placeholder="Mínimo 6 caracteres"
+            placeholder="Crie uma nova senha forte"
             value={password}
             onChange={e => setPassword(e.target.value)}
             required
-            minLength={6}
           />
+          <PasswordStrengthIndicator password={password} />
         </div>
 
         <div className="space-y-2">
@@ -82,7 +83,7 @@ export default function ResetPassword() {
           />
         </div>
 
-        <Button type="submit" className="w-full" disabled={loading}>
+        <Button type="submit" className="w-full" disabled={loading || !isPasswordStrong(password)}>
           {loading ? 'Redefinindo...' : 'Redefinir Senha'}
         </Button>
 

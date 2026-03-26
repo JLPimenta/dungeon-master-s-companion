@@ -90,7 +90,7 @@ export const localAuthService: AuthService = {
     return { user: toPublicUser(newUser), token };
   },
 
-  async loginWithGoogle(): Promise<AuthResponse> {
+  async loginWithGoogle(_credential?: string, _acceptTerms?: boolean): Promise<AuthResponse> {
     throw new Error('Login com Google não disponível no modo offline.');
   },
 

@@ -3,6 +3,7 @@ import { BrowserRouter, Route, Routes } from "react-router-dom";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
+import { GoogleOAuthProvider } from "@react-oauth/google";
 import { AuthProvider } from "@/contexts/AuthContext";
 import { ProtectedRoute } from "@/components/auth/ProtectedRoute";
 import Index from "./pages/Index.tsx";
@@ -15,10 +16,12 @@ import ForgotPassword from "./pages/ForgotPassword.tsx";
 import ResetPassword from "./pages/ResetPassword.tsx";
 import Profile from "./pages/Profile.tsx";
 import SharedCharacterSheetPage from "./pages/SharedCharacterSheet.tsx";
+import TermsOfUse from "./pages/TermsOfUse.tsx";
 
 const queryClient = new QueryClient();
 
 const App = () => (
+  <GoogleOAuthProvider clientId={import.meta.env.VITE_GOOGLE_CLIENT_ID ?? ''}>
   <QueryClientProvider client={queryClient}>
     <TooltipProvider>
       <Toaster />
@@ -33,6 +36,7 @@ const App = () => (
             <Route path="/forgot-password" element={<ForgotPassword />} />
             <Route path="/reset-password" element={<ResetPassword />} />
             <Route path="/character/shared/:id" element={<SharedCharacterSheetPage />} />
+            <Route path="/terms-of-use" element={<TermsOfUse />} />
 
             {/* Protected routes */}
             <Route path="/" element={<ProtectedRoute><Index /></ProtectedRoute>} />
@@ -46,6 +50,7 @@ const App = () => (
       </BrowserRouter>
     </TooltipProvider>
   </QueryClientProvider>
+  </GoogleOAuthProvider>
 );
 
 export default App;

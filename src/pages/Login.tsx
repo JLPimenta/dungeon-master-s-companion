@@ -7,6 +7,14 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Separator } from '@/components/ui/separator';
+import { Checkbox } from '@/components/ui/checkbox';
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog';
 import { useAuth } from '@/hooks/useAuth';
 import { useToast } from '@/hooks/use-toast';
 
@@ -15,6 +23,8 @@ export default function Login() {
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
   const [captchaToken, setCaptchaToken] = useState<string | null>(null);
+  const [pendingGoogleCredential, setPendingGoogleCredential] = useState<string | null>(null);
+  const [acceptedTerms, setAcceptedTerms] = useState(false);
   const recaptchaRef = useRef<ReCAPTCHA>(null);
   const { login, loginWithGoogle } = useAuth();
   const navigate = useNavigate();
@@ -39,13 +49,36 @@ export default function Login() {
     }
   };
 
-  const handleGoogle = async () => {
+  const handleGoogleSuccess = async (credential: string) => {
     try {
-      await loginWithGoogle('');
+      await loginWithGoogle(credential);
+      navigate('/');
+    } catch (err: any) {
+      if (err.message && err.message.toLowerCase().includes('termos')) {
+        setPendingGoogleCredential(credential);
+        setAcceptedTerms(false);
+      } else {
+        toast({ title: 'Erro', description: err.message, variant: 'destructive' });
+      }
+    }
+  };
+
+  const handleConfirmGoogleRegistration = async () => {
+    if (!pendingGoogleCredential) return;
+    setLoading(true);
+    try {
+      await loginWithGoogle(pendingGoogleCredential, true);
       navigate('/');
     } catch (err: any) {
       toast({ title: 'Erro', description: err.message, variant: 'destructive' });
+    } finally {
+      setLoading(false);
+      setPendingGoogleCredential(null);
     }
+  };
+
+  const handleGoogleError = () => {
+    toast({ title: 'Erro', description: 'Falha ao autenticar com o Google.', variant: 'destructive' });
   };
 
   return (
@@ -105,7 +138,7 @@ export default function Login() {
           </span>
         </div>
 
-        <GoogleSignInButton onClick={handleGoogle} disabled={loading} />
+        <GoogleSignInButton onSuccess={handleGoogleSuccess} onError={handleGoogleError} disabled={loading} />
 
         <p className="text-center text-sm text-muted-foreground">
           Não tem uma conta?{' '}
@@ -114,6 +147,35 @@ export default function Login() {
           </Link>
         </p>
       </form>
+
+      <Dialog open={!!pendingGoogleCredential} onOpenChange={(open) => !open && setPendingGoogleCredential(null)}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle>Complete seu cadastro</DialogTitle>
+            <DialogDescription>
+              Vimos que você ainda não tem uma conta. Para continuar com o Google, você precisa aceitar nossos Termos de Uso.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="flex items-center space-x-2 py-4">
+            <Checkbox
+              id="terms-modal"
+              checked={acceptedTerms}
+              onCheckedChange={(checked) => setAcceptedTerms(checked as boolean)}
+            />
+            <Label htmlFor="terms-modal" className="text-sm font-normal">
+              Li e aceito os <Link to="/terms-of-use" target="_blank" className="text-primary hover:underline">Termos de Uso</Link>
+            </Label>
+          </div>
+          <div className="flex justify-end space-x-2">
+            <Button variant="outline" onClick={() => setPendingGoogleCredential(null)} disabled={loading}>
+              Cancelar
+            </Button>
+            <Button onClick={handleConfirmGoogleRegistration} disabled={loading || !acceptedTerms}>
+              {loading ? 'Confirmando...' : 'Confirmar e Entrar'}
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
     </AuthLayout>
   );
 }

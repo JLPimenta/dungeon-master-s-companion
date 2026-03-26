@@ -16,6 +16,7 @@ export interface AuthCredentials {
 export interface RegisterData extends AuthCredentials {
   name: string;
   captchaToken?: string;
+  acceptTerms?: boolean;
 }
 
 export interface AuthResponse {

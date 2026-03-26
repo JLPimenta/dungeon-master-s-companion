@@ -12,7 +12,7 @@ interface AuthContextType {
     isLoading: boolean;
     login: (credentials: AuthCredentials) => Promise<void>;
     register: (data: RegisterData) => Promise<void>;
-    loginWithGoogle: (credential: string) => Promise<void>;
+    loginWithGoogle: (credential: string, acceptTerms?: boolean) => Promise<void>;
     logout: () => Promise<void>;
     updateProfile: (data: Partial<Pick<User, 'name' | 'avatarUrl'>>) => Promise<void>;
     changePassword: (currentPassword: string, newPassword: string) => Promise<void>;
@@ -49,8 +49,8 @@ export function AuthProvider({children}: { children: React.ReactNode }) {
         await queryClient.invalidateQueries({ queryKey: ['characters'] });
     }, [queryClient]);
 
-    const loginWithGoogle = useCallback(async (credential: string) => {
-        const res = await service.loginWithGoogle(credential);
+    const loginWithGoogle = useCallback(async (credential: string, acceptTerms?: boolean) => {
+        const res = await service.loginWithGoogle(credential, acceptTerms);
         setUser(res.user);
         await queryClient.invalidateQueries({ queryKey: ['characters'] });
     }, [queryClient]);

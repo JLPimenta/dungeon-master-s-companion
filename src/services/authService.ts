@@ -3,7 +3,7 @@ import type { AuthCredentials, AuthResponse, RegisterData, User } from '@/types/
 export interface AuthService {
   login(credentials: AuthCredentials): Promise<AuthResponse>;
   register(data: RegisterData): Promise<AuthResponse>;
-  loginWithGoogle(credential: string): Promise<AuthResponse>;
+  loginWithGoogle(credential: string, acceptTerms?: boolean): Promise<AuthResponse>;
   logout(): Promise<void>;
   getCurrentUser(): Promise<User | null>;
   updateProfile(data: Partial<Pick<User, 'name' | 'avatarUrl'>>): Promise<User>;

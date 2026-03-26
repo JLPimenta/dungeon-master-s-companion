@@ -8,6 +8,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Separator } from '@/components/ui/separator';
+import { Checkbox } from '@/components/ui/checkbox';
 import { useAuth } from '@/hooks/useAuth';
 import { useToast } from '@/hooks/use-toast';
 
@@ -18,6 +19,7 @@ export default function Register() {
   const [confirmPassword, setConfirmPassword] = useState('');
   const [loading, setLoading] = useState(false);
   const [captchaToken, setCaptchaToken] = useState<string | null>(null);
+  const [acceptedTerms, setAcceptedTerms] = useState(false);
   const recaptchaRef = useRef<ReCAPTCHA>(null);
   const { register, loginWithGoogle } = useAuth();
   const navigate = useNavigate();
@@ -35,11 +37,14 @@ export default function Register() {
     }
     if (!captchaToken) {
       toast({ title: 'Confirmação necessária', description: 'Por favor, confirme que você não é um robô.', variant: 'destructive' });
+    }
+    if (!acceptedTerms) {
+      toast({ title: 'Atenção', description: 'Você deve aceitar os termos de uso para criar uma conta.', variant: 'destructive' });
       return;
     }
     setLoading(true);
     try {
-      await register({ name, email, password, captchaToken });
+      await register({ name, email, password, captchaToken, acceptTerms: true });
       const isApi = import.meta.env.VITE_USE_API === 'true';
       if (isApi) {
         navigate('/confirm-email', { state: { email } });
@@ -55,13 +60,17 @@ export default function Register() {
     }
   };
 
-  const handleGoogle = async () => {
+  const handleGoogleSuccess = async (credential: string) => {
     try {
-      await loginWithGoogle('');
+      await loginWithGoogle(credential, true);
       navigate('/');
     } catch (err: any) {
       toast({ title: 'Erro', description: err.message, variant: 'destructive' });
     }
+  };
+
+  const handleGoogleError = () => {
+    toast({ title: 'Erro', description: 'Falha ao autenticar com o Google.', variant: 'destructive' });
   };
 
   return (
@@ -126,10 +135,21 @@ export default function Register() {
           />
         </div>
 
+        <div className="flex items-center space-x-2">
+          <Checkbox 
+            id="terms" 
+            checked={acceptedTerms}
+            onCheckedChange={(checked) => setAcceptedTerms(checked as boolean)}
+          />
+          <Label htmlFor="terms" className="text-sm font-normal">
+            Li e aceito os <Link to="/terms-of-use" target="_blank" className="text-primary hover:underline">Termos de Uso</Link>
+          </Label>
+        </div>
+
         <Button
           type="submit"
           className="w-full"
-          disabled={loading || !isPasswordStrong(password) || !captchaToken}
+          disabled={loading || !isPasswordStrong(password) || !captchaToken || !acceptedTerms}
         >
           {loading ? 'Criando conta...' : 'Criar Conta'}
         </Button>
@@ -141,7 +161,7 @@ export default function Register() {
           </span>
         </div>
 
-        <GoogleSignInButton label="Registrar com Google" onClick={handleGoogle} disabled={loading} />
+        <GoogleSignInButton label="Registrar com Google" onSuccess={handleGoogleSuccess} onError={handleGoogleError} disabled={loading || !acceptedTerms} />
 
         <p className="text-center text-sm text-muted-foreground">
           Já tem uma conta?{' '}
