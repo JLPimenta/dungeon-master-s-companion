@@ -69,8 +69,9 @@ export function WeaponsTable({ sheet, onChange, onBlur }: Props) {
                   <span />
                 </div>
 
-                {sheet.weapons.map((w, i) => {
-                  const isExpanded = expandedIds.has(w.id);
+                <div className="space-y-3 lg:max-h-[260px] lg:overflow-y-auto lg:pr-1 pb-1">
+                  {sheet.weapons.map((w, i) => {
+                    const isExpanded = expandedIds.has(w.id);
                   return (
                     <div key={w.id} className="relative rounded-md border border-border/40 p-3 md:border-0 md:p-0">
 
@@ -191,6 +192,7 @@ export function WeaponsTable({ sheet, onChange, onBlur }: Props) {
                     </div>
                   );
                 })}
+              </div>
               </div>
           )}
         </CardContent>

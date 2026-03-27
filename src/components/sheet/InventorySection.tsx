@@ -19,17 +19,29 @@ const COIN_LABELS: Record<keyof Coins, string> = {
 
 export function InventorySection({sheet, onChange, onBlur}: Props) {
     const [collapsed, setCollapsed] = useState(false);
+    const [expandedIds, setExpandedIds] = useState<Set<string>>(new Set());
     const profBonus = getEffectiveProficiencyBonus(sheet)
     const maxAttune = getAttunementSlots(profBonus);
 
+    const toggleExpanded = (id: string) => {
+        setExpandedIds(prev => {
+            const next = new Set(prev);
+            if (next.has(id)) next.delete(id);
+            else next.add(id);
+            return next;
+        });
+    };
+
     /* ── Equipment ── */
     const addItem = () => {
+        const id = crypto.randomUUID();
         onChange({
             inventory: [
                 ...sheet.inventory,
-                {id: crypto.randomUUID(), name: '', quantity: 1, weight: 0, notes: ''},
+                {id, name: '', quantity: 1, weight: 0, notes: ''},
             ],
         });
+        setExpandedIds(prev => new Set(prev).add(id));
     };
     const updateItem = (idx: number, patch: Partial<InventoryItem>) => {
         const inventory = [...sheet.inventory];
@@ -43,12 +55,14 @@ export function InventorySection({sheet, onChange, onBlur}: Props) {
     /* ── Attuned items ── */
     const addAttuned = () => {
         if (sheet.attunedItems.length >= maxAttune) return;
+        const id = crypto.randomUUID();
         onChange({
             attunedItems: [
                 ...sheet.attunedItems,
-                {id: crypto.randomUUID(), name: '', description: ''},
+                {id, name: '', description: ''},
             ],
         });
+        setExpandedIds(prev => new Set(prev).add(id));
     };
     const updateAttuned = (idx: number, patch: Partial<AttunedItem>) => {
         const attunedItems = [...sheet.attunedItems];
@@ -103,63 +117,80 @@ export function InventorySection({sheet, onChange, onBlur}: Props) {
                     )}
 
                     <div className="space-y-2">
-                        {sheet.inventory.map((item, i) => (
+                        {sheet.inventory.map((item, i) => {
+                            const isExpanded = expandedIds.has(item.id);
+                            return (
                             <div key={item.id} className="rounded-md border border-border/40 p-3 md:border-0 md:p-0">
 
-                                {/* ── Mobile: labeled 2-col card ── */}
-                                <div className="grid grid-cols-2 gap-2 md:hidden">
-                                    <div className="col-span-2">
-                                        <Label className="text-sm text-muted-foreground">Item</Label>
-                                        <Input
-                                            placeholder="Nome do item"
-                                            value={item.name}
-                                            onChange={e => updateItem(i, {name: e.target.value})}
-                                            className="mt-1 h-10 text-sm"
-                                        />
-                                    </div>
-                                    <div>
-                                        <Label className="text-sm text-muted-foreground">Quantidade</Label>
-                                        <Input
-                                            type="number"
-                                            min={0}
-                                            value={item.quantity}
-                                            onChange={e => updateItem(i, {quantity: Number(e.target.value) || 0})}
-                                            className="mt-1 h-10 text-sm"
-                                        />
-                                    </div>
-                                    <div>
-                                        <Label className="text-sm text-muted-foreground">Peso (lb)</Label>
-                                        <Input
-                                            type="number"
-                                            min={0}
-                                            step={0.1}
-                                            value={item.weight}
-                                            onChange={e => updateItem(i, {weight: Number(e.target.value) || 0})}
-                                            className="mt-1 h-10 text-sm"
-                                        />
-                                    </div>
-                                    <div className="col-span-2">
-                                        <Label className="text-sm text-muted-foreground">Notas</Label>
-                                        <Input
-                                            placeholder="Observações…"
-                                            value={item.notes}
-                                            onChange={e => updateItem(i, {notes: e.target.value})}
-                                            className="mt-1 h-10 text-sm"
-                                        />
-                                    </div>
-                                    <Button
-                                        variant="ghost"
-                                        size="sm"
-                                        className="col-span-2 h-8 justify-start gap-1 text-sm text-muted-foreground hover:text-destructive"
-                                        onClick={() => removeItem(i)}
+                                {/* ── Mobile: collapsible card ── */}
+                                <div className="md:hidden">
+                                    <button
+                                        type="button"
+                                        onClick={() => toggleExpanded(item.id)}
+                                        className="flex w-full items-center justify-between rounded-md px-1 py-1 text-left text-sm hover:bg-primary/5 transition-colors"
                                     >
-                                        <Trash2 className="h-4 w-4"/> Remover
-                                    </Button>
+                                        <span className="font-medium text-foreground truncate">
+                                            {item.name || 'Novo item'}
+                                            {item.quantity > 1 && <span className="text-muted-foreground ml-2">x{item.quantity}</span>}
+                                        </span>
+                                        <ChevronDown className={`h-4 w-4 shrink-0 text-muted-foreground transition-transform duration-200 ${isExpanded ? 'rotate-180' : ''}`} />
+                                    </button>
+
+                                    {isExpanded && (
+                                        <div className="grid grid-cols-2 gap-2 mt-2">
+                                            <div className="col-span-2">
+                                                <Label className="text-sm text-muted-foreground">Item</Label>
+                                                <Input
+                                                    placeholder="Nome do item"
+                                                    value={item.name}
+                                                    onChange={e => updateItem(i, {name: e.target.value})}
+                                                    className="mt-1 h-10 text-sm"
+                                                />
+                                            </div>
+                                            <div>
+                                                <Label className="text-sm text-muted-foreground">Quantidade</Label>
+                                                <Input
+                                                    type="number"
+                                                    min={0}
+                                                    value={item.quantity}
+                                                    onChange={e => updateItem(i, {quantity: Number(e.target.value) || 0})}
+                                                    className="mt-1 h-10 text-sm"
+                                                />
+                                            </div>
+                                            <div>
+                                                <Label className="text-sm text-muted-foreground">Peso (lb)</Label>
+                                                <Input
+                                                    type="number"
+                                                    min={0}
+                                                    step={0.1}
+                                                    value={item.weight}
+                                                    onChange={e => updateItem(i, {weight: Number(e.target.value) || 0})}
+                                                    className="mt-1 h-10 text-sm"
+                                                />
+                                            </div>
+                                            <div className="col-span-2">
+                                                <Label className="text-sm text-muted-foreground">Notas</Label>
+                                                <Input
+                                                    placeholder="Observações…"
+                                                    value={item.notes}
+                                                    onChange={e => updateItem(i, {notes: e.target.value})}
+                                                    className="mt-1 h-10 text-sm"
+                                                />
+                                            </div>
+                                            <Button
+                                                variant="ghost"
+                                                size="sm"
+                                                className="col-span-2 h-8 justify-start gap-1 text-sm text-muted-foreground hover:text-destructive"
+                                                onClick={() => removeItem(i)}
+                                            >
+                                                <Trash2 className="h-4 w-4"/> Remover
+                                            </Button>
+                                        </div>
+                                    )}
                                 </div>
 
                                 {/* ── Desktop: single-row ── */}
-                                <div
-                                    className="hidden md:grid md:grid-cols-[1fr_68px_80px_1fr_36px] gap-2 items-center">
+                                <div className="hidden md:grid md:grid-cols-[1fr_68px_80px_1fr_36px] gap-2 items-center">
                                     <Input
                                         placeholder="Item"
                                         value={item.name}
@@ -200,7 +231,8 @@ export function InventorySection({sheet, onChange, onBlur}: Props) {
                                 </div>
 
                             </div>
-                        ))}
+                            );
+                        })}
                     </div>
                 </section>
 
@@ -222,37 +254,54 @@ export function InventorySection({sheet, onChange, onBlur}: Props) {
                     </div>
 
                     <div className="space-y-2">
-                        {sheet.attunedItems.map((item, i) => (
+                        {sheet.attunedItems.map((item, i) => {
+                            const isExpanded = expandedIds.has(item.id);
+                            return (
                             <div key={item.id} className="rounded-md border border-border/40 p-3 md:border-0 md:p-0">
 
                                 {/* ── Mobile ── */}
-                                <div className="flex flex-col gap-2 md:hidden">
-                                    <div>
-                                        <Label className="text-sm text-muted-foreground">Nome</Label>
-                                        <Input
-                                            placeholder="Nome do item"
-                                            value={item.name}
-                                            onChange={e => updateAttuned(i, {name: e.target.value})}
-                                            className="mt-1 h-10 text-sm"
-                                        />
-                                    </div>
-                                    <div>
-                                        <Label className="text-sm text-muted-foreground">Descrição / Efeito</Label>
-                                        <Input
-                                            placeholder="Propriedade ou efeito…"
-                                            value={item.description}
-                                            onChange={e => updateAttuned(i, {description: e.target.value})}
-                                            className="mt-1 h-10 text-sm"
-                                        />
-                                    </div>
-                                    <Button
-                                        variant="ghost"
-                                        size="sm"
-                                        className="h-8 justify-start gap-1 text-sm text-muted-foreground hover:text-destructive"
-                                        onClick={() => removeAttuned(i)}
+                                <div className="md:hidden">
+                                    <button
+                                        type="button"
+                                        onClick={() => toggleExpanded(item.id)}
+                                        className="flex w-full items-center justify-between rounded-md px-1 py-1 text-left text-sm hover:bg-primary/5 transition-colors"
                                     >
-                                        <Trash2 className="h-4 w-4"/> Remover
-                                    </Button>
+                                        <span className="font-medium text-foreground truncate">
+                                            {item.name || 'Novo item sintonizado'}
+                                        </span>
+                                        <ChevronDown className={`h-4 w-4 shrink-0 text-muted-foreground transition-transform duration-200 ${isExpanded ? 'rotate-180' : ''}`} />
+                                    </button>
+
+                                    {isExpanded && (
+                                        <div className="flex flex-col gap-2 mt-2">
+                                            <div>
+                                                <Label className="text-sm text-muted-foreground">Nome</Label>
+                                                <Input
+                                                    placeholder="Nome do item"
+                                                    value={item.name}
+                                                    onChange={e => updateAttuned(i, {name: e.target.value})}
+                                                    className="mt-1 h-10 text-sm"
+                                                />
+                                            </div>
+                                            <div>
+                                                <Label className="text-sm text-muted-foreground">Descrição / Efeito</Label>
+                                                <Input
+                                                    placeholder="Propriedade ou efeito…"
+                                                    value={item.description}
+                                                    onChange={e => updateAttuned(i, {description: e.target.value})}
+                                                    className="mt-1 h-10 text-sm"
+                                                />
+                                            </div>
+                                            <Button
+                                                variant="ghost"
+                                                size="sm"
+                                                className="h-8 justify-start gap-1 text-sm text-muted-foreground hover:text-destructive"
+                                                onClick={() => removeAttuned(i)}
+                                            >
+                                                <Trash2 className="h-4 w-4"/> Remover
+                                            </Button>
+                                        </div>
+                                    )}
                                 </div>
 
                                 {/* ── Desktop ── */}
@@ -280,7 +329,8 @@ export function InventorySection({sheet, onChange, onBlur}: Props) {
                                 </div>
 
                             </div>
-                        ))}
+                            );
+                        })}
                     </div>
                 </section>
 

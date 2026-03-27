@@ -37,6 +37,30 @@ function SaveIndicator({status}: {status: SaveStatus}) {
     );
 }
 
+function deepEqual(obj1: any, obj2: any): boolean {
+    if (obj1 === obj2) return true;
+    if (typeof obj1 !== 'object' || typeof obj2 !== 'object' || obj1 == null || obj2 == null) return false;
+    
+    if (Array.isArray(obj1) && Array.isArray(obj2)) {
+        if (obj1.length !== obj2.length) return false;
+        for (let i = 0; i < obj1.length; i++) {
+            if (!deepEqual(obj1[i], obj2[i])) return false;
+        }
+        return true;
+    }
+    
+    const keys1 = Object.keys(obj1);
+    const keys2 = Object.keys(obj2);
+    
+    if (keys1.length !== keys2.length) return false;
+    
+    for (const key of keys1) {
+        if (!keys2.includes(key) || !deepEqual(obj1[key], obj2[key])) return false;
+    }
+    
+    return true;
+}
+
 export default function CharacterSheetPage() {
     const {id} = useParams<{ id: string }>();
     const navigate = useNavigate();
@@ -57,6 +81,9 @@ export default function CharacterSheetPage() {
         if (sheet && !isDirtyRef.current && !pendingRef.current && !needsResaveRef.current) {
             setLocal(sheet);
             localRef.current = sheet;
+            if (!lastSavedRef.current) {
+                lastSavedRef.current = sheet;
+            }
         }
     }, [sheet]);
 
@@ -76,7 +103,7 @@ export default function CharacterSheetPage() {
         if (!data) return;
 
         // Dirty-check: skip if nothing changed since last save
-        if (lastSavedRef.current && JSON.stringify(data) === JSON.stringify(lastSavedRef.current)) {
+        if (lastSavedRef.current && deepEqual(data, lastSavedRef.current)) {
             isDirtyRef.current = false;
             return;
         }
@@ -194,16 +221,18 @@ export default function CharacterSheetPage() {
                     </div>
 
                     {/* Right column */}
-                    <div className="space-y-6">
+                    <div className="flex flex-col space-y-6 h-full">
                         <CombatSection sheet={local} onChange={update} onBlur={handleBlur}/>
                         <WeaponsTable sheet={local} onChange={update} onBlur={handleBlur}/>
-                        <FeaturesTraits sheet={local} onChange={update} onBlur={handleBlur}/>
+                        <div className="flex-1">
+                            <PersonalitySection sheet={local} onChange={update} onBlur={handleBlur}/>
+                        </div>
                     </div>
                 </div>
 
                 <SpellcastingSection sheet={local} onChange={update} onBlur={handleBlur}/>
                 <InventorySection sheet={local} onChange={update} onBlur={handleBlur}/>
-                <PersonalitySection sheet={local} onChange={update} onBlur={handleBlur}/>
+                <FeaturesTraits sheet={local} onChange={update} onBlur={handleBlur}/>
                 <CampaignNotes sheet={local} onChange={update} onBlur={handleBlur}/>
                 <CustomFields sheet={local} onChange={update} onBlur={handleBlur}/>
             </div>
