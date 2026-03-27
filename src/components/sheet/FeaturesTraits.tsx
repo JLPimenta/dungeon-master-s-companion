@@ -6,16 +6,15 @@ import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
 import { Button } from '@/components/ui/button';
 import { ChevronDown, ChevronUp, Plus, Trash2 } from 'lucide-react';
-import { useIsMobile } from '@/hooks/use-mobile';
 
 interface Props {
   sheet: CharacterSheet;
   onChange: (patch: Partial<CharacterSheet>) => void;
+  onBlur?: () => void;
 }
 
-export function FeaturesTraits({ sheet, onChange }: Props) {
-  const isMobile = useIsMobile();
-  const [collapsed, setCollapsed] = useState(isMobile);
+export function FeaturesTraits({ sheet, onChange, onBlur }: Props) {
+  const [collapsed, setCollapsed] = useState(false);
 
   const addFeature = () => {
     onChange({ classFeatures: [...sheet.classFeatures, ''] });
@@ -40,14 +39,14 @@ export function FeaturesTraits({ sheet, onChange }: Props) {
           className="flex w-full items-center justify-between"
         >
           <CardTitle className="text-lg text-primary">Características e Traços</CardTitle>
-          <span className="text-muted-foreground md:hidden">
+          <span className="text-muted-foreground">
             {collapsed ? <ChevronDown className="h-4 w-4" /> : <ChevronUp className="h-4 w-4" />}
           </span>
         </button>
       </CardHeader>
 
-      {(!collapsed || !isMobile) && (
-        <CardContent className="space-y-4 px-4 pb-4">
+      {!collapsed && (
+        <CardContent className="space-y-4 px-4 pb-4" onBlur={onBlur}>
           {/* Class features */}
           <div>
             <div className="flex items-center justify-between mb-2">

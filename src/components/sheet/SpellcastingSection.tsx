@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import type { CharacterSheet, Spell, AbilityKey } from '@/types/character';
 import { ABILITY_LABELS } from '@/types/character';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -6,7 +7,7 @@ import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Plus, Trash2 } from 'lucide-react';
+import { ChevronDown, Plus, Trash2 } from 'lucide-react';
 import {
   getAbilityModifier,
   getSpellSaveDC,
@@ -17,6 +18,7 @@ import {
 interface Props {
   sheet: CharacterSheet;
   onChange: (patch: Partial<CharacterSheet>) => void;
+  onBlur?: () => void;
 }
 
 const SPELL_LEVELS = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9];
@@ -25,7 +27,9 @@ const LEVEL_LABELS: Record<number, string> = {
   5: '5º', 6: '6º', 7: '7º', 8: '8º', 9: '9º',
 };
 
-export function SpellcastingSection({ sheet, onChange }: Props) {
+export function SpellcastingSection({ sheet, onChange, onBlur }: Props) {
+  const [expandedIds, setExpandedIds] = useState<Set<string>>(new Set());
+
   const profBonus = getEffectiveProficiencyBonus(sheet);
   const abilityMod = sheet.spellcastingAbility
       ? getAbilityModifier(sheet, sheet.spellcastingAbility)
@@ -34,6 +38,15 @@ export function SpellcastingSection({ sheet, onChange }: Props) {
   const attackBonus = sheet.spellcastingAbility
       ? getSpellAttackBonus(abilityMod, profBonus)
       : 0;
+
+  const toggleExpanded = (id: string) => {
+    setExpandedIds(prev => {
+      const next = new Set(prev);
+      if (next.has(id)) next.delete(id);
+      else next.add(id);
+      return next;
+    });
+  };
 
   const addSpell = () => {
     const spell: Spell = {
@@ -48,6 +61,7 @@ export function SpellcastingSection({ sheet, onChange }: Props) {
       materialRequired: '',
     };
     onChange({ spells: [...sheet.spells, spell] });
+    setExpandedIds(prev => new Set(prev).add(spell.id));
   };
 
   const updateSpell = (idx: number, patch: Partial<Spell>) => {
@@ -75,7 +89,7 @@ export function SpellcastingSection({ sheet, onChange }: Props) {
           <CardTitle className="text-lg text-primary">Conjuração</CardTitle>
         </CardHeader>
 
-        <CardContent className="space-y-4 px-4 pb-4">
+        <CardContent className="space-y-4 px-4 pb-4" onBlur={onBlur}>
 
           {/* ── Spellcasting ability row ── */}
           <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
@@ -118,10 +132,7 @@ export function SpellcastingSection({ sheet, onChange }: Props) {
             </div>
           </div>
 
-          {/* ── Spell slots ──
-            Mobile:  3 cols  (1-3 / 4-6 / 7-9)
-            sm+:     5 cols
-            lg+:     9 cols (tudo em linha) */}
+          {/* ── Spell slots ── */}
           <div>
             <Label className="mb-2 block text-sm text-muted-foreground">Espaços de Magia</Label>
             <div className="grid grid-cols-3 gap-x-3 gap-y-3 sm:grid-cols-5 lg:grid-cols-9">
@@ -131,7 +142,6 @@ export function SpellcastingSection({ sheet, onChange }: Props) {
                   {LEVEL_LABELS[lv]}
                 </span>
                     <div className="flex items-center gap-1">
-                      {/* h-7 → h-9 per plan */}
                       <Input
                           type="number"
                           min={0}
@@ -181,100 +191,117 @@ export function SpellcastingSection({ sheet, onChange }: Props) {
                               .filter(s => s.level === lv)
                               .map(spell => {
                                 const idx = sheet.spells.findIndex(s => s.id === spell.id);
+                                const isExpanded = expandedIds.has(spell.id);
                                 return (
                                     <div
                                         key={spell.id}
                                         className="rounded-md border border-border/40 p-3 md:border-0 md:p-0"
                                     >
-                                      {/* ── Mobile: 2-col card ── */}
-                                      <div className="grid grid-cols-2 gap-2 md:hidden">
-                                        <div className="col-span-2 flex items-center gap-2">
-                                          <Select
-                                              value={String(spell.level)}
-                                              onValueChange={v => updateSpell(idx, { level: Number(v) })}
-                                          >
-                                            {/* h-7 → h-9 */}
-                                            <SelectTrigger className="h-9 w-24 shrink-0 text-sm">
-                                              <SelectValue />
-                                            </SelectTrigger>
-                                            <SelectContent>
-                                              {SPELL_LEVELS.map(l => (
-                                                  <SelectItem key={l} value={String(l)}>
-                                                    {LEVEL_LABELS[l]}
-                                                  </SelectItem>
-                                              ))}
-                                            </SelectContent>
-                                          </Select>
-                                          <Input
-                                              placeholder="Nome"
-                                              value={spell.name}
-                                              onChange={e => updateSpell(idx, { name: e.target.value })}
-                                              className="h-9 flex-1 text-sm"
-                                          />
-                                        </div>
+                                      {/* ── Mobile: collapsible card ── */}
+                                      <div className="md:hidden">
+                                        <button
+                                          type="button"
+                                          onClick={() => toggleExpanded(spell.id)}
+                                          className="flex w-full items-center justify-between rounded-md px-1 py-1 text-left text-sm hover:bg-primary/5 transition-colors"
+                                        >
+                                          <span className="font-medium text-foreground truncate">
+                                            <span className="text-xs text-muted-foreground mr-1.5">{LEVEL_LABELS[spell.level]}</span>
+                                            {spell.name || 'Nova magia'}
+                                          </span>
+                                          <ChevronDown className={`h-4 w-4 shrink-0 text-muted-foreground transition-transform duration-200 ${isExpanded ? 'rotate-180' : ''}`} />
+                                        </button>
 
-                                        <div>
-                                          <Label className="text-sm text-muted-foreground">Tempo</Label>
-                                          <Input
-                                              placeholder="1 ação"
-                                              value={spell.castingTime}
-                                              onChange={e => updateSpell(idx, { castingTime: e.target.value })}
-                                              className="mt-1 h-9 text-sm"
-                                          />
-                                        </div>
-                                        <div>
-                                          <Label className="text-sm text-muted-foreground">Alcance</Label>
-                                          <Input
-                                              placeholder="30 pés"
-                                              value={spell.range}
-                                              onChange={e => updateSpell(idx, { range: e.target.value })}
-                                              className="mt-1 h-9 text-sm"
-                                          />
-                                        </div>
+                                        {isExpanded && (
+                                          <div className="grid grid-cols-2 gap-2 mt-2">
+                                            <div className="col-span-2 flex items-center gap-2">
+                                              <Select
+                                                  value={String(spell.level)}
+                                                  onValueChange={v => updateSpell(idx, { level: Number(v) })}
+                                              >
+                                                <SelectTrigger className="h-9 w-24 shrink-0 text-sm">
+                                                  <SelectValue />
+                                                </SelectTrigger>
+                                                <SelectContent>
+                                                  {SPELL_LEVELS.map(l => (
+                                                      <SelectItem key={l} value={String(l)}>
+                                                        {LEVEL_LABELS[l]}
+                                                      </SelectItem>
+                                                  ))}
+                                                </SelectContent>
+                                              </Select>
+                                              <Input
+                                                  placeholder="Nome"
+                                                  value={spell.name}
+                                                  onChange={e => updateSpell(idx, { name: e.target.value })}
+                                                  className="h-9 flex-1 text-sm"
+                                              />
+                                            </div>
 
-                                        <div className="col-span-2">
-                                          <Label className="text-sm text-muted-foreground">
-                                            Notas / Material
-                                          </Label>
-                                          <Input
-                                              placeholder="Componentes, observações…"
-                                              value={spell.notes}
-                                              onChange={e => updateSpell(idx, { notes: e.target.value })}
-                                              className="mt-1 h-9 text-sm"
-                                          />
-                                        </div>
+                                            <div>
+                                              <Label className="text-sm text-muted-foreground">Tempo</Label>
+                                              <Input
+                                                  placeholder="1 ação"
+                                                  value={spell.castingTime}
+                                                  onChange={e => updateSpell(idx, { castingTime: e.target.value })}
+                                                  className="mt-1 h-9 text-sm"
+                                              />
+                                            </div>
+                                            <div>
+                                              <Label className="text-sm text-muted-foreground">Alcance</Label>
+                                              <Input
+                                                  placeholder="30 pés"
+                                                  value={spell.range}
+                                                  onChange={e => updateSpell(idx, { range: e.target.value })}
+                                                  className="mt-1 h-9 text-sm"
+                                              />
+                                            </div>
 
-                                        <div className="flex items-center gap-4">
-                                          {/* checkbox h-3.5 w-3.5 → h-4 w-4, span text-xs → text-sm */}
-                                          <label className="flex cursor-pointer items-center gap-1.5 text-sm text-muted-foreground">
-                                            <Checkbox
-                                                checked={spell.concentration}
-                                                onCheckedChange={c => updateSpell(idx, { concentration: !!c })}
-                                                className="h-4 w-4"
-                                            />
-                                            Concentração
-                                          </label>
-                                          <label className="flex cursor-pointer items-center gap-1.5 text-sm text-muted-foreground">
-                                            <Checkbox
-                                                checked={spell.ritual}
-                                                onCheckedChange={c => updateSpell(idx, { ritual: !!c })}
-                                                className="h-4 w-4"
-                                            />
-                                            Ritual
-                                          </label>
-                                        </div>
+                                            <div className="col-span-2">
+                                              <Label className="text-sm text-muted-foreground">
+                                                Notas / Material
+                                              </Label>
+                                              <Input
+                                                  placeholder="Componentes, observações…"
+                                                  value={spell.notes}
+                                                  onChange={e => updateSpell(idx, { notes: e.target.value })}
+                                                  className="mt-1 h-9 text-sm"
+                                              />
+                                            </div>
 
-                                        <div className="flex justify-end">
-                                          <Button
-                                              variant="ghost"
-                                              size="sm"
-                                              className="h-8 gap-1 text-sm text-muted-foreground hover:text-destructive"
-                                              onClick={() => removeSpell(idx)}
-                                          >
-                                            <Trash2 className="h-4 w-4" /> Remover
-                                          </Button>
-                                        </div>
+                                            <div className="flex items-center gap-4">
+                                              <label className="flex cursor-pointer items-center gap-1.5 text-sm text-muted-foreground">
+                                                <Checkbox
+                                                    checked={spell.concentration}
+                                                    onCheckedChange={c => updateSpell(idx, { concentration: !!c })}
+                                                    className="h-4 w-4"
+                                                />
+                                                Concentração
+                                              </label>
+                                              <label className="flex cursor-pointer items-center gap-1.5 text-sm text-muted-foreground">
+                                                <Checkbox
+                                                    checked={spell.ritual}
+                                                    onCheckedChange={c => updateSpell(idx, { ritual: !!c })}
+                                                    className="h-4 w-4"
+                                                />
+                                                Ritual
+                                              </label>
+                                            </div>
+
+                                            <div className="flex justify-end">
+                                              <Button
+                                                  variant="ghost"
+                                                  size="sm"
+                                                  className="h-8 gap-1 text-sm text-muted-foreground hover:text-destructive"
+                                                  onClick={() => removeSpell(idx)}
+                                              >
+                                                <Trash2 className="h-4 w-4" /> Remover
+                                              </Button>
+                                            </div>
+                                          </div>
+                                        )}
                                       </div>
+
+                                      {/* ── Desktop: single-row grid ── */}
                                       <div className="hidden md:grid md:grid-cols-[80px_1fr_96px_96px_auto_auto_1fr_36px] gap-1.5 items-center">
                                         <Select
                                             value={String(spell.level)}
@@ -317,7 +344,6 @@ export function SpellcastingSection({ sheet, onChange }: Props) {
                                               onCheckedChange={c => updateSpell(idx, { concentration: !!c })}
                                               className="h-4 w-4"
                                           />
-                                          {/* text-[10px] → text-xs */}
                                           <span className="text-xs text-muted-foreground">C</span>
                                         </div>
                                         <div className="flex items-center gap-1">

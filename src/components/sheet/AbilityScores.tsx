@@ -11,6 +11,7 @@ import {HelpCircle} from 'lucide-react';
 interface Props {
     sheet: CharacterSheet;
     onChange: (patch: Partial<CharacterSheet>) => void;
+    onBlur?: () => void;
 }
 
 const ABILITY_KEYS: AbilityKey[] = [
@@ -18,7 +19,7 @@ const ABILITY_KEYS: AbilityKey[] = [
     'intelligence', 'wisdom', 'charisma',
 ];
 
-export function AbilityScores({sheet, onChange}: Props) {
+export function AbilityScores({sheet, onChange, onBlur}: Props) {
     const profBonus = getEffectiveProficiencyBonus(sheet);
 
     const handleValue = (key: AbilityKey, value: number) => {
@@ -59,7 +60,7 @@ export function AbilityScores({sheet, onChange}: Props) {
                 </CardTitle>
             </CardHeader>
 
-            <CardContent className="space-y-2 px-4 pb-4">
+            <CardContent className="space-y-2 px-4 pb-4" onBlur={onBlur}>
                 {ABILITY_KEYS.map(key => {
                     const mod = getModifier(sheet.abilities[key].value);
                     const stBonus = sheet.bonuses?.savingThrows?.[key] ?? 0;

@@ -1,23 +1,38 @@
+import { useState } from 'react';
 import type { CharacterSheet, Weapon } from '@/types/character';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
-import { Plus, Trash2 } from 'lucide-react';
+import { ChevronDown, Plus, Trash2 } from 'lucide-react';
 
 interface Props {
   sheet: CharacterSheet;
   onChange: (patch: Partial<CharacterSheet>) => void;
+  onBlur?: () => void;
 }
 
-export function WeaponsTable({ sheet, onChange }: Props) {
+export function WeaponsTable({ sheet, onChange, onBlur }: Props) {
+  const [expandedIds, setExpandedIds] = useState<Set<string>>(new Set());
+
+  const toggleExpanded = (id: string) => {
+    setExpandedIds(prev => {
+      const next = new Set(prev);
+      if (next.has(id)) next.delete(id);
+      else next.add(id);
+      return next;
+    });
+  };
+
   const addWeapon = () => {
+    const newId = crypto.randomUUID();
     onChange({
       weapons: [
         ...sheet.weapons,
-        { id: crypto.randomUUID(), name: '', attackBonus: '', damage: '', damageType: '', notes: '' },
+        { id: newId, name: '', attackBonus: '', damage: '', damageType: '', notes: '' },
       ],
     });
+    setExpandedIds(prev => new Set(prev).add(newId));
   };
 
   const updateWeapon = (idx: number, patch: Partial<Weapon>) => {
@@ -39,7 +54,7 @@ export function WeaponsTable({ sheet, onChange }: Props) {
           </Button>
         </CardHeader>
 
-        <CardContent className="px-4 pb-4">
+        <CardContent className="px-4 pb-4" onBlur={onBlur}>
           {sheet.weapons.length === 0 ? (
               <p className="py-4 text-center text-sm text-muted-foreground">Nenhuma arma adicionada.</p>
           ) : (
@@ -54,64 +69,81 @@ export function WeaponsTable({ sheet, onChange }: Props) {
                   <span />
                 </div>
 
-                {sheet.weapons.map((w, i) => (
+                {sheet.weapons.map((w, i) => {
+                  const isExpanded = expandedIds.has(w.id);
+                  return (
                     <div key={w.id} className="relative rounded-md border border-border/40 p-3 md:border-0 md:p-0">
 
-                      {/* ── Mobile: labeled 2-col card ── */}
-                      <div className="grid grid-cols-2 gap-2 md:hidden">
-                        <div className="col-span-2">
-                          <Label className="text-sm text-muted-foreground">Nome</Label>
-                          <Input
-                              placeholder="Nome da Arma"
-                              value={w.name}
-                              onChange={e => updateWeapon(i, { name: e.target.value })}
-                              className="mt-1 h-10 text-sm"
-                          />
-                        </div>
-                        <div>
-                          <Label className="text-sm text-muted-foreground">+Atq / CD</Label>
-                          <Input
-                              placeholder="+5 / CD 13"
-                              value={w.attackBonus}
-                              onChange={e => updateWeapon(i, { attackBonus: e.target.value })}
-                              className="mt-1 h-10 text-sm"
-                          />
-                        </div>
-                        <div>
-                          <Label className="text-sm text-muted-foreground">Dano</Label>
-                          <Input
-                              placeholder="1d8+3"
-                              value={w.damage}
-                              onChange={e => updateWeapon(i, { damage: e.target.value })}
-                              className="mt-1 h-10 text-sm"
-                          />
-                        </div>
-                        <div>
-                          <Label className="text-sm text-muted-foreground">Tipo</Label>
-                          <Input
-                              placeholder="Cortante"
-                              value={w.damageType}
-                              onChange={e => updateWeapon(i, { damageType: e.target.value })}
-                              className="mt-1 h-10 text-sm"
-                          />
-                        </div>
-                        <div>
-                          <Label className="text-sm text-muted-foreground">Notas</Label>
-                          <Input
-                              placeholder="Propriedades…"
-                              value={w.notes}
-                              onChange={e => updateWeapon(i, { notes: e.target.value })}
-                              className="mt-1 h-10 text-sm"
-                          />
-                        </div>
-                        <Button
-                            variant="ghost"
-                            size="sm"
-                            className="col-span-2 h-8 text-sm text-muted-foreground hover:text-destructive justify-start gap-1"
-                            onClick={() => removeWeapon(i)}
+                      {/* ── Mobile: collapsible card ── */}
+                      <div className="md:hidden">
+                        <button
+                          type="button"
+                          onClick={() => toggleExpanded(w.id)}
+                          className="flex w-full items-center justify-between rounded-md px-1 py-1 text-left text-sm hover:bg-primary/5 transition-colors"
                         >
-                          <Trash2 className="h-4 w-4" /> Remover
-                        </Button>
+                          <span className="font-medium text-foreground truncate">
+                            {w.name || 'Nova arma'}
+                          </span>
+                          <ChevronDown className={`h-4 w-4 shrink-0 text-muted-foreground transition-transform duration-200 ${isExpanded ? 'rotate-180' : ''}`} />
+                        </button>
+
+                        {isExpanded && (
+                          <div className="grid grid-cols-2 gap-2 mt-2">
+                            <div className="col-span-2">
+                              <Label className="text-sm text-muted-foreground">Nome</Label>
+                              <Input
+                                  placeholder="Nome da Arma"
+                                  value={w.name}
+                                  onChange={e => updateWeapon(i, { name: e.target.value })}
+                                  className="mt-1 h-10 text-sm"
+                              />
+                            </div>
+                            <div>
+                              <Label className="text-sm text-muted-foreground">+Atq / CD</Label>
+                              <Input
+                                  placeholder="+5 / CD 13"
+                                  value={w.attackBonus}
+                                  onChange={e => updateWeapon(i, { attackBonus: e.target.value })}
+                                  className="mt-1 h-10 text-sm"
+                              />
+                            </div>
+                            <div>
+                              <Label className="text-sm text-muted-foreground">Dano</Label>
+                              <Input
+                                  placeholder="1d8+3"
+                                  value={w.damage}
+                                  onChange={e => updateWeapon(i, { damage: e.target.value })}
+                                  className="mt-1 h-10 text-sm"
+                              />
+                            </div>
+                            <div>
+                              <Label className="text-sm text-muted-foreground">Tipo</Label>
+                              <Input
+                                  placeholder="Cortante"
+                                  value={w.damageType}
+                                  onChange={e => updateWeapon(i, { damageType: e.target.value })}
+                                  className="mt-1 h-10 text-sm"
+                              />
+                            </div>
+                            <div>
+                              <Label className="text-sm text-muted-foreground">Notas</Label>
+                              <Input
+                                  placeholder="Propriedades…"
+                                  value={w.notes}
+                                  onChange={e => updateWeapon(i, { notes: e.target.value })}
+                                  className="mt-1 h-10 text-sm"
+                              />
+                            </div>
+                            <Button
+                                variant="ghost"
+                                size="sm"
+                                className="col-span-2 h-8 text-sm text-muted-foreground hover:text-destructive justify-start gap-1"
+                                onClick={() => removeWeapon(i)}
+                            >
+                              <Trash2 className="h-4 w-4" /> Remover
+                            </Button>
+                          </div>
+                        )}
                       </div>
 
                       {/* ── Desktop: single-row grid ── */}
@@ -157,7 +189,8 @@ export function WeaponsTable({ sheet, onChange }: Props) {
                       </div>
 
                     </div>
-                ))}
+                  );
+                })}
               </div>
           )}
         </CardContent>

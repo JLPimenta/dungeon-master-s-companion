@@ -9,9 +9,10 @@ import { getInitiativeBonus, formatModifier } from '@/utils/calculations';
 interface Props {
   sheet: CharacterSheet;
   onChange: (patch: Partial<CharacterSheet>) => void;
+  onBlur?: () => void;
 }
 
-export function CombatSection({ sheet, onChange }: Props) {
+export function CombatSection({ sheet, onChange, onBlur }: Props) {
   // getInitiativeBonus já soma sheet.bonuses?.initiative internamente
   const initTotal = getInitiativeBonus(sheet);
   const initBonus = sheet.bonuses?.initiative ?? 0;
@@ -29,7 +30,7 @@ export function CombatSection({ sheet, onChange }: Props) {
         <CardHeader className="pb-3 pt-4 px-4">
           <CardTitle className="text-lg text-primary">Informações Gerais</CardTitle>
         </CardHeader>
-        <CardContent className="px-4 pb-4">
+        <CardContent className="px-4 pb-4" onBlur={onBlur}>
 
           <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
             <div>

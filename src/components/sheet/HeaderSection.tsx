@@ -11,9 +11,10 @@ import { BonusInput } from '@/components/ui/bonus-input';
 interface Props {
   sheet: CharacterSheet;
   onChange: (patch: Partial<CharacterSheet>) => void;
+  onBlur?: () => void;
 }
 
-export function HeaderSection({ sheet, onChange }: Props) {
+export function HeaderSection({ sheet, onChange, onBlur }: Props) {
   const profBonus = getEffectiveProficiencyBonus(sheet);
   const profBonusExtra = sheet.bonuses?.proficiencyBonus ?? 0;
   const [isOpen, setIsOpen] = useState(true);
@@ -91,7 +92,7 @@ export function HeaderSection({ sheet, onChange }: Props) {
                   </div>
               )}
 
-              <div className="grid grid-cols-2 gap-3 sm:grid-cols-4 lg:grid-cols-7">
+              <div className="grid grid-cols-2 gap-3 sm:grid-cols-4 lg:grid-cols-7" onBlur={onBlur}>
 
                 {/* Nome */}
                 <div className="col-span-2 lg:col-span-2">

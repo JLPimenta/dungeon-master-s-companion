@@ -6,20 +6,19 @@ import {Button} from '@/components/ui/button';
 import {Label} from '@/components/ui/label';
 import {ChevronDown, ChevronUp, Plus, Trash2} from 'lucide-react';
 import {getAttunementSlots, getEffectiveProficiencyBonus} from '@/utils/calculations';
-import {useIsMobile} from '@/hooks/use-mobile';
 
 interface Props {
     sheet: CharacterSheet;
     onChange: (patch: Partial<CharacterSheet>) => void;
+    onBlur?: () => void;
 }
 
 const COIN_LABELS: Record<keyof Coins, string> = {
     cp: 'PC', sp: 'PP', ep: 'PE', gp: 'PO', pp: 'PL',
 };
 
-export function InventorySection({sheet, onChange}: Props) {
-    const isMobile = useIsMobile();
-    const [collapsed, setCollapsed] = useState(isMobile);
+export function InventorySection({sheet, onChange, onBlur}: Props) {
+    const [collapsed, setCollapsed] = useState(false);
     const profBonus = getEffectiveProficiencyBonus(sheet)
     const maxAttune = getAttunementSlots(profBonus);
 
@@ -74,14 +73,14 @@ export function InventorySection({sheet, onChange}: Props) {
                     className="flex w-full items-center justify-between"
                 >
                     <CardTitle className="text-lg text-primary">Inventário</CardTitle>
-                    <span className="text-muted-foreground md:hidden">
+                    <span className="text-muted-foreground">
                         {collapsed ? <ChevronDown className="h-4 w-4"/> : <ChevronUp className="h-4 w-4"/>}
                     </span>
                 </button>
             </CardHeader>
 
-            {(!collapsed || !isMobile) && (
-            <CardContent className="space-y-6 px-4 pb-4">
+            {!collapsed && (
+            <CardContent className="space-y-6 px-4 pb-4" onBlur={onBlur}>
 
                 {/* ════════════════════════════ Equipment ════════════════════════════ */}
                 <section>

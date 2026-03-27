@@ -13,6 +13,7 @@ import {
 interface Props {
   sheet: CharacterSheet;
   onChange: (patch: Partial<CharacterSheet>) => void;
+  onBlur?: () => void;
 }
 
 const ABILITY_ORDER: AbilityKey[] = [
@@ -20,7 +21,7 @@ const ABILITY_ORDER: AbilityKey[] = [
   'intelligence', 'wisdom', 'charisma',
 ];
 
-export function SkillsSection({ sheet, onChange }: Props) {
+export function SkillsSection({ sheet, onChange, onBlur }: Props) {
   const profBonus = getEffectiveProficiencyBonus(sheet);
 
   const perceptionSkill = sheet.skills.find(s => s.name === 'Percepção');
@@ -66,7 +67,7 @@ export function SkillsSection({ sheet, onChange }: Props) {
           <span className="text-xs text-muted-foreground">Percepção Passiva: {passivePerc}</span>
         </CardHeader>
 
-        <CardContent className="px-4 pb-4 text-sm">
+        <CardContent className="px-4 pb-4 text-sm" onBlur={onBlur}>
           {groups.map((group, gi) => (
               <div
                   key={group.key}

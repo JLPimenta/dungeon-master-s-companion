@@ -48,17 +48,22 @@ export default function CharacterSheetPage() {
     const debounceRef = useRef<ReturnType<typeof setTimeout>>();
     const isDirtyRef = useRef(false);
     const pendingRef = useRef(false);
+    const needsResaveRef = useRef(false);
+    const localRef = useRef<CharacterSheetType | null>(null);
     const lastSavedRef = useRef<CharacterSheetType | null>(null);
     const savedTimerRef = useRef<ReturnType<typeof setTimeout>>();
 
     useEffect(() => {
-        if (sheet && !isDirtyRef.current) setLocal(sheet);
+        if (sheet && !isDirtyRef.current && !pendingRef.current && !needsResaveRef.current) {
+            setLocal(sheet);
+            localRef.current = sheet;
+        }
     }, [sheet]);
 
     // Warn before unloading while a save is in-flight
     useEffect(() => {
         const handler = (e: BeforeUnloadEvent) => {
-            if (pendingRef.current) {
+            if (pendingRef.current || isDirtyRef.current) {
                 e.preventDefault();
             }
         };
@@ -66,38 +71,62 @@ export default function CharacterSheetPage() {
         return () => window.removeEventListener('beforeunload', handler);
     }, []);
 
+    const flush = useCallback(() => {
+        const data = localRef.current;
+        if (!data) return;
+
+        // Dirty-check: skip if nothing changed since last save
+        if (lastSavedRef.current && JSON.stringify(data) === JSON.stringify(lastSavedRef.current)) {
+            isDirtyRef.current = false;
+            return;
+        }
+
+        if (pendingRef.current) {
+            needsResaveRef.current = true;
+            return;
+        }
+
+        pendingRef.current = true;
+        needsResaveRef.current = false;
+        setSaveStatus('saving');
+
+        saveMutation.mutate(data, {
+            onSuccess: () => {
+                lastSavedRef.current = data;
+                setSaveStatus('saved');
+                clearTimeout(savedTimerRef.current);
+                savedTimerRef.current = setTimeout(() => setSaveStatus('idle'), 5000);
+            },
+            onSettled: () => {
+                pendingRef.current = false;
+                isDirtyRef.current = false;
+                if (needsResaveRef.current) flush();
+            },
+            onError: (err) => {
+                toast.error(`Erro ao salvar: ${err.message}`);
+                setSaveStatus('idle');
+            }
+        });
+    }, [saveMutation]);
+
     const update = useCallback((patch: Partial<CharacterSheetType>) => {
         isDirtyRef.current = true;
         setLocal(prev => {
             if (!prev) return prev;
             const next = {...prev, ...patch};
+            localRef.current = next;
             clearTimeout(debounceRef.current);
-            debounceRef.current = setTimeout(() => {
-                if (!pendingRef.current) {
-                    pendingRef.current = true;
-                    setSaveStatus('saving');
-                    saveMutation.mutate(next, {
-                        onSuccess: () => {
-                            lastSavedRef.current = next;
-                            isDirtyRef.current = false;
-                            setSaveStatus('saved');
-                            clearTimeout(savedTimerRef.current);
-                            savedTimerRef.current = setTimeout(() => setSaveStatus('idle'), 5000);
-                        },
-                        onSettled: () => {
-                            pendingRef.current = false;
-                        },
-                        onError: (err) => {
-                            toast.error(`Erro ao salvar: ${err.message}`);
-                            setSaveStatus('idle');
-                            if (lastSavedRef.current) setLocal(lastSavedRef.current);
-                        }
-                    });
-                }
-            }, 2500);
+            debounceRef.current = setTimeout(() => flush(), 10000);
             return next;
         });
-    }, [saveMutation]);
+    }, [flush]);
+
+    const handleBlur = useCallback(() => {
+        if (isDirtyRef.current) {
+            clearTimeout(debounceRef.current);
+            flush();
+        }
+    }, [flush]);
 
     const toggleFullscreen = async () => {
         if (!document.fullscreenElement) {
@@ -155,28 +184,28 @@ export default function CharacterSheetPage() {
 
             {/* Sheet content */}
             <div className="mx-auto max-w-6xl space-y-6">
-                <HeaderSection sheet={local} onChange={update}/>
+                <HeaderSection sheet={local} onChange={update} onBlur={handleBlur}/>
 
                 <div className="grid grid-cols-1 gap-6 lg:grid-cols-[280px_1fr]">
                     {/* Left column */}
                     <div className="space-y-6">
-                        <AbilityScores sheet={local} onChange={update}/>
-                        <SkillsSection sheet={local} onChange={update}/>
+                        <AbilityScores sheet={local} onChange={update} onBlur={handleBlur}/>
+                        <SkillsSection sheet={local} onChange={update} onBlur={handleBlur}/>
                     </div>
 
                     {/* Right column */}
                     <div className="space-y-6">
-                        <CombatSection sheet={local} onChange={update}/>
-                        <WeaponsTable sheet={local} onChange={update}/>
-                        <FeaturesTraits sheet={local} onChange={update}/>
+                        <CombatSection sheet={local} onChange={update} onBlur={handleBlur}/>
+                        <WeaponsTable sheet={local} onChange={update} onBlur={handleBlur}/>
+                        <FeaturesTraits sheet={local} onChange={update} onBlur={handleBlur}/>
                     </div>
                 </div>
 
-                <SpellcastingSection sheet={local} onChange={update}/>
-                <InventorySection sheet={local} onChange={update}/>
-                <PersonalitySection sheet={local} onChange={update}/>
-                <CampaignNotes sheet={local} onChange={update}/>
-                <CustomFields sheet={local} onChange={update}/>
+                <SpellcastingSection sheet={local} onChange={update} onBlur={handleBlur}/>
+                <InventorySection sheet={local} onChange={update} onBlur={handleBlur}/>
+                <PersonalitySection sheet={local} onChange={update} onBlur={handleBlur}/>
+                <CampaignNotes sheet={local} onChange={update} onBlur={handleBlur}/>
+                <CustomFields sheet={local} onChange={update} onBlur={handleBlur}/>
             </div>
         </div>
     );
