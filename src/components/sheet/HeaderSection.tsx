@@ -98,6 +98,7 @@ export function HeaderSection({ sheet, onChange, onBlur }: Props) {
                 <div className="col-span-2 lg:col-span-2">
                   <Label className="text-sm text-muted-foreground">Nome</Label>
                   <Input
+                      maxLength={255}
                       value={sheet.name}
                       onChange={e => onChange({ name: e.target.value })}
                       className="mt-1 text-lg font-semibold"
@@ -108,7 +109,7 @@ export function HeaderSection({ sheet, onChange, onBlur }: Props) {
                 {/* Classe */}
                 <div className="col-span-1 lg:col-span-1">
                   <Label className="text-sm text-muted-foreground">Classe</Label>
-                  <Input value={sheet.class} onChange={e => onChange({ class: e.target.value })} className="mt-1 text-sm" />
+                  <Input maxLength={100} value={sheet.class} onChange={e => onChange({ class: e.target.value })} className="mt-1 text-sm" />
                 </div>
 
                 {/* Nível */}

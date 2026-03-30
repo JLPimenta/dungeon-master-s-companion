@@ -130,8 +130,19 @@ export default function CharacterSheetPage() {
                 if (needsResaveRef.current) flush();
             },
             onError: (err) => {
-                toast.error(`Erro ao salvar: ${err.message}`);
-                setSaveStatus('idle');
+                const isUserError = err.message.toLowerCase().includes('texto')
+                    || err.message.toLowerCase().includes('limite');
+
+                toast.error(err.message, {
+                    duration: isUserError ? 8000 : 4000,
+                    description: isUserError
+                        ? 'Verifique os campos de Personalidade, Traços de Espécie e Talentos.'
+                        : undefined,
+                });
+
+                if (!isUserError && lastSavedRef.current) {
+                    setLocal(lastSavedRef.current);
+                }
             }
         });
     }, [saveMutation]);

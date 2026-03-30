@@ -77,12 +77,12 @@ export function FeaturesTraits({ sheet, onChange, onBlur }: Props) {
 
           <div>
             <Label className="text-sm text-muted-foreground">Traços de Espécie</Label>
-            <Textarea value={sheet.speciesTraits} onChange={e => onChange({ speciesTraits: e.target.value })} className="mt-1 min-h-[60px] text-sm" />
+            <Textarea maxLength={5_000} value={sheet.speciesTraits} onChange={e => onChange({ speciesTraits: e.target.value })} className="mt-1 min-h-[60px] text-sm" />
           </div>
 
           <div>
             <Label className="text-sm text-muted-foreground">Talentos</Label>
-            <Textarea value={sheet.feats} onChange={e => onChange({ feats: e.target.value })} className="mt-1 min-h-[60px] text-sm" />
+            <Textarea maxLength={5_000} value={sheet.feats} onChange={e => onChange({ feats: e.target.value })} className="mt-1 min-h-[60px] text-sm" />
           </div>
 
           <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
