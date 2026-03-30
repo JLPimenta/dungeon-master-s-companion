@@ -18,7 +18,7 @@ const COIN_LABELS: Record<keyof Coins, string> = {
 };
 
 export function InventorySection({sheet, onChange, onBlur}: Props) {
-    const [collapsed, setCollapsed] = useState(false);
+    const [collapsed, setCollapsed] = useState(true);
     const [expandedIds, setExpandedIds] = useState<Set<string>>(new Set());
     const profBonus = getEffectiveProficiencyBonus(sheet)
     const maxAttune = getAttunementSlots(profBonus);

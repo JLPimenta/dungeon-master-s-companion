@@ -22,7 +22,7 @@ const CATEGORIES = [
 
 export function CampaignNotes({ sheet, onChange, onBlur }: Props) {
   const [filter, setFilter] = useState<string>('all');
-  const [collapsed, setCollapsed] = useState(false);
+  const [collapsed, setCollapsed] = useState(true);
   const [expandedIds, setExpandedIds] = useState<Set<string>>(new Set());
 
   const addNote = () => {
@@ -91,8 +91,8 @@ export function CampaignNotes({ sheet, onChange, onBlur }: Props) {
               return (
                 <div key={note.id} className="rounded-md border border-border/50 md:p-3 p-1 space-y-2">
                   
-                  {/* MOBILE VIEW */}
-                  <div className="md:hidden">
+                  {/* UNIFIED COLLAPSIBLE VIEW */}
+                  <div>
                     <button
                       type="button"
                       onClick={() => toggleExpanded(note.id)}
@@ -118,25 +118,11 @@ export function CampaignNotes({ sheet, onChange, onBlur }: Props) {
                             <Trash2 className="h-4 w-4" />
                           </Button>
                         </div>
-                        <Textarea value={note.content} onChange={e => updateNote(idx, { content: e.target.value })} placeholder="Conteúdo…" className="min-h-[60px] text-sm" />
+                        <Textarea maxLength={5_000} value={note.content} onChange={e => updateNote(idx, { content: e.target.value })} placeholder="Conteúdo…" className="min-h-[60px] text-sm" />
                       </div>
                     )}
                   </div>
 
-                  {/* DESKTOP VIEW */}
-                  <div className="hidden md:block">
-                    <div className="flex gap-2 items-center mb-2">
-                      <Select value={note.category} onValueChange={v => updateNote(idx, { category: v as CampaignNote['category'] })}>
-                        <SelectTrigger className="h-9 w-28 text-sm"><SelectValue /></SelectTrigger>
-                        <SelectContent>{CATEGORIES.map(c => <SelectItem key={c.value} value={c.value}>{c.label}</SelectItem>)}</SelectContent>
-                      </Select>
-                      <Input placeholder="Título" value={note.title} onChange={e => updateNote(idx, { title: e.target.value })} className="h-9 text-sm" />
-                      <Button variant="ghost" size="icon" className="h-9 w-9 shrink-0 text-muted-foreground hover:text-destructive" onClick={() => removeNote(idx)}>
-                        <Trash2 className="h-4 w-4" />
-                      </Button>
-                    </div>
-                    <Textarea value={note.content} onChange={e => updateNote(idx, { content: e.target.value })} placeholder="Conteúdo…" className="min-h-[60px] text-sm" />
-                  </div>
                 </div>
               );
             })

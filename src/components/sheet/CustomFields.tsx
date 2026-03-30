@@ -13,7 +13,7 @@ interface Props {
 }
 
 export function CustomFields({ sheet, onChange, onBlur }: Props) {
-  const [collapsed, setCollapsed] = useState(false);
+  const [collapsed, setCollapsed] = useState(true);
   const [expandedIds, setExpandedIds] = useState<Set<string>>(new Set());
 
   const addField = () => {
@@ -73,10 +73,10 @@ export function CustomFields({ sheet, onChange, onBlur }: Props) {
             sheet.customFields.map((field, i) => {
               const isExpanded = expandedIds.has(field.id);
               return (
-                <div key={field.id} className="rounded-md border border-border/40 p-3 md:border-0 md:p-0">
+                <div key={field.id} className="rounded-md border border-border/40 p-1 md:p-3">
                   
-                  {/* MOBILE VIEW */}
-                  <div className="md:hidden">
+                  {/* UNIFIED COLLAPSIBLE VIEW */}
+                  <div>
                     <button
                       type="button"
                       onClick={() => toggleExpanded(field.id)}
@@ -115,31 +115,6 @@ export function CustomFields({ sheet, onChange, onBlur }: Props) {
                     )}
                   </div>
 
-                  {/* DESKTOP VIEW */}
-                  <div className="hidden md:block rounded-md border border-border/40 p-3">
-                    <div className="mb-2 flex items-center gap-2">
-                      <Input
-                        placeholder="Nome do campo"
-                        value={field.label}
-                        onChange={e => updateField(i, { label: e.target.value })}
-                        className="h-9 text-sm"
-                      />
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        className="h-9 w-9 shrink-0 text-muted-foreground hover:text-destructive"
-                        onClick={() => removeField(i)}
-                      >
-                        <Trash2 className="h-4 w-4" />
-                      </Button>
-                    </div>
-                    <Textarea
-                      placeholder="Valor"
-                      value={field.value}
-                      onChange={e => updateField(i, { value: e.target.value })}
-                      className="min-h-[72px] resize-y text-sm"
-                    />
-                  </div>
                 </div>
               );
             })
