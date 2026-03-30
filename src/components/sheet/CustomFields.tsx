@@ -49,7 +49,7 @@ export function CustomFields({ sheet, onChange, onBlur }: Props) {
           onClick={() => setCollapsed(c => !c)}
           className="flex w-full items-center justify-between"
         >
-          <CardTitle className="text-lg text-primary">Campos Personalizáveis</CardTitle>
+          <CardTitle className="text-lg text-primary">viteCampos Personalizáveis</CardTitle>
           <span className="text-muted-foreground">
             {collapsed ? <ChevronDown className="h-4 w-4" /> : <ChevronUp className="h-4 w-4" />}
           </span>

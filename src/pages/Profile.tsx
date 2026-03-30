@@ -9,6 +9,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
 import { PasswordStrengthIndicator, isPasswordStrong } from '@/components/auth/PasswordStrengthIndicator';
 import { LogoutDialog } from '@/components/auth/LogoutDialog';
+import { useTheme } from 'next-themes';
 
 import {
   AlertDialog,
@@ -21,9 +22,10 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from '@/components/ui/alert-dialog';
-import { ArrowLeft, Trash2 } from 'lucide-react';
+import { ArrowLeft, Trash2, Laptop, Moon, Sun } from 'lucide-react';
 
 export default function Profile() {
+  const { theme, setTheme } = useTheme();
   const { user, updateProfile, changePassword, deleteAccount } = useAuth();
   const navigate = useNavigate();
   const { toast } = useToast();
@@ -180,6 +182,45 @@ export default function Profile() {
                 {changingPassword ? 'Alterando...' : 'Alterar Senha'}
               </Button>
             </form>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-lg">Configurações</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-4">
+              <div className="space-y-3">
+                <Label>Tema Visual</Label>
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                  <Button
+                    type="button"
+                    variant={theme === 'light' ? 'default' : 'outline'}
+                    className="w-full gap-2"
+                    onClick={() => setTheme('light')}
+                  >
+                    <Sun className="h-4 w-4" /> Claro
+                  </Button>
+                  <Button
+                    type="button"
+                    variant={theme === 'dark' ? 'default' : 'outline'}
+                    className="w-full gap-2"
+                    onClick={() => setTheme('dark')}
+                  >
+                    <Moon className="h-4 w-4" /> Escuro
+                  </Button>
+                  <Button
+                    type="button"
+                    variant={theme === 'system' ? 'default' : 'outline'}
+                    className="w-full gap-2"
+                    onClick={() => setTheme('system')}
+                  >
+                    <Laptop className="h-4 w-4" /> Sistema
+                  </Button>
+                </div>
+              </div>
+            </div>
           </CardContent>
         </Card>
 

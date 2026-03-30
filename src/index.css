@@ -7,6 +7,52 @@
 
 @layer base {
   :root {
+    /* MODO CLARO (Pergaminho/Fantasia) */
+    --background: 42 35% 94%;
+    --foreground: 220 20% 18%;
+
+    --card: 42 30% 98%;
+    --card-foreground: 220 20% 18%;
+
+    --popover: 42 30% 98%;
+    --popover-foreground: 220 20% 18%;
+
+    --primary: 43 74% 45%;
+    --primary-foreground: 40 30% 98%;
+
+    --secondary: 42 20% 88%;
+    --secondary-foreground: 220 20% 18%;
+
+    --muted: 42 20% 88%;
+    --muted-foreground: 220 15% 45%;
+
+    --accent: 43 74% 45%;
+    --accent-foreground: 40 30% 98%;
+
+    --destructive: 0 70% 50%;
+    --destructive-foreground: 40 20% 98%;
+
+    --border: 42 25% 82%;
+    --input: 42 25% 85%;
+    --ring: 43 74% 45%;
+
+    --radius: 0.375rem;
+
+    --sidebar-background: 42 30% 92%;
+    --sidebar-foreground: 220 20% 18%;
+    --sidebar-primary: 43 74% 45%;
+    --sidebar-primary-foreground: 40 30% 98%;
+    --sidebar-accent: 42 20% 86%;
+    --sidebar-accent-foreground: 220 20% 18%;
+    --sidebar-border: 42 20% 80%;
+    --sidebar-ring: 43 74% 45%;
+
+    --font-heading: 'Cinzel', serif;
+    --font-body: 'Crimson Text', serif;
+  }
+
+  .dark {
+    /* MODO ESCURO (Original) */
     --background: 220 20% 10%;
     --foreground: 40 20% 82%;
 
@@ -35,8 +81,6 @@
     --input: 220 14% 20%;
     --ring: 43 74% 49%;
 
-    --radius: 0.375rem;
-
     --sidebar-background: 220 20% 8%;
     --sidebar-foreground: 40 20% 82%;
     --sidebar-primary: 43 74% 49%;
@@ -45,9 +89,6 @@
     --sidebar-accent-foreground: 40 20% 82%;
     --sidebar-border: 43 30% 20%;
     --sidebar-ring: 43 74% 49%;
-
-    --font-heading: 'Cinzel', serif;
-    --font-body: 'Crimson Text', serif;
   }
 }
 

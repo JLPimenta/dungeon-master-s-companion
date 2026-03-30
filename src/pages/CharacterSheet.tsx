@@ -37,6 +37,25 @@ function SaveIndicator({status}: {status: SaveStatus}) {
     );
 }
 
+export function FloatingSaveIndicator({ status }: { status: SaveStatus }) {
+    if (status === 'idle') return null;
+    return (
+        <div className="fixed z-50 flex items-center gap-2 rounded-full border border-border/50 bg-background/95 px-4 py-2 text-sm shadow-lg backdrop-blur animate-in fade-in slide-in-from-bottom-5 bottom-6 left-1/2 -translate-x-1/2 md:bottom-8 md:right-8 md:left-auto md:translate-x-0">
+            {status === 'saving' ? (
+                <>
+                    <Loader2 className="h-4 w-4 animate-spin text-primary" />
+                    <span className="text-primary font-medium tracking-wide">Salvando...</span>
+                </>
+            ) : (
+                <>
+                    <Check className="h-4 w-4 text-green-500" />
+                    <span className="text-green-500 font-medium tracking-wide">Salvo!</span>
+                </>
+            )}
+        </div>
+    );
+}
+
 function deepEqual(obj1: any, obj2: any): boolean {
     if (obj1 === obj2) return true;
     if (typeof obj1 !== 'object' || typeof obj2 !== 'object' || obj1 == null || obj2 == null) return false;
@@ -76,6 +95,13 @@ export default function CharacterSheetPage() {
     const localRef = useRef<CharacterSheetType | null>(null);
     const lastSavedRef = useRef<CharacterSheetType | null>(null);
     const savedTimerRef = useRef<ReturnType<typeof setTimeout>>();
+    const [scrolled, setScrolled] = useState(false);
+
+    useEffect(() => {
+        const handleScroll = () => setScrolled(window.scrollY > 80);
+        window.addEventListener('scroll', handleScroll, { passive: true });
+        return () => window.removeEventListener('scroll', handleScroll);
+    }, []);
 
     useEffect(() => {
         if (sheet && !isDirtyRef.current && !pendingRef.current && !needsResaveRef.current) {
@@ -247,6 +273,8 @@ export default function CharacterSheetPage() {
                 <CampaignNotes sheet={local} onChange={update} onBlur={handleBlur}/>
                 <CustomFields sheet={local} onChange={update} onBlur={handleBlur}/>
             </div>
+
+            {scrolled && <FloatingSaveIndicator status={saveStatus} />}
         </div>
     );
 }
