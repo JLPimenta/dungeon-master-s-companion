@@ -49,9 +49,9 @@ export default function Login() {
     }
   };
 
-  const handleGoogleSuccess = async (credential: string) => {
+  const handleGoogleSuccess = async (credential: string, nonce: string | null) => {
     try {
-      await loginWithGoogle(credential);
+      await loginWithGoogle(credential, undefined, nonce);
       navigate('/');
     } catch (err: any) {
       if (err.message && err.message.toLowerCase().includes('termos')) {

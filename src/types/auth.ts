@@ -1,3 +1,13 @@
+export interface UserPreferences {
+  autoSave: boolean;
+  theme: 'light' | 'dark' | 'system';
+}
+
+export const DEFAULT_PREFERENCES: UserPreferences = {
+  autoSave: false,
+  theme: 'system',
+};
+
 export interface User {
   id: string;
   name: string;
@@ -5,6 +15,7 @@ export interface User {
   avatarUrl?: string;
   emailVerified: boolean;
   createdAt: string;
+  preferences?: Partial<UserPreferences>;
 }
 
 export interface AuthCredentials {

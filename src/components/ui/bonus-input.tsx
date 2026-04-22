@@ -63,7 +63,7 @@ export function BonusInput({
     return (
         <input
             type="text"
-            inputMode="numeric"
+            inputMode="text"
             value={raw}
             onChange={handleChange}
             onBlur={handleBlur}
