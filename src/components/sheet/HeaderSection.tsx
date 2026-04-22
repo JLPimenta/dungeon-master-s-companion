@@ -3,6 +3,7 @@ import type { CharacterSheet } from '@/types/character';
 import { Card, CardContent } from '@/components/ui/card';
 import { Collapsible, CollapsibleTrigger, CollapsibleContent } from '@/components/ui/collapsible';
 import { Input } from '@/components/ui/input';
+import { NumericInput } from '@/components/ui/numeric-input';
 import { Label } from '@/components/ui/label';
 import { getEffectiveProficiencyBonus } from '@/utils/calculations';
 import { ChevronDown } from 'lucide-react';
@@ -115,12 +116,12 @@ export function HeaderSection({ sheet, onChange, onBlur }: Props) {
                 {/* Nível */}
                 <div className="col-span-1 lg:col-span-1">
                   <Label className="text-sm text-muted-foreground">Nível</Label>
-                  <Input
-                      type="number"
+                  <NumericInput
                       min={1}
                       max={20}
+                      fallback={1}
                       value={sheet.level}
-                      onChange={e => onChange({ level: Number(e.target.value) || 1 })}
+                      onChange={v => onChange({ level: v })}
                       className="mt-1 text-sm"
                   />
                 </div>
@@ -146,11 +147,10 @@ export function HeaderSection({ sheet, onChange, onBlur }: Props) {
                 {/* XP */}
                 <div className="col-span-1 lg:col-span-1">
                   <Label className="text-sm text-muted-foreground">XP</Label>
-                  <Input
-                      type="number"
+                  <NumericInput
                       min={0}
                       value={sheet.xp}
-                      onChange={e => onChange({ xp: Number(e.target.value) || 0 })}
+                      onChange={v => onChange({ xp: v })}
                       className="mt-1 text-sm"
                   />
                 </div>

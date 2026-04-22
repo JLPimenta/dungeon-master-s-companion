@@ -37,6 +37,7 @@ export default function Register() {
     }
     if (!captchaToken) {
       toast({ title: 'Confirmação necessária', description: 'Por favor, confirme que você não é um robô.', variant: 'destructive' });
+      return;
     }
     if (!acceptedTerms) {
       toast({ title: 'Atenção', description: 'Você deve aceitar os termos de uso para criar uma conta.', variant: 'destructive' });
@@ -60,9 +61,9 @@ export default function Register() {
     }
   };
 
-  const handleGoogleSuccess = async (credential: string) => {
+  const handleGoogleSuccess = async (credential: string, nonce: string | null) => {
     try {
-      await loginWithGoogle(credential, true);
+      await loginWithGoogle(credential, true, nonce);
       navigate('/');
     } catch (err: any) {
       toast({ title: 'Erro', description: err.message, variant: 'destructive' });

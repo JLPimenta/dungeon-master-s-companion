@@ -1,4 +1,4 @@
-import {useState} from 'react';
+import {useState, useEffect} from 'react';
 import type {CharacterSheet} from '@/types/character';
 import {Card, CardContent, CardHeader, CardTitle} from '@/components/ui/card';
 import {Textarea} from '@/components/ui/textarea';
@@ -6,6 +6,7 @@ import {Input} from '@/components/ui/input';
 import {Label} from '@/components/ui/label';
 import {ChevronDown, ChevronUp} from 'lucide-react';
 import {cn} from '@/lib/utils';
+import {useIsMobile} from '@/hooks/use-mobile';
 
 interface Props {
     sheet: CharacterSheet;
@@ -14,7 +15,12 @@ interface Props {
 }
 
 export function PersonalitySection({sheet, onChange, onBlur}: Props) {
+    const isMobile = useIsMobile();
     const [collapsed, setCollapsed] = useState(false);
+
+    useEffect(() => {
+        setCollapsed(isMobile);
+    }, []);
 
     return (
         <Card className="border-primary/20 h-full flex flex-col">
@@ -24,7 +30,7 @@ export function PersonalitySection({sheet, onChange, onBlur}: Props) {
                     <button
                         type="button"
                         onClick={() => setCollapsed(c => !c)}
-                        className="md:hidden text-muted-foreground p-1 hover:text-primary transition-colors"
+                        className="lg:hidden text-muted-foreground p-1 hover:text-primary transition-colors"
                     >
                         {collapsed ? <ChevronDown className="h-4 w-4"/> : <ChevronUp className="h-4 w-4"/>}
                     </button>
@@ -32,7 +38,7 @@ export function PersonalitySection({sheet, onChange, onBlur}: Props) {
             </CardHeader>
 
             <CardContent
-                className={cn("px-4 pb-4 flex-1 flex-col", collapsed ? "hidden md:flex" : "flex")}
+                className={cn("px-4 pb-4 flex-1 flex-col", collapsed ? "hidden lg:flex" : "flex")}
                 onBlur={onBlur}
             >
                 <div className="flex-1 flex flex-col mb-4">

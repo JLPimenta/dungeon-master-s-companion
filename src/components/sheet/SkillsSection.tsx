@@ -1,8 +1,11 @@
+import { useState, useEffect } from 'react';
 import type { CharacterSheet, AbilityKey } from '@/types/character';
 import { ABILITY_ABBR } from '@/types/character';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Checkbox } from '@/components/ui/checkbox';
 import { BonusInput } from '@/components/ui/bonus-input';
+import { useIsMobile } from '@/hooks/use-mobile';
+import { ChevronDown, ChevronUp } from 'lucide-react';
 import {
   getSkillBonus,
   getEffectiveProficiencyBonus,
@@ -23,6 +26,13 @@ const ABILITY_ORDER: AbilityKey[] = [
 
 export function SkillsSection({ sheet, onChange, onBlur }: Props) {
   const profBonus = getEffectiveProficiencyBonus(sheet);
+  const isMobile = useIsMobile();
+  const [collapsed, setCollapsed] = useState(false);
+
+  // Default collapsed on mobile
+  useEffect(() => {
+    setCollapsed(isMobile);
+  }, []);
 
   const perceptionSkill = sheet.skills.find(s => s.name === 'Percepção');
   const perceptionBonus = sheet.bonuses?.skills?.['Percepção'] ?? 0;
@@ -64,10 +74,19 @@ export function SkillsSection({ sheet, onChange, onBlur }: Props) {
       <Card className="border-primary/20">
         <CardHeader className="flex flex-row items-center justify-between pb-2 pt-4 px-4">
           <CardTitle className="text-lg text-primary">Perícias</CardTitle>
-          <span className="text-xs text-muted-foreground">Percepção Passiva: {passivePerc}</span>
+          <div className="flex items-center gap-2">
+            <span className="text-xs text-muted-foreground">Percepção Passiva: {passivePerc}</span>
+            <button
+              type="button"
+              onClick={() => setCollapsed(c => !c)}
+              className="lg:hidden text-muted-foreground p-1 hover:text-primary transition-colors"
+            >
+              {collapsed ? <ChevronDown className="h-4 w-4" /> : <ChevronUp className="h-4 w-4" />}
+            </button>
+          </div>
         </CardHeader>
 
-        <CardContent className="px-4 pb-4 text-sm" onBlur={onBlur}>
+        <CardContent className={`px-4 pb-4 text-sm ${collapsed ? 'hidden lg:block' : ''}`} onBlur={onBlur}>
           {groups.map((group, gi) => (
               <div
                   key={group.key}

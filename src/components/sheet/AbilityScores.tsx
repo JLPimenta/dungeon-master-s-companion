@@ -1,7 +1,7 @@
 import type {AbilityKey, CharacterSheet} from '@/types/character';
 import {ABILITY_ABBR} from '@/types/character';
 import {Card, CardContent, CardHeader, CardTitle} from '@/components/ui/card';
-import {Input} from '@/components/ui/input';
+import {NumericInput} from '@/components/ui/numeric-input';
 import {Checkbox} from '@/components/ui/checkbox';
 import {BonusInput} from '@/components/ui/bonus-input';
 import {formatModifier, getEffectiveProficiencyBonus, getModifier, getSavingThrowBonus,} from '@/utils/calculations';
@@ -80,12 +80,12 @@ export function AbilityScores({sheet, onChange, onBlur}: Props) {
               </span>
 
                             {/* Valor do atributo */}
-                            <Input
-                                type="number"
+                            <NumericInput
                                 min={1}
                                 max={30}
+                                fallback={10}
                                 value={sheet.abilities[key].value}
-                                onChange={e => handleValue(key, Number(e.target.value) || 10)}
+                                onChange={v => handleValue(key, v)}
                                 className="h-9 w-14 text-center text-sm"
                             />
 

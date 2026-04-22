@@ -9,7 +9,8 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
 import { PasswordStrengthIndicator, isPasswordStrong } from '@/components/auth/PasswordStrengthIndicator';
 import { LogoutDialog } from '@/components/auth/LogoutDialog';
-import { useTheme } from 'next-themes';
+import { useUserPreferences } from '@/hooks/useUserPreferences';
+import { Switch } from '@/components/ui/switch';
 
 import {
   AlertDialog,
@@ -25,7 +26,7 @@ import {
 import { ArrowLeft, Trash2, Laptop, Moon, Sun } from 'lucide-react';
 
 export default function Profile() {
-  const { theme, setTheme } = useTheme();
+  const { preferences, updatePreferences, autoSaveEnabled, currentTheme } = useUserPreferences();
   const { user, updateProfile, changePassword, deleteAccount } = useAuth();
   const navigate = useNavigate();
   const { toast } = useToast();
@@ -190,31 +191,45 @@ export default function Profile() {
             <CardTitle className="text-lg">Configurações</CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="space-y-4">
+            <div className="space-y-6">
+              <div className="flex items-center justify-between space-x-2">
+                <div className="space-y-1">
+                  <Label htmlFor="autosave"  className="text-base">Salvamento Automático</Label>
+                  <p className="text-sm text-muted-foreground">
+                    Salva automaticamente as alterações da ficha de personagem no servidor.
+                  </p>
+                </div>
+                <Switch
+                  id="autosave"
+                  checked={autoSaveEnabled}
+                  onCheckedChange={checked => updatePreferences({ autoSave: checked })}
+                />
+              </div>
+
               <div className="space-y-3">
-                <Label>Tema Visual</Label>
+                <Label className="text-base">Tema Visual</Label>
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                   <Button
                     type="button"
-                    variant={theme === 'light' ? 'default' : 'outline'}
+                    variant={currentTheme === 'light' ? 'default' : 'outline'}
                     className="w-full gap-2"
-                    onClick={() => setTheme('light')}
+                    onClick={() => updatePreferences({ theme: 'light' })}
                   >
                     <Sun className="h-4 w-4" /> Claro
                   </Button>
                   <Button
                     type="button"
-                    variant={theme === 'dark' ? 'default' : 'outline'}
+                    variant={currentTheme === 'dark' ? 'default' : 'outline'}
                     className="w-full gap-2"
-                    onClick={() => setTheme('dark')}
+                    onClick={() => updatePreferences({ theme: 'dark' })}
                   >
                     <Moon className="h-4 w-4" /> Escuro
                   </Button>
                   <Button
                     type="button"
-                    variant={theme === 'system' ? 'default' : 'outline'}
+                    variant={currentTheme === 'system' ? 'default' : 'outline'}
                     className="w-full gap-2"
-                    onClick={() => setTheme('system')}
+                    onClick={() => updatePreferences({ theme: 'system' })}
                   >
                     <Laptop className="h-4 w-4" /> Sistema
                   </Button>

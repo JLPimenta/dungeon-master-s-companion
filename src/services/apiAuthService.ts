@@ -1,5 +1,6 @@
 import type { AuthService } from './authService';
-import type { AuthCredentials, AuthResponse, RegisterData, User } from '@/types/auth';
+import type { AuthCredentials, AuthResponse, RegisterData, User, UserPreferences } from '@/types/auth';
+import { sanitizeApiError } from '@/utils/sanitizeApiError';
 
 const BASE_URL = import.meta.env.VITE_API_URL;
 const TOKEN_KEY = 'dnd_auth_token';
@@ -27,8 +28,9 @@ async function authRequest<T>(path: string, options?: RequestInit): Promise<T> {
 
   if (!response.ok) {
     const body = await response.json().catch(() => ({}));
-    const message = body?.message ?? `Erro ${response.status}`;
-    throw new Error(Array.isArray(message) ? message.join(', ') : message);
+    const rawMessage = body?.message;
+    const joined = Array.isArray(rawMessage) ? rawMessage.join(', ') : rawMessage;
+    throw new Error(sanitizeApiError(response.status, joined));
   }
 
   if (response.status === 204) return undefined as T;
@@ -57,10 +59,10 @@ export const apiAuthService: AuthService = {
     return res;
   },
 
-  async loginWithGoogle(credential: string, acceptTerms?: boolean): Promise<AuthResponse> {
+  async loginWithGoogle(credential: string, acceptTerms?: boolean, nonce?: string | null): Promise<AuthResponse> {
     const res = await authRequest<AuthResponse>('/auth/google', {
       method: 'POST',
-      body: JSON.stringify({ credential, acceptTerms: acceptTerms ?? false }),
+      body: JSON.stringify({ credential, acceptTerms: acceptTerms ?? false, nonce: nonce ?? undefined }),
     });
     setAuthToken(res.token);
     return res;
@@ -87,6 +89,13 @@ export const apiAuthService: AuthService = {
     return authRequest<User>('/auth/profile', {
       method: 'PUT',
       body: JSON.stringify(data),
+    });
+  },
+
+  async updatePreferences(prefs: Partial<UserPreferences>): Promise<User> {
+    return authRequest<User>('/auth/preferences', {
+      method: 'PATCH',
+      body: JSON.stringify(prefs),
     });
   },
 
@@ -121,5 +130,12 @@ export const apiAuthService: AuthService = {
   async deleteAccount(): Promise<void> {
     await authRequest<void>('/auth/account', { method: 'DELETE' });
     clearAuthToken();
+  },
+
+  async resendConfirmationEmail(email: string): Promise<void> {
+    await authRequest<void>('/auth/resend-confirmation', {
+      method: 'POST',
+      body: JSON.stringify({ email }),
+    });
   },
 };

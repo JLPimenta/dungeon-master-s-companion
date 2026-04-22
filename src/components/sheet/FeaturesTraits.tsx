@@ -5,7 +5,8 @@ import {Input} from '@/components/ui/input';
 import {Textarea} from '@/components/ui/textarea';
 import {Label} from '@/components/ui/label';
 import {Button} from '@/components/ui/button';
-import {ChevronDown, ChevronUp, Plus, Trash2} from 'lucide-react';
+import {ConfirmDeleteButton} from '@/components/ui/confirm-delete-button';
+import {ChevronDown, ChevronUp, Plus} from 'lucide-react';
 
 interface Props {
     sheet: CharacterSheet;
@@ -100,14 +101,11 @@ export function FeaturesTraits({sheet, onChange, onBlur}: Props) {
                                                         className="min-h-[72px] resize-y text-sm flex-1"
                                                         placeholder="Descreva a característica…"
                                                     />
-                                                    <Button
-                                                        variant="ghost"
-                                                        size="icon"
-                                                        className="h-9 w-9 shrink-0 self-start text-muted-foreground hover:text-destructive"
-                                                        onClick={() => removeFeature(i)}
-                                                    >
-                                                        <Trash2 className="h-4 w-4"/>
-                                                    </Button>
+                                                    <ConfirmDeleteButton
+                                                        iconOnly
+                                                        className="h-9 w-9 shrink-0 self-start"
+                                                        onConfirm={() => removeFeature(i)}
+                                                    />
                                                 </div>
                                             )}
                                         </div>

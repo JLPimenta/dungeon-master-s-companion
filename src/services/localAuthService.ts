@@ -1,5 +1,5 @@
 import type { AuthService } from './authService';
-import type { AuthCredentials, AuthResponse, RegisterData, User } from '@/types/auth';
+import type { AuthCredentials, AuthResponse, RegisterData, User, UserPreferences } from '@/types/auth';
 
 const USERS_KEY = 'dnd_auth_users';
 const SESSION_KEY = 'dnd_auth_session';
@@ -38,15 +38,58 @@ function clearSession(): void {
   localStorage.removeItem(SESSION_KEY);
 }
 
-function simpleHash(password: string): string {
-  // Simple hash for local-only use (NOT secure for production)
-  let hash = 0;
-  for (let i = 0; i < password.length; i++) {
-    const char = password.charCodeAt(i);
-    hash = (hash << 5) - hash + char;
-    hash |= 0;
+const PBKDF2_ITERATIONS = 100_000;
+const SALT_BYTES = 16;
+const HASH_BYTES = 32;
+
+function bufToHex(buf: ArrayBuffer): string {
+  return Array.from(new Uint8Array(buf), b => b.toString(16).padStart(2, '0')).join('');
+}
+
+function hexToBuf(hex: string): Uint8Array {
+  const bytes = new Uint8Array(hex.length / 2);
+  for (let i = 0; i < hex.length; i += 2) {
+    bytes[i / 2] = parseInt(hex.substring(i, i + 2), 16);
   }
-  return hash.toString(36);
+  return bytes;
+}
+
+/** Hash a password using PBKDF2-SHA256. Returns 'salt:hash' in hex. */
+async function hashPassword(password: string): Promise<string> {
+  const salt = crypto.getRandomValues(new Uint8Array(SALT_BYTES));
+  const keyMaterial = await crypto.subtle.importKey(
+    'raw',
+    new TextEncoder().encode(password),
+    'PBKDF2',
+    false,
+    ['deriveBits'],
+  );
+  const derived = await crypto.subtle.deriveBits(
+    { name: 'PBKDF2', salt, iterations: PBKDF2_ITERATIONS, hash: 'SHA-256' },
+    keyMaterial,
+    HASH_BYTES * 8,
+  );
+  return `${bufToHex(salt)}:${bufToHex(derived)}`;
+}
+
+/** Verify a password against a stored 'salt:hash' string. */
+async function verifyPassword(password: string, stored: string): Promise<boolean> {
+  const [saltHex, hashHex] = stored.split(':');
+  if (!saltHex || !hashHex) return false;
+  const salt = hexToBuf(saltHex);
+  const keyMaterial = await crypto.subtle.importKey(
+    'raw',
+    new TextEncoder().encode(password),
+    'PBKDF2',
+    false,
+    ['deriveBits'],
+  );
+  const derived = await crypto.subtle.deriveBits(
+    { name: 'PBKDF2', salt, iterations: PBKDF2_ITERATIONS, hash: 'SHA-256' },
+    keyMaterial,
+    HASH_BYTES * 8,
+  );
+  return bufToHex(derived) === hashHex;
 }
 
 function generateToken(): string {
@@ -62,7 +105,7 @@ export const localAuthService: AuthService = {
   async login(credentials: AuthCredentials): Promise<AuthResponse> {
     const users = readUsers();
     const user = users.find(u => u.email === credentials.email);
-    if (!user || user.passwordHash !== simpleHash(credentials.password)) {
+    if (!user || !(await verifyPassword(credentials.password, user.passwordHash))) {
       throw new Error('Email ou senha incorretos.');
     }
     const token = generateToken();
@@ -79,7 +122,7 @@ export const localAuthService: AuthService = {
       id: crypto.randomUUID(),
       name: data.name,
       email: data.email,
-      passwordHash: simpleHash(data.password),
+      passwordHash: await hashPassword(data.password),
       emailVerified: true, // Auto-verified in local mode
       createdAt: new Date().toISOString(),
     };
@@ -90,7 +133,7 @@ export const localAuthService: AuthService = {
     return { user: toPublicUser(newUser), token };
   },
 
-  async loginWithGoogle(_credential?: string, _acceptTerms?: boolean): Promise<AuthResponse> {
+  async loginWithGoogle(_credential?: string, _acceptTerms?: boolean, _nonce?: string | null): Promise<AuthResponse> {
     throw new Error('Login com Google não disponível no modo offline.');
   },
 
@@ -117,16 +160,31 @@ export const localAuthService: AuthService = {
     return toPublicUser(users[idx]);
   },
 
+  async updatePreferences(prefs: Partial<UserPreferences>): Promise<User> {
+    const session = getSession();
+    if (!session) throw new Error('Não autenticado.');
+    const users = readUsers();
+    const idx = users.findIndex(u => u.id === session.userId);
+    if (idx < 0) throw new Error('Usuário não encontrado.');
+    
+    users[idx].preferences = {
+      ...users[idx].preferences,
+      ...prefs
+    };
+    writeUsers(users);
+    return toPublicUser(users[idx]);
+  },
+
   async changePassword(currentPassword: string, newPassword: string): Promise<void> {
     const session = getSession();
     if (!session) throw new Error('Não autenticado.');
     const users = readUsers();
     const idx = users.findIndex(u => u.id === session.userId);
     if (idx < 0) throw new Error('Usuário não encontrado.');
-    if (users[idx].passwordHash !== simpleHash(currentPassword)) {
+    if (!(await verifyPassword(currentPassword, users[idx].passwordHash))) {
       throw new Error('Senha atual incorreta.');
     }
-    users[idx].passwordHash = simpleHash(newPassword);
+    users[idx].passwordHash = await hashPassword(newPassword);
     writeUsers(users);
   },
 
@@ -148,5 +206,9 @@ export const localAuthService: AuthService = {
     const users = readUsers();
     writeUsers(users.filter(u => u.id !== session.userId));
     clearSession();
+  },
+
+  async resendConfirmationEmail(_email: string): Promise<void> {
+    // Auto-confirmed in local mode — no-op
   },
 };

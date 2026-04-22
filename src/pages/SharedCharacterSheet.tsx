@@ -91,8 +91,19 @@ export default function SharedCharacterSheetPage() {
         Você está visualizando a ficha de <strong className="text-foreground">{sheet.name}</strong> em modo somente leitura. Nenhuma alteração será salva.
       </div>
 
-      {/* Sheet — all form controls disabled via fieldset */}
-      <fieldset disabled className="mx-auto max-w-6xl space-y-6 [&_button:not([type])]:pointer-events-none [&_button[type=button]]:pointer-events-none">
+      {/* Sheet — pseudo readonly via CSS pointer-events wrapper */}
+      <div className="mx-auto max-w-6xl space-y-6 relative opacity-80 pointer-events-none">
+        <style dangerouslySetInnerHTML={{ __html: `
+          /* Restaurar eventos de clique e arrastar estritamente aos cabeçalhos de colapso */
+          div.max-w-6xl button.flex.w-full.items-center.justify-between {
+            pointer-events: auto !important;
+            cursor: pointer !important;
+          }
+          /* Esconder botões destrutivos ou de adição */
+          div.max-w-6xl button:has(svg.lucide-plus), div.max-w-6xl button:has(svg.lucide-trash2) {
+            display: none !important;
+          }
+        ` }} />
         <HeaderSection sheet={sheet} onChange={noop} />
 
         <div className="grid grid-cols-1 gap-6 lg:grid-cols-[280px_1fr]">
@@ -100,19 +111,21 @@ export default function SharedCharacterSheetPage() {
             <AbilityScores sheet={sheet} onChange={noop} />
             <SkillsSection sheet={sheet} onChange={noop} />
           </div>
-          <div className="space-y-6">
+          <div className="flex flex-col space-y-6 h-full">
             <CombatSection sheet={sheet} onChange={noop} />
             <WeaponsTable sheet={sheet} onChange={noop} />
-            <FeaturesTraits sheet={sheet} onChange={noop} />
+            <div className="flex-1">
+              <PersonalitySection sheet={sheet} onChange={noop} />
+            </div>
           </div>
         </div>
 
         <SpellcastingSection sheet={sheet} onChange={noop} />
-        <InventorySection sheet={sheet} onChange={noop} />
-        <PersonalitySection sheet={sheet} onChange={noop} />
-        <CampaignNotes sheet={sheet} onChange={noop} />
-        <CustomFields sheet={sheet} onChange={noop} />
-      </fieldset>
+        {/* <InventorySection sheet={sheet} onChange={noop} /> Ocultado remotamente */}
+        <FeaturesTraits sheet={sheet} onChange={noop} />
+        {/* <CampaignNotes sheet={sheet} onChange={noop} /> Ocultado remotamente */}
+        {/* <CustomFields sheet={sheet} onChange={noop} /> Ocultado remotamente */}
+      </div>
     </div>
   );
 }
