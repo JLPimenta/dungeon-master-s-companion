@@ -13,10 +13,12 @@ import {InventorySection} from '@/components/sheet/InventorySection';
 import {PersonalitySection} from '@/components/sheet/PersonalitySection';
 import {CampaignNotes} from '@/components/sheet/CampaignNotes';
 import {CustomFields} from '@/components/sheet/CustomFields';
+import {UnsavedChangesBar} from '@/components/sheet/UnsavedChangesBar';
 import {Button} from '@/components/ui/button';
 import {Switch} from '@/components/ui/switch';
 import {ArrowLeft, Check, Copy, Globe, Loader2, Lock, Maximize, Minimize, Share2} from 'lucide-react';
 import {toast} from 'sonner';
+import {useUserPreferences} from '@/hooks/useUserPreferences';
 
 type SaveStatus = 'idle' | 'saving' | 'saved';
 
@@ -97,6 +99,8 @@ export default function CharacterSheetPage() {
     const lastSavedRef = useRef<CharacterSheetType | null>(null);
     const savedTimerRef = useRef<ReturnType<typeof setTimeout>>();
     const [scrolled, setScrolled] = useState(false);
+    const { autoSaveEnabled } = useUserPreferences();
+    const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
 
     useEffect(() => {
         const handleScroll = () => setScrolled(window.scrollY > 80);
@@ -150,13 +154,14 @@ export default function CharacterSheetPage() {
                 setSaveStatus('saved');
                 clearTimeout(savedTimerRef.current);
                 savedTimerRef.current = setTimeout(() => setSaveStatus('idle'), 5000);
-            },
-            onSettled: () => {
-                pendingRef.current = false;
-                isDirtyRef.current = false;
-                if (needsResaveRef.current) flush();
+                
+                if (!needsResaveRef.current) {
+                    isDirtyRef.current = false;
+                    setHasUnsavedChanges(false);
+                }
             },
             onError: (err) => {
+                setSaveStatus('idle');
                 const isUserError = err.message.toLowerCase().includes('texto')
                     || err.message.toLowerCase().includes('limite');
 
@@ -169,29 +174,50 @@ export default function CharacterSheetPage() {
 
                 if (!isUserError && lastSavedRef.current) {
                     setLocal(lastSavedRef.current);
+                    if (!needsResaveRef.current) {
+                        isDirtyRef.current = false;
+                        setHasUnsavedChanges(false);
+                    }
                 }
+            },
+            onSettled: () => {
+                pendingRef.current = false;
+                if (needsResaveRef.current) flush();
             }
         });
     }, [saveMutation]);
 
     const update = useCallback((patch: Partial<CharacterSheetType>) => {
         isDirtyRef.current = true;
+        setHasUnsavedChanges(true);
         setLocal(prev => {
             if (!prev) return prev;
             const next = {...prev, ...patch};
             localRef.current = next;
-            clearTimeout(debounceRef.current);
-            debounceRef.current = setTimeout(() => flush(), 10000);
+            if (autoSaveEnabled) {
+                clearTimeout(debounceRef.current);
+                debounceRef.current = setTimeout(() => flush(), 10000);
+            }
             return next;
         });
-    }, [flush]);
+    }, [flush, autoSaveEnabled]);
 
     const handleBlur = useCallback(() => {
-        if (isDirtyRef.current) {
+        if (isDirtyRef.current && autoSaveEnabled) {
             clearTimeout(debounceRef.current);
             flush();
         }
-    }, [flush]);
+    }, [flush, autoSaveEnabled]);
+
+    const handleDiscard = useCallback(() => {
+        if (lastSavedRef.current) {
+            setLocal(lastSavedRef.current);
+            localRef.current = lastSavedRef.current;
+            isDirtyRef.current = false;
+            setHasUnsavedChanges(false);
+            clearTimeout(debounceRef.current);
+        }
+    }, []);
 
     const toggleFullscreen = async () => {
         if (!document.fullscreenElement) {
@@ -243,8 +269,15 @@ export default function CharacterSheetPage() {
     }
 
     return (
-        <div className="min-h-screen px-4 py-6 md:px-8">
-            {/* Toolbar */}
+        <>
+            <UnsavedChangesBar 
+                isVisible={hasUnsavedChanges && !autoSaveEnabled} 
+                onSave={flush} 
+                onDiscard={handleDiscard} 
+                isSaving={saveStatus === 'saving'} 
+            />
+            <div className="min-h-screen px-4 py-6 md:px-8">
+                {/* Toolbar */}
             <div className="mx-auto mb-6 flex max-w-6xl items-center justify-between">
                 <div className="flex items-center gap-3">
                     <Button variant="ghost" onClick={() => navigate('/')} className="gap-2">
@@ -354,5 +387,6 @@ export default function CharacterSheetPage() {
 
             {scrolled && <FloatingSaveIndicator status={saveStatus} />}
         </div>
+        </>
     );
 }

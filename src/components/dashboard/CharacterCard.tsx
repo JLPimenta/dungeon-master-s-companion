@@ -1,7 +1,8 @@
 import type { CharacterSheet } from '@/types/character';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Trash2, Swords, Shield } from 'lucide-react';
+import { ConfirmDeleteButton } from '@/components/ui/confirm-delete-button';
+import { Swords, Shield } from 'lucide-react';
 import { getProficiencyBonus } from '@/utils/calculations';
 
 interface Props {
@@ -20,15 +21,14 @@ export function CharacterCard({ character, onClick, onDelete }: Props) {
     >
       <CardContent className="p-5">
         {/* Delete button */}
-        <Button
-          variant="ghost"
-          size="icon"
-          className="absolute right-2 top-2 h-8 w-8 text-muted-foreground opacity-0 transition-opacity hover:text-destructive group-hover:opacity-100"
-          onClick={(e) => { e.stopPropagation(); onDelete(); }}
-          aria-label="Excluir ficha"
-        >
-          <Trash2 className="h-4 w-4" />
-        </Button>
+        <div onClick={(e) => e.stopPropagation()}>
+          <ConfirmDeleteButton
+            iconOnly
+            className="absolute right-2 top-2 h-8 w-8 text-muted-foreground opacity-0 transition-opacity hover:text-destructive group-hover:opacity-100"
+            onConfirm={onDelete}
+            title="Excluir ficha"
+          />
+        </div>
 
         {/* Name */}
         <h3 className="mb-3 pr-8 text-xl font-semibold text-primary" style={{ fontFamily: 'var(--font-heading)' }}>

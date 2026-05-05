@@ -4,7 +4,8 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
-import { ChevronDown, Plus, Trash2 } from 'lucide-react';
+import { ConfirmDeleteButton } from '@/components/ui/confirm-delete-button';
+import { ChevronDown, Plus } from 'lucide-react';
 
 interface Props {
   sheet: CharacterSheet;
@@ -135,14 +136,11 @@ export function WeaponsTable({ sheet, onChange, onBlur }: Props) {
                                   className="mt-1 h-10 text-sm"
                               />
                             </div>
-                            <Button
-                                variant="ghost"
-                                size="sm"
-                                className="col-span-2 h-8 text-sm text-muted-foreground hover:text-destructive justify-start gap-1"
-                                onClick={() => removeWeapon(i)}
-                            >
-                              <Trash2 className="h-4 w-4" /> Remover
-                            </Button>
+                            <ConfirmDeleteButton
+                                iconOnly={false}
+                                className="col-span-2 h-8 text-sm text-muted-foreground hover:text-destructive justify-start gap-1 w-full"
+                                onConfirm={() => removeWeapon(i)}
+                            />
                           </div>
                         )}
                       </div>
@@ -179,14 +177,11 @@ export function WeaponsTable({ sheet, onChange, onBlur }: Props) {
                             onChange={e => updateWeapon(i, { notes: e.target.value })}
                             className="h-10 text-sm"
                         />
-                        <Button
-                            variant="ghost"
-                            size="icon"
-                            className="h-10 w-9 text-muted-foreground hover:text-destructive"
-                            onClick={() => removeWeapon(i)}
-                        >
-                          <Trash2 className="h-4 w-4" />
-                        </Button>
+                        <ConfirmDeleteButton
+                            iconOnly
+                            className="h-10 w-9"
+                            onConfirm={() => removeWeapon(i)}
+                        />
                       </div>
 
                     </div>

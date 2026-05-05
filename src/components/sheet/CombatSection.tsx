@@ -1,6 +1,7 @@
 import type { CharacterSheet } from '@/types/character';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
+import { NumericInput } from '@/components/ui/numeric-input';
 import { Label } from '@/components/ui/label';
 import { Checkbox } from '@/components/ui/checkbox';
 import { BonusInput } from '@/components/ui/bonus-input';
@@ -35,10 +36,10 @@ export function CombatSection({ sheet, onChange, onBlur }: Props) {
           <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
             <div>
               <Label className="text-sm text-muted-foreground">CA</Label>
-              <Input
-                  type="number"
+              <NumericInput
+                  min={0}
                   value={sheet.armorClass}
-                  onChange={e => onChange({ armorClass: Number(e.target.value) || 0 })}
+                  onChange={v => onChange({ armorClass: v })}
                   className="mt-1 h-10 text-sm"
               />
             </div>
@@ -65,10 +66,10 @@ export function CombatSection({ sheet, onChange, onBlur }: Props) {
 
             <div>
               <Label className="text-sm text-muted-foreground">Deslocamento</Label>
-              <Input
-                  type="number"
+              <NumericInput
+                  min={0}
                   value={sheet.speed}
-                  onChange={e => onChange({ speed: Number(e.target.value) || 0 })}
+                  onChange={v => onChange({ speed: v })}
                   className="mt-1 h-10 text-sm"
               />
             </div>
@@ -86,28 +87,29 @@ export function CombatSection({ sheet, onChange, onBlur }: Props) {
           <div className="mt-4 grid grid-cols-3 gap-3">
             <div>
               <Label className="text-sm text-muted-foreground">PV Atual</Label>
-              <Input
-                  type="number"
+              <NumericInput
+                  min={0}
                   value={sheet.hitPoints.current}
-                  onChange={e => onChange({ hitPoints: { ...sheet.hitPoints, current: Number(e.target.value) || 0 } })}
+                  onChange={v => onChange({ hitPoints: { ...sheet.hitPoints, current: v } })}
                   className="mt-1 h-10 text-sm"
               />
             </div>
             <div>
               <Label className="text-sm text-muted-foreground">PV Máx</Label>
-              <Input
-                  type="number"
+              <NumericInput
+                  min={1}
+                  fallback={1}
                   value={sheet.hitPoints.max}
-                  onChange={e => onChange({ hitPoints: { ...sheet.hitPoints, max: Number(e.target.value) || 0 } })}
+                  onChange={v => onChange({ hitPoints: { ...sheet.hitPoints, max: v } })}
                   className="mt-1 h-10 text-sm"
               />
             </div>
             <div>
               <Label className="text-sm text-muted-foreground">PV Temp</Label>
-              <Input
-                  type="number"
+              <NumericInput
+                  min={0}
                   value={sheet.hitPoints.temp}
-                  onChange={e => onChange({ hitPoints: { ...sheet.hitPoints, temp: Number(e.target.value) || 0 } })}
+                  onChange={v => onChange({ hitPoints: { ...sheet.hitPoints, temp: v } })}
                   className="mt-1 h-10 text-sm"
               />
             </div>
@@ -125,11 +127,10 @@ export function CombatSection({ sheet, onChange, onBlur }: Props) {
             </div>
             <div>
               <Label className="text-sm text-muted-foreground">Dados Usados</Label>
-              <Input
-                  type="number"
+              <NumericInput
                   min={0}
                   value={sheet.hitDice.used}
-                  onChange={e => onChange({ hitDice: { ...sheet.hitDice, used: Number(e.target.value) || 0 } })}
+                  onChange={v => onChange({ hitDice: { ...sheet.hitDice, used: v } })}
                   className="mt-1 h-10 text-sm"
               />
             </div>

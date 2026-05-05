@@ -5,7 +5,8 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Button } from '@/components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { ChevronDown, ChevronUp, Plus, Trash2 } from 'lucide-react';
+import { ConfirmDeleteButton } from '@/components/ui/confirm-delete-button';
+import { ChevronDown, ChevronUp, Plus } from 'lucide-react';
 
 interface Props {
   sheet: CharacterSheet;
@@ -114,9 +115,11 @@ export function CampaignNotes({ sheet, onChange, onBlur }: Props) {
                             <SelectContent>{CATEGORIES.map(c => <SelectItem key={c.value} value={c.value}>{c.label}</SelectItem>)}</SelectContent>
                           </Select>
                           <Input placeholder="Título" value={note.title} onChange={e => updateNote(idx, { title: e.target.value })} className="h-9 text-sm" />
-                          <Button variant="ghost" size="icon" className="h-9 w-9 shrink-0 text-muted-foreground hover:text-destructive" onClick={() => removeNote(idx)}>
-                            <Trash2 className="h-4 w-4" />
-                          </Button>
+                          <ConfirmDeleteButton 
+                            iconOnly
+                            className="h-9 w-9 shrink-0" 
+                            onConfirm={() => removeNote(idx)} 
+                          />
                         </div>
                         <Textarea maxLength={5_000} value={note.content} onChange={e => updateNote(idx, { content: e.target.value })} placeholder="Conteúdo…" className="min-h-[60px] text-sm" />
                       </div>

@@ -4,7 +4,8 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Button } from '@/components/ui/button';
-import { ChevronDown, ChevronUp, Plus, Trash2 } from 'lucide-react';
+import { ConfirmDeleteButton } from '@/components/ui/confirm-delete-button';
+import { ChevronDown, ChevronUp, Plus } from 'lucide-react';
 
 interface Props {
   sheet: CharacterSheet;
@@ -96,14 +97,11 @@ export function CustomFields({ sheet, onChange, onBlur }: Props) {
                             onChange={e => updateField(i, { label: e.target.value })}
                             className="h-9 text-sm"
                           />
-                          <Button
-                            variant="ghost"
-                            size="icon"
-                            className="h-9 w-9 shrink-0 text-muted-foreground hover:text-destructive"
-                            onClick={() => removeField(i)}
-                          >
-                            <Trash2 className="h-4 w-4" />
-                          </Button>
+                          <ConfirmDeleteButton
+                            iconOnly
+                            className="h-9 w-9 shrink-0"
+                            onConfirm={() => removeField(i)}
+                          />
                         </div>
                         <Textarea
                           placeholder="Valor"

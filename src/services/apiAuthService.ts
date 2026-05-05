@@ -1,9 +1,22 @@
 import type { AuthService } from './authService';
-import type { AuthCredentials, AuthResponse, RegisterData, User } from '@/types/auth';
+import type { AuthCredentials, AuthResponse, RegisterData, User, UserPreferences } from '@/types/auth';
 import { sanitizeApiError } from '@/utils/sanitizeApiError';
 import { getCsrfToken } from '@/utils/csrf';
 
 const BASE_URL = import.meta.env.VITE_API_URL;
+const TOKEN_KEY = 'dnd_auth_token';
+
+export function getAuthToken(): string | null {
+  return localStorage.getItem(TOKEN_KEY);
+}
+
+function setAuthToken(token: string): void {
+  localStorage.setItem(TOKEN_KEY, token);
+}
+
+function clearAuthToken(): void {
+  localStorage.removeItem(TOKEN_KEY);
+}
 
 async function authRequest<T>(path: string, options?: RequestInit): Promise<T> {
   const isGet = !options?.method || options.method.toUpperCase() === 'GET';
@@ -19,16 +32,17 @@ async function authRequest<T>(path: string, options?: RequestInit): Promise<T> {
     headers['X-CSRF-TOKEN'] = csrfToken;
   }
 
-  const response = await fetch(`${BASE_URL}${path}`, { 
-    ...options, 
+  const response = await fetch(`${BASE_URL}${path}`, {
+    ...options,
     headers,
-    credentials: 'include' 
+    credentials: 'include'
   });
 
   if (!response.ok) {
     const body = await response.json().catch(() => ({}));
-    const message = body?.message ?? `Erro ${response.status}`;
-    throw new Error(Array.isArray(message) ? message.join(', ') : message);
+    const rawMessage = body?.message;
+    const joined = Array.isArray(rawMessage) ? rawMessage.join(', ') : rawMessage;
+    throw new Error(sanitizeApiError(response.status, joined));
   }
 
   if (response.status === 204) return undefined as T;
@@ -82,6 +96,13 @@ export const apiAuthService: AuthService = {
     });
   },
 
+  async updatePreferences(prefs: Partial<UserPreferences>): Promise<User> {
+    return authRequest<User>('/auth/preferences', {
+      method: 'PATCH',
+      body: JSON.stringify(prefs),
+    });
+  },
+
   async changePassword(currentPassword: string, newPassword: string): Promise<void> {
     await authRequest<void>('/auth/change-password', {
       method: 'PUT',
@@ -112,5 +133,12 @@ export const apiAuthService: AuthService = {
 
   async deleteAccount(): Promise<void> {
     await authRequest<void>('/auth/account', { method: 'DELETE' });
+  },
+
+  async resendConfirmationEmail(email: string): Promise<void> {
+    await authRequest<void>('/auth/resend-confirmation', {
+      method: 'POST',
+      body: JSON.stringify({ email }),
+    });
   },
 };

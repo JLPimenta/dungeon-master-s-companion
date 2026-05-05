@@ -1,6 +1,7 @@
 import {CharacterService} from "@/services/characterService.ts";
 import {CharacterSheet} from "@/types/character.ts";
 import {getCsrfToken} from "@/utils/csrf.ts";
+import {sanitizeApiError} from "@/utils/sanitizeApiError";
 
 const BASE_URL = import.meta.env.VITE_API_URL
 
@@ -22,10 +23,11 @@ async function request<T>(path: string, options?: RequestInit): Promise<T> {
     })
 
     if (!response.ok) {
-        const body = await response.json().catch(() => {})
-        const message = body?.message ?? `Erro ${response.status}`
+        const body = await response.json().catch(() => ({}))
+        const rawMessage = body?.message
+        const joined = Array.isArray(rawMessage) ? rawMessage.join(', ') : rawMessage
 
-        throw new Error(Array.isArray(message) ? message.join(', ') : message)
+        throw new Error(sanitizeApiError(response.status, joined))
     }
 
     if (response.status === 204) return undefined as T;
@@ -45,7 +47,7 @@ export const apiService: CharacterService = {
             .catch((err: Error) => {
                 if (err.message.includes('404')) return null
                 throw err
-        })
+            })
     },
 
     create(sheet: CharacterSheet): Promise<CharacterSheet> {
@@ -63,7 +65,7 @@ export const apiService: CharacterService = {
     },
 
     async delete(id: string): Promise<void> {
-        await request<void>(`/characters/${id}`, { method: 'DELETE' });
+        await request<void>(`/characters/${id}`, {method: 'DELETE'});
     }
 
 }

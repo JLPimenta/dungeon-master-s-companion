@@ -1,6 +1,6 @@
 import React, {createContext, useCallback, useEffect, useState} from 'react';
 import { useQueryClient } from '@tanstack/react-query';
-import type {AuthCredentials, RegisterData, User} from '@/types/auth';
+import type {AuthCredentials, RegisterData, User, UserPreferences} from '@/types/auth';
 import {getAuthService} from '@/services/authServiceProvider';
 
 // Singleton — safe to call outside the component (always returns the same object)
@@ -12,13 +12,15 @@ interface AuthContextType {
     isLoading: boolean;
     login: (credentials: AuthCredentials) => Promise<void>;
     register: (data: RegisterData) => Promise<void>;
-    loginWithGoogle: (credential: string, acceptTerms?: boolean) => Promise<void>;
+    loginWithGoogle: (credential: string, acceptTerms?: boolean, nonce?: string | null) => Promise<void>;
     logout: () => Promise<void>;
     updateProfile: (data: Partial<Pick<User, 'name' | 'avatarUrl'>>) => Promise<void>;
+    updatePreferences: (prefs: Partial<UserPreferences>) => Promise<void>;
     changePassword: (currentPassword: string, newPassword: string) => Promise<void>;
     requestPasswordReset: (email: string) => Promise<void>;
     resetPassword: (token: string, newPassword: string) => Promise<void>;
     confirmEmail: (token: string) => Promise<void>;
+    resendConfirmationEmail: (email: string) => Promise<void>;
     deleteAccount: () => Promise<void>;
 }
 
@@ -49,8 +51,8 @@ export function AuthProvider({children}: { children: React.ReactNode }) {
         await queryClient.invalidateQueries({ queryKey: ['characters'] });
     }, [queryClient]);
 
-    const loginWithGoogle = useCallback(async (credential: string, acceptTerms?: boolean) => {
-        const res = await service.loginWithGoogle(credential, acceptTerms);
+    const loginWithGoogle = useCallback(async (credential: string, acceptTerms?: boolean, nonce?: string | null) => {
+        const res = await service.loginWithGoogle(credential, acceptTerms, nonce);
         setUser(res.user);
         await queryClient.invalidateQueries({ queryKey: ['characters'] });
     }, [queryClient]);
@@ -63,6 +65,11 @@ export function AuthProvider({children}: { children: React.ReactNode }) {
 
     const updateProfile = useCallback(async (data: Partial<Pick<User, 'name' | 'avatarUrl'>>) => {
         const updated = await service.updateProfile(data);
+        setUser(updated);
+    }, []);
+
+    const updatePreferences = useCallback(async (prefs: Partial<UserPreferences>) => {
+        const updated = await service.updatePreferences(prefs);
         setUser(updated);
     }, []);
 
@@ -82,6 +89,10 @@ export function AuthProvider({children}: { children: React.ReactNode }) {
         await service.confirmEmail(token);
     }, []);
 
+    const resendConfirmationEmail = useCallback(async (email: string) => {
+        await service.resendConfirmationEmail(email);
+    }, []);
+
     const deleteAccount = useCallback(async () => {
         await service.deleteAccount();
         setUser(null);
@@ -99,10 +110,12 @@ export function AuthProvider({children}: { children: React.ReactNode }) {
                 loginWithGoogle,
                 logout,
                 updateProfile,
+                updatePreferences,
                 changePassword,
                 requestPasswordReset,
                 resetPassword,
                 confirmEmail,
+                resendConfirmationEmail,
                 deleteAccount,
             }}
         >
