@@ -1,29 +1,29 @@
 import type { AuthService } from './authService';
 import type { AuthCredentials, AuthResponse, RegisterData, User } from '@/types/auth';
+import { sanitizeApiError } from '@/utils/sanitizeApiError';
+import { getCsrfToken } from '@/utils/csrf';
 
 const BASE_URL = import.meta.env.VITE_API_URL;
-const TOKEN_KEY = 'dnd_auth_token';
-
-export function getAuthToken(): string | null {
-  return localStorage.getItem(TOKEN_KEY);
-}
-
-function setAuthToken(token: string): void {
-  localStorage.setItem(TOKEN_KEY, token);
-}
-
-function clearAuthToken(): void {
-  localStorage.removeItem(TOKEN_KEY);
-}
 
 async function authRequest<T>(path: string, options?: RequestInit): Promise<T> {
-  const token = getAuthToken();
+  const isGet = !options?.method || options.method.toUpperCase() === 'GET';
+  const csrfToken = getCsrfToken();
   const headers: Record<string, string> = {
     'Content-Type': 'application/json',
-    ...(token ? { Authorization: `Bearer ${token}` } : {}),
+    ...(options?.headers as Record<string, string> || {}),
   };
 
-  const response = await fetch(`${BASE_URL}${path}`, { ...options, headers });
+  if (csrfToken && !isGet) {
+    // Standard header mapping for CSRF tokens
+    headers['X-XSRF-TOKEN'] = csrfToken;
+    headers['X-CSRF-TOKEN'] = csrfToken;
+  }
+
+  const response = await fetch(`${BASE_URL}${path}`, { 
+    ...options, 
+    headers,
+    credentials: 'include' 
+  });
 
   if (!response.ok) {
     const body = await response.json().catch(() => ({}));
@@ -44,7 +44,6 @@ export const apiAuthService: AuthService = {
       method: 'POST',
       body: JSON.stringify(credentials),
     });
-    setAuthToken(res.token);
     return res;
   },
 
@@ -53,32 +52,25 @@ export const apiAuthService: AuthService = {
       method: 'POST',
       body: JSON.stringify(data),
     });
-    setAuthToken(res.token);
     return res;
   },
 
-  async loginWithGoogle(credential: string, acceptTerms?: boolean): Promise<AuthResponse> {
+  async loginWithGoogle(credential: string, acceptTerms?: boolean, nonce?: string | null): Promise<AuthResponse> {
     const res = await authRequest<AuthResponse>('/auth/google', {
       method: 'POST',
-      body: JSON.stringify({ credential, acceptTerms: acceptTerms ?? false }),
+      body: JSON.stringify({ credential, acceptTerms: acceptTerms ?? false, nonce: nonce ?? undefined }),
     });
-    setAuthToken(res.token);
     return res;
   },
 
   async logout(): Promise<void> {
-    try {
-      await authRequest<void>('/auth/logout', { method: 'POST' });
-    } finally {
-      clearAuthToken();
-    }
+    await authRequest<void>('/auth/logout', { method: 'POST' });
   },
 
   async getCurrentUser(): Promise<User | null> {
     try {
       return await authRequest<User>('/auth/me');
     } catch {
-      clearAuthToken();
       return null;
     }
   },
@@ -120,6 +112,5 @@ export const apiAuthService: AuthService = {
 
   async deleteAccount(): Promise<void> {
     await authRequest<void>('/auth/account', { method: 'DELETE' });
-    clearAuthToken();
   },
 };

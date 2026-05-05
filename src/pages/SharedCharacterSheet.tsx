@@ -34,11 +34,12 @@ export default function SharedCharacterSheetPage() {
       return;
     }
 
-    fetch(`${BASE_URL}/characters/${id}/shared`)
+    fetch(`${BASE_URL}/characters/${id}/shared`, { credentials: 'include' })
       .then(async res => {
         if (!res.ok) {
           const body = await res.json().catch(() => ({}));
-          throw new Error(body?.message ?? `Erro ${res.status}`);
+          const msg = body?.message ?? `Erro ${res.status}`;
+          throw new Error(Array.isArray(msg) ? msg.join(', ') : msg);
         }
         const text = await res.text();
         return text ? JSON.parse(text) : null;

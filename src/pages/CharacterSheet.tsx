@@ -14,7 +14,8 @@ import {PersonalitySection} from '@/components/sheet/PersonalitySection';
 import {CampaignNotes} from '@/components/sheet/CampaignNotes';
 import {CustomFields} from '@/components/sheet/CustomFields';
 import {Button} from '@/components/ui/button';
-import {ArrowLeft, Check, Loader2, Maximize, Minimize, Share2} from 'lucide-react';
+import {Switch} from '@/components/ui/switch';
+import {ArrowLeft, Check, Copy, Globe, Loader2, Lock, Maximize, Minimize, Share2} from 'lucide-react';
 import {toast} from 'sonner';
 
 type SaveStatus = 'idle' | 'saving' | 'saved';
@@ -202,11 +203,26 @@ export default function CharacterSheetPage() {
         }
     };
 
-    const handleShare = () => {
+    const [shareOpen, setShareOpen] = useState(false);
+
+    const handleCopyShareLink = () => {
         if (!local) return;
         const url = `${window.location.origin}/character/shared/${local.id}`;
         navigator.clipboard.writeText(url);
         toast.success('Link copiado para a área de transferência!');
+    };
+
+    const handleToggleShared = (checked: boolean) => {
+        update({ isShared: checked });
+        // Flush imediatamente para persistir a mudança de visibilidade
+        setTimeout(() => {
+            clearTimeout(debounceRef.current);
+            flush();
+        }, 0);
+        toast.info(checked
+            ? 'Ficha agora está pública via link de compartilhamento.'
+            : 'Ficha agora está privada. Apenas você pode acessá-la.'
+        );
     };
 
     if (isLoading) {
@@ -237,9 +253,71 @@ export default function CharacterSheetPage() {
                     <SaveIndicator status={saveStatus}/>
                 </div>
                 <div className="flex gap-2">
-                    <Button variant="outline" size="icon" onClick={handleShare} title="Compartilhar">
-                        <Share2 className="h-4 w-4"/>
-                    </Button>
+                    {/* Share dropdown */}
+                    <div className="relative">
+                        <Button
+                            variant="outline"
+                            size="icon"
+                            onClick={() => setShareOpen(prev => !prev)}
+                            title="Compartilhar"
+                            className={local?.isShared ? 'border-primary/50 text-primary' : ''}
+                        >
+                            <Share2 className="h-4 w-4"/>
+                        </Button>
+
+                        {shareOpen && (
+                            <>
+                                {/* Backdrop invisível para fechar ao clicar fora */}
+                                <div className="fixed inset-0 z-40" onClick={() => setShareOpen(false)} />
+
+                                <div className="absolute right-0 top-full z-50 mt-2 w-80 rounded-lg border border-border bg-popover p-4 shadow-xl animate-in fade-in slide-in-from-top-2">
+                                    {/* Header com status */}
+                                    <div className="mb-3 flex items-center gap-2">
+                                        {local?.isShared
+                                            ? <Globe className="h-4 w-4 text-primary"/>
+                                            : <Lock className="h-4 w-4 text-muted-foreground"/>
+                                        }
+                                        <span className="text-sm font-medium">
+                                            {local?.isShared ? 'Ficha pública' : 'Ficha privada'}
+                                        </span>
+                                    </div>
+
+                                    {/* Toggle */}
+                                    <div className="flex items-center justify-between rounded-md border border-border/50 bg-muted/30 px-3 py-2.5">
+                                        <label htmlFor="share-toggle" className="text-sm text-muted-foreground cursor-pointer">
+                                            Permitir acesso via link
+                                        </label>
+                                        <Switch
+                                            id="share-toggle"
+                                            checked={local?.isShared ?? false}
+                                            onCheckedChange={handleToggleShared}
+                                        />
+                                    </div>
+
+                                    {/* Link section — só aparece quando compartilhada */}
+                                    {local?.isShared && (
+                                        <div className="mt-3 space-y-2">
+                                            <p className="text-xs text-muted-foreground">
+                                                Qualquer pessoa com o link poderá visualizar esta ficha em modo somente leitura.
+                                            </p>
+                                            <div className="flex gap-2">
+                                                <input
+                                                    readOnly
+                                                    value={`${window.location.origin}/character/shared/${local.id}`}
+                                                    className="flex-1 truncate rounded-md border border-border bg-background px-2.5 py-1.5 text-xs text-muted-foreground"
+                                                />
+                                                <Button variant="outline" size="sm" onClick={handleCopyShareLink} className="gap-1.5 shrink-0">
+                                                    <Copy className="h-3.5 w-3.5"/>
+                                                    Copiar
+                                                </Button>
+                                            </div>
+                                        </div>
+                                    )}
+                                </div>
+                            </>
+                        )}
+                    </div>
+
                     <Button variant="outline" size="icon" onClick={toggleFullscreen} title="Tela cheia">
                         {isFullscreen ? <Minimize className="h-4 w-4"/> : <Maximize className="h-4 w-4"/>}
                     </Button>

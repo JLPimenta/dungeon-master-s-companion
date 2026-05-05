@@ -204,6 +204,9 @@ export interface CharacterSheet {
 
   // Manual bonuses for computed (read-only) fields
   bonuses: CharacterBonuses;
+
+  // Sharing
+  isShared?: boolean;
 }
 
 const DEFAULT_BONUSES: CharacterBonuses = {
@@ -272,5 +275,6 @@ export function createDefaultCharacter(name: string): CharacterSheet {
     campaignNotes: [],
     customFields: [],
     bonuses: { ...DEFAULT_BONUSES, savingThrows: {}, skills: {} },
+    isShared: false,
   };
 }

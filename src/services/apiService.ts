@@ -1,17 +1,24 @@
 import {CharacterService} from "@/services/characterService.ts";
 import {CharacterSheet} from "@/types/character.ts";
-import {getAuthToken} from "@/services/apiAuthService.ts";
+import {getCsrfToken} from "@/utils/csrf.ts";
 
 const BASE_URL = import.meta.env.VITE_API_URL
 
 async function request<T>(path: string, options?: RequestInit): Promise<T> {
-    const token = getAuthToken();
+    const isGet = !options?.method || options.method.toUpperCase() === 'GET';
+    const csrfToken = getCsrfToken();
     const headers: Record<string, string> = {
         'Content-Type': 'application/json',
-        ...(token ? { Authorization: `Bearer ${token}` } : {}),
+        ...(options?.headers as Record<string, string> || {}),
     };
+
+    if (csrfToken && !isGet) {
+        headers['X-XSRF-TOKEN'] = csrfToken;
+        headers['X-CSRF-TOKEN'] = csrfToken;
+    }
+
     const response = await fetch(`${BASE_URL}${path}`, {
-        ...options, headers
+        ...options, headers, credentials: 'include'
     })
 
     if (!response.ok) {
