@@ -1,7 +1,7 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { getCharacterService } from '@/services/serviceProvider';
-import type { CharacterSheet } from '@/types/character';
-import { createDefaultCharacter } from '@/types/character';
+import { resolveSystem } from '@/systems/registry';
+import type { AnySheet, SheetListItem, SystemId } from '@/systems/types';
 
 const QUERY_KEY = ['characters'];
 
@@ -22,12 +22,19 @@ export function useCharacter(id: string | undefined) {
   });
 }
 
+export interface CreateCharacterInput {
+  name: string;
+  system: SystemId;
+}
+
 export function useCreateCharacter() {
   const service = getCharacterService();
   const qc = useQueryClient();
   return useMutation({
-    mutationFn: (name: string) => {
-      const sheet = createDefaultCharacter(name);
+    // Os defaults vêm do módulo do sistema escolhido (no modo API, o backend
+    // ignora o resto e gera os próprios defaults a partir de nome + sistema).
+    mutationFn: ({ name, system }: CreateCharacterInput) => {
+      const sheet = resolveSystem(system).createDefault(name);
       return service.create(sheet);
     },
     onSuccess: () => qc.invalidateQueries({ queryKey: QUERY_KEY }),
@@ -38,12 +45,12 @@ export function useSaveCharacter() {
   const service = getCharacterService();
   const qc = useQueryClient();
   return useMutation({
-    mutationFn: (sheet: CharacterSheet) => service.update(sheet),
+    mutationFn: (sheet: AnySheet) => service.update(sheet),
     onSuccess: (updatedSheet) => {
-      qc.setQueryData<CharacterSheet[]>(QUERY_KEY, (old) =>
+      qc.setQueryData<SheetListItem[]>(QUERY_KEY, (old) =>
         old?.map((char) => (char.id === updatedSheet.id ? updatedSheet : char))
       );
-      qc.setQueryData<CharacterSheet>([...QUERY_KEY, updatedSheet.id], updatedSheet);
+      qc.setQueryData<AnySheet>([...QUERY_KEY, updatedSheet.id], updatedSheet);
     },
   });
 }

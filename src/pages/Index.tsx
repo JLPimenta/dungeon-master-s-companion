@@ -1,6 +1,6 @@
 import {useState} from 'react';
 import {useNavigate} from 'react-router-dom';
-import {useCharacters, useCreateCharacter, useDeleteCharacter} from '@/hooks/useCharacters';
+import {useCharacters, useCreateCharacter, useDeleteCharacter, type CreateCharacterInput} from '@/hooks/useCharacters';
 import {CharacterCard} from '@/components/dashboard/CharacterCard';
 import {CreateCharacterDialog} from '@/components/dashboard/CreateCharacterDialog';
 import {DeleteCharacterDialog} from '@/components/dashboard/DeleteCharacterDialog';
@@ -17,8 +17,8 @@ const Index = () => {
     const [createOpen, setCreateOpen] = useState(false);
     const [deleteTarget, setDeleteTarget] = useState<{ id: string; name: string } | null>(null);
 
-    const handleCreate = async (name: string) => {
-        const sheet = await createMutation.mutateAsync(name);
+    const handleCreate = async (input: CreateCharacterInput) => {
+        const sheet = await createMutation.mutateAsync(input);
         setCreateOpen(false);
         navigate(`/character/${sheet.id}`);
     };

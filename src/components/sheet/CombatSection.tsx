@@ -1,4 +1,4 @@
-import type { CharacterSheet } from '@/types/character';
+import type { DndSectionProps } from '@/systems/dnd-common/types';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { NumericInput } from '@/components/ui/numeric-input';
@@ -7,13 +7,13 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { BonusInput } from '@/components/ui/bonus-input';
 import { getInitiativeBonus, formatModifier } from '@/utils/calculations';
 
-interface Props {
-  sheet: CharacterSheet;
-  onChange: (patch: Partial<CharacterSheet>) => void;
-  onBlur?: () => void;
+// Seção compartilhada pela família D&D (5e e 5.5e): ver src/systems/dnd-common/types.ts.
+interface Props extends DndSectionProps {
+  /** Rótulo da inspiração: "Inspiração Heroica" (5.5e) ou "Inspiração" (5e). */
+  inspirationLabel?: string;
 }
 
-export function CombatSection({ sheet, onChange, onBlur }: Props) {
+export function CombatSection({ sheet, onChange, onBlur, inspirationLabel = 'Inspiração Heroica' }: Props) {
   // getInitiativeBonus já soma sheet.bonuses?.initiative internamente
   const initTotal = getInitiativeBonus(sheet);
   const initBonus = sheet.bonuses?.initiative ?? 0;
@@ -176,7 +176,7 @@ export function CombatSection({ sheet, onChange, onBlur }: Props) {
                 onCheckedChange={c => onChange({ heroicInspiration: !!c })}
                 className="h-4 w-4"
             />
-            <span className="text-sm">Inspiração Heroica</span>
+            <span className="text-sm">{inspirationLabel}</span>
           </div>
 
         </CardContent>

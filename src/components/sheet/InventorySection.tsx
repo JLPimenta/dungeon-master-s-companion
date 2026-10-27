@@ -1,5 +1,6 @@
+import type { DndSectionProps } from '@/systems/dnd-common/types';
 import {useState} from 'react';
-import type {AttunedItem, CharacterSheet, Coins, InventoryItem} from '@/types/character';
+import type {AttunedItem, Coins, InventoryItem} from '@/types/character';
 import {Card, CardContent, CardHeader, CardTitle} from '@/components/ui/card';
 import {Input} from '@/components/ui/input';
 import {Button} from '@/components/ui/button';
@@ -8,21 +9,24 @@ import {ConfirmDeleteButton} from '@/components/ui/confirm-delete-button';
 import {ChevronDown, ChevronUp, Plus} from 'lucide-react';
 import {getAttunementSlots, getEffectiveProficiencyBonus} from '@/utils/calculations';
 
-interface Props {
-    sheet: CharacterSheet;
-    onChange: (patch: Partial<CharacterSheet>) => void;
-    onBlur?: () => void;
+// Seção compartilhada pela família D&D (5e e 5.5e): ver src/systems/dnd-common/types.ts.
+interface Props extends DndSectionProps {
+    /**
+     * Limite de itens sintonizados. Sem valor, usa a regra da casa do 5.5e
+     * (igual ao bônus de proficiência — ver getAttunementSlots).
+     */
+    maxAttunedItems?: number;
 }
 
 const COIN_LABELS: Record<keyof Coins, string> = {
     cp: 'PC', sp: 'PP', ep: 'PE', gp: 'PO', pp: 'PL',
 };
 
-export function InventorySection({sheet, onChange, onBlur}: Props) {
+export function InventorySection({sheet, onChange, onBlur, maxAttunedItems}: Props) {
     const [collapsed, setCollapsed] = useState(true);
     const [expandedIds, setExpandedIds] = useState<Set<string>>(new Set());
     const profBonus = getEffectiveProficiencyBonus(sheet)
-    const maxAttune = getAttunementSlots(profBonus);
+    const maxAttune = maxAttunedItems ?? getAttunementSlots(profBonus);
 
     const toggleExpanded = (id: string) => {
         setExpandedIds(prev => {

@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import type { CharacterSheet, CampaignNote } from '@/types/character';
+import type { CampaignNote } from '@/systems/shared/types';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
@@ -8,9 +8,10 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { ConfirmDeleteButton } from '@/components/ui/confirm-delete-button';
 import { ChevronDown, ChevronUp, Plus } from 'lucide-react';
 
+// Seção comum a todos os sistemas: depende só de `campaignNotes`.
 interface Props {
-  sheet: CharacterSheet;
-  onChange: (patch: Partial<CharacterSheet>) => void;
+  sheet: { campaignNotes: CampaignNote[] };
+  onChange: (patch: { campaignNotes: CampaignNote[] }) => void;
   onBlur?: () => void;
 }
 
