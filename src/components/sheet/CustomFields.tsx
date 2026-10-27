@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import type { CharacterSheet, CustomField } from '@/types/character';
+import type { CustomField } from '@/systems/shared/types';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
@@ -8,8 +8,9 @@ import { ConfirmDeleteButton } from '@/components/ui/confirm-delete-button';
 import { ChevronDown, ChevronUp, Plus } from 'lucide-react';
 
 interface Props {
-  sheet: CharacterSheet;
-  onChange: (patch: Partial<CharacterSheet>) => void;
+  // Seção comum a todos os sistemas: depende só de `customFields`.
+  sheet: { customFields: CustomField[] };
+  onChange: (patch: { customFields: CustomField[] }) => void;
   onBlur?: () => void;
 }
 

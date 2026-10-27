@@ -1,17 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import type { CharacterSheet } from '@/types/character';
-import { HeaderSection } from '@/components/sheet/HeaderSection';
-import { AbilityScores } from '@/components/sheet/AbilityScores';
-import { SkillsSection } from '@/components/sheet/SkillsSection';
-import { CombatSection } from '@/components/sheet/CombatSection';
-import { WeaponsTable } from '@/components/sheet/WeaponsTable';
-import { FeaturesTraits } from '@/components/sheet/FeaturesTraits';
-import { SpellcastingSection } from '@/components/sheet/SpellcastingSection';
-import { InventorySection } from '@/components/sheet/InventorySection';
-import { PersonalitySection } from '@/components/sheet/PersonalitySection';
-import { CampaignNotes } from '@/components/sheet/CampaignNotes';
-import { CustomFields } from '@/components/sheet/CustomFields';
+import type { AnySheet } from '@/systems/types';
+import { findSystem } from '@/systems/registry';
 import { Button } from '@/components/ui/button';
 import { Eye, ArrowLeft } from 'lucide-react';
 
@@ -23,7 +13,7 @@ const noop = () => {};
 export default function SharedCharacterSheetPage() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
-  const [sheet, setSheet] = useState<CharacterSheet | null>(null);
+  const [sheet, setSheet] = useState<AnySheet | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
 
@@ -60,11 +50,13 @@ export default function SharedCharacterSheetPage() {
     );
   }
 
-  if (error || !sheet) {
+  const system = sheet ? findSystem(sheet) : undefined;
+
+  if (error || !sheet || !system) {
     return (
       <div className="flex min-h-screen flex-col items-center justify-center gap-4 px-4 text-center">
         <p className="text-lg text-muted-foreground">
-          {error ?? 'Ficha não encontrada.'}
+          {error ?? (sheet ? 'Esta ficha usa um sistema de jogo ainda não suportado.' : 'Ficha não encontrada.')}
         </p>
         <Button variant="outline" onClick={() => navigate('/')}>
           Ir para o início
@@ -105,27 +97,7 @@ export default function SharedCharacterSheetPage() {
             display: none !important;
           }
         ` }} />
-        <HeaderSection sheet={sheet} onChange={noop} />
-
-        <div className="grid grid-cols-1 gap-6 lg:grid-cols-[280px_1fr]">
-          <div className="space-y-6">
-            <AbilityScores sheet={sheet} onChange={noop} />
-            <SkillsSection sheet={sheet} onChange={noop} />
-          </div>
-          <div className="flex flex-col space-y-6 h-full">
-            <CombatSection sheet={sheet} onChange={noop} />
-            <WeaponsTable sheet={sheet} onChange={noop} />
-            <div className="flex-1">
-              <PersonalitySection sheet={sheet} onChange={noop} />
-            </div>
-          </div>
-        </div>
-
-        <SpellcastingSection sheet={sheet} onChange={noop} />
-        {/* <InventorySection sheet={sheet} onChange={noop} /> Ocultado remotamente */}
-        <FeaturesTraits sheet={sheet} onChange={noop} />
-        {/* <CampaignNotes sheet={sheet} onChange={noop} /> Ocultado remotamente */}
-        {/* <CustomFields sheet={sheet} onChange={noop} /> Ocultado remotamente */}
+        <system.SheetComponent sheet={sheet} onChange={noop} readOnly />
       </div>
     </div>
   );

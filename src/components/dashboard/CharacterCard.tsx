@@ -1,18 +1,26 @@
-import type { CharacterSheet } from '@/types/character';
+import type { CharacterCardData, SheetListItem } from '@/systems/types';
+import { AVAILABLE_SYSTEMS, findSystem } from '@/systems/registry';
 import { Card, CardContent } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
 import { ConfirmDeleteButton } from '@/components/ui/confirm-delete-button';
 import { Swords, Shield } from 'lucide-react';
-import { getProficiencyBonus } from '@/utils/calculations';
 
 interface Props {
-  character: CharacterSheet;
+  character: SheetListItem;
   onClick: () => void;
   onDelete: () => void;
 }
 
+const DETAIL_ICONS = { class: Swords, origin: Shield } as const;
+
+/**
+ * Card genérico: o conteúdo vem de `card`, calculado pelo sistema da ficha
+ * (no servidor, ou no cliente quando o item não traz `card`).
+ */
 export function CharacterCard({ character, onClick, onDelete }: Props) {
-  const profBonus = getProficiencyBonus(character.level);
+  const system = findSystem(character);
+  const card: CharacterCardData | undefined =
+    character.card ?? system?.buildCard(character as never);
+  const showSystemBadge = AVAILABLE_SYSTEMS.length > 1 || !system;
 
   return (
     <Card
@@ -30,32 +38,36 @@ export function CharacterCard({ character, onClick, onDelete }: Props) {
           />
         </div>
 
+        {showSystemBadge && (
+          <span className="mb-2 inline-block rounded-full border border-primary/30 px-2 py-0.5 text-[0.7rem] uppercase tracking-wider text-primary/80">
+            {system?.shortLabel ?? 'Sistema não suportado'}
+          </span>
+        )}
+
         {/* Name */}
         <h3 className="mb-3 pr-8 text-xl font-semibold text-primary" style={{ fontFamily: 'var(--font-heading)' }}>
           {character.name || 'Sem Nome'}
         </h3>
 
         {/* Info rows */}
-        <div className="space-y-1.5 text-sm">
-          {character.class && (
-            <div className="flex items-center gap-2 text-foreground">
-              <Swords className="h-3.5 w-3.5 text-primary/70" />
-              <span>{character.class}{character.subclass ? ` — ${character.subclass}` : ''}</span>
-            </div>
-          )}
-          {character.species && (
-            <div className="flex items-center gap-2 text-foreground">
-              <Shield className="h-3.5 w-3.5 text-primary/70" />
-              <span>{character.species}</span>
-            </div>
-          )}
-        </div>
+        {card && card.details.length > 0 && (
+          <div className="space-y-1.5 text-sm">
+            {card.details.map(detail => {
+              const Icon = DETAIL_ICONS[detail.kind] ?? Swords;
+              return (
+                <div key={`${detail.kind}-${detail.text}`} className="flex items-center gap-2 text-foreground">
+                  <Icon className="h-3.5 w-3.5 text-primary/70" />
+                  <span>{detail.text}</span>
+                </div>
+              );
+            })}
+          </div>
+        )}
 
         {/* Footer stats */}
         <div className="mt-4 flex items-center gap-4 border-t border-border/40 pt-3 text-xs text-muted-foreground">
           <span>Nível {character.level}</span>
-          <span>Proficiência +{profBonus}</span>
-          <span>PV {character.hitPoints.current}/{character.hitPoints.max}</span>
+          {card?.stats.map(stat => <span key={stat}>{stat}</span>)}
         </div>
       </CardContent>
     </Card>

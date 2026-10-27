@@ -1,5 +1,5 @@
 import {CharacterService} from "@/services/characterService.ts";
-import {CharacterSheet} from "@/types/character.ts";
+import type {AnySheet, SheetListItem} from "@/systems/types";
 import {getCsrfToken} from "@/utils/csrf.ts";
 import {sanitizeApiError} from "@/utils/sanitizeApiError";
 
@@ -38,27 +38,28 @@ async function request<T>(path: string, options?: RequestInit): Promise<T> {
 }
 
 export const apiService: CharacterService = {
-    getAll(): Promise<CharacterSheet[]> {
-        return request<CharacterSheet[]>('/characters');
+    getAll(): Promise<SheetListItem[]> {
+        return request<SheetListItem[]>('/characters');
     },
 
-    getById(id: string): Promise<CharacterSheet | null> {
-        return request<CharacterSheet>(`/characters/${id}`)
+    getById(id: string): Promise<AnySheet | null> {
+        return request<AnySheet>(`/characters/${id}`)
             .catch((err: Error) => {
                 if (err.message.includes('404')) return null
                 throw err
             })
     },
 
-    create(sheet: CharacterSheet): Promise<CharacterSheet> {
-        return request<CharacterSheet>('/characters/', {
+    // O backend gera os defaults do sistema: basta nome + sistema.
+    create(sheet: AnySheet): Promise<AnySheet> {
+        return request<AnySheet>('/characters/', {
             method: 'POST',
-            body: JSON.stringify(sheet)
+            body: JSON.stringify({name: sheet.name, system: sheet.system})
         })
     },
 
-    update(sheet: CharacterSheet): Promise<CharacterSheet> {
-        return request<CharacterSheet>(`/characters/${sheet.id}`, {
+    update(sheet: AnySheet): Promise<AnySheet> {
+        return request<AnySheet>(`/characters/${sheet.id}`, {
             method: 'PUT',
             body: JSON.stringify(sheet)
         })

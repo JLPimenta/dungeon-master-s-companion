@@ -1,5 +1,6 @@
+import type { DndSectionProps } from '@/systems/dnd-common/types';
 import { useState, useEffect } from 'react';
-import type { CharacterSheet, Spell, AbilityKey } from '@/types/character';
+import type { Spell, AbilityKey } from '@/types/character';
 import { ABILITY_LABELS } from '@/types/character';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -19,11 +20,8 @@ import {
   formatModifier, getEffectiveProficiencyBonus,
 } from '@/utils/calculations';
 
-interface Props {
-  sheet: CharacterSheet;
-  onChange: (patch: Partial<CharacterSheet>) => void;
-  onBlur?: () => void;
-}
+// Seção compartilhada pela família D&D (5e e 5.5e): ver src/systems/dnd-common/types.ts.
+type Props = DndSectionProps;
 
 const SPELL_LEVELS = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9];
 const LEVEL_LABELS: Record<number, string> = {

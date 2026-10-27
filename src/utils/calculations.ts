@@ -23,7 +23,7 @@ export function getProficiencyBonus(level: number): number {
  * Use este em todos os cálculos que dependem de proficiência
  * (perícias, salvaguardas, magias, sintonização).
  */
-export function getEffectiveProficiencyBonus(sheet: CharacterSheet): number {
+export function getEffectiveProficiencyBonus(sheet: Pick<CharacterSheet, 'level' | 'bonuses'>): number {
   return getProficiencyBonus(sheet.level) + (sheet.bonuses?.proficiencyBonus ?? 0);
 }
 
@@ -87,10 +87,10 @@ export function getAttunementSlots(proficiencyBonus: number): number {
  * Iniciativa efetiva: modificador de Destreza + bônus manual do jogador.
  * O bônus cobre casos como o Antecedente "Criminoso" (adiciona proficiência à iniciativa).
  */
-export function getInitiativeBonus(sheet: CharacterSheet): number {
+export function getInitiativeBonus(sheet: Pick<CharacterSheet, 'abilities' | 'bonuses'>): number {
   return getModifier(sheet.abilities.dexterity.value) + (sheet.bonuses?.initiative ?? 0);
 }
 
-export function getAbilityModifier(sheet: CharacterSheet, ability: AbilityKey): number {
+export function getAbilityModifier(sheet: Pick<CharacterSheet, 'abilities'>, ability: AbilityKey): number {
   return getModifier(sheet.abilities[ability].value);
 }

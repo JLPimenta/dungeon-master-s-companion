@@ -1,18 +1,8 @@
 import {useParams, useNavigate} from 'react-router-dom';
 import {useCallback, useEffect, useRef, useState} from 'react';
 import {useCharacter, useSaveCharacter} from '@/hooks/useCharacters';
-import type {CharacterSheet as CharacterSheetType} from '@/types/character';
-import {HeaderSection} from '@/components/sheet/HeaderSection';
-import {AbilityScores} from '@/components/sheet/AbilityScores';
-import {SkillsSection} from '@/components/sheet/SkillsSection';
-import {CombatSection} from '@/components/sheet/CombatSection';
-import {WeaponsTable} from '@/components/sheet/WeaponsTable';
-import {FeaturesTraits} from '@/components/sheet/FeaturesTraits';
-import {SpellcastingSection} from '@/components/sheet/SpellcastingSection';
-import {InventorySection} from '@/components/sheet/InventorySection';
-import {PersonalitySection} from '@/components/sheet/PersonalitySection';
-import {CampaignNotes} from '@/components/sheet/CampaignNotes';
-import {CustomFields} from '@/components/sheet/CustomFields';
+import type {AnySheet as CharacterSheetType} from '@/systems/types';
+import {findSystem} from '@/systems/registry';
 import {UnsavedChangesBar} from '@/components/sheet/UnsavedChangesBar';
 import {Button} from '@/components/ui/button';
 import {Switch} from '@/components/ui/switch';
@@ -268,6 +258,21 @@ export default function CharacterSheetPage() {
         );
     }
 
+    // Único ponto de contato da página com o sistema da ficha.
+    const system = findSystem(local);
+    if (!system) {
+        return (
+            <div className="flex min-h-screen flex-col items-center justify-center gap-4 px-4 text-center">
+                <p className="text-muted-foreground">
+                    Esta ficha usa um sistema de jogo que esta versão do Grimório ainda não suporta.
+                    Recarregue a página para buscar a versão mais recente.
+                </p>
+                <Button variant="outline" onClick={() => navigate('/')}>Voltar</Button>
+            </div>
+        );
+    }
+    const SystemSheet = system.SheetComponent;
+
     return (
         <>
             <UnsavedChangesBar 
@@ -357,33 +362,8 @@ export default function CharacterSheetPage() {
                 </div>
             </div>
 
-            {/* Sheet content */}
-            <div className="mx-auto max-w-6xl space-y-6">
-                <HeaderSection sheet={local} onChange={update} onBlur={handleBlur}/>
-
-                <div className="grid grid-cols-1 gap-6 lg:grid-cols-[280px_1fr]">
-                    {/* Left column */}
-                    <div className="space-y-6">
-                        <AbilityScores sheet={local} onChange={update} onBlur={handleBlur}/>
-                        <SkillsSection sheet={local} onChange={update} onBlur={handleBlur}/>
-                    </div>
-
-                    {/* Right column */}
-                    <div className="flex flex-col space-y-6 h-full">
-                        <CombatSection sheet={local} onChange={update} onBlur={handleBlur}/>
-                        <WeaponsTable sheet={local} onChange={update} onBlur={handleBlur}/>
-                        <div className="flex-1">
-                            <PersonalitySection sheet={local} onChange={update} onBlur={handleBlur}/>
-                        </div>
-                    </div>
-                </div>
-
-                <SpellcastingSection sheet={local} onChange={update} onBlur={handleBlur}/>
-                <InventorySection sheet={local} onChange={update} onBlur={handleBlur}/>
-                <FeaturesTraits sheet={local} onChange={update} onBlur={handleBlur}/>
-                <CampaignNotes sheet={local} onChange={update} onBlur={handleBlur}/>
-                <CustomFields sheet={local} onChange={update} onBlur={handleBlur}/>
-            </div>
+            {/* Sheet content — layout definido pelo sistema da ficha */}
+            <SystemSheet sheet={local} onChange={update} onBlur={handleBlur}/>
 
             {scrolled && <FloatingSaveIndicator status={saveStatus} />}
         </div>

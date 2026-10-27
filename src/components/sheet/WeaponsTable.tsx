@@ -1,5 +1,6 @@
+import type { DndSectionProps } from '@/systems/dnd-common/types';
 import { useState } from 'react';
-import type { CharacterSheet, Weapon } from '@/types/character';
+import type { Weapon } from '@/types/character';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
@@ -7,11 +8,8 @@ import { Label } from '@/components/ui/label';
 import { ConfirmDeleteButton } from '@/components/ui/confirm-delete-button';
 import { ChevronDown, Plus } from 'lucide-react';
 
-interface Props {
-  sheet: CharacterSheet;
-  onChange: (patch: Partial<CharacterSheet>) => void;
-  onBlur?: () => void;
-}
+// Seção compartilhada pela família D&D (5e e 5.5e): ver src/systems/dnd-common/types.ts.
+type Props = DndSectionProps;
 
 export function WeaponsTable({ sheet, onChange, onBlur }: Props) {
   const [expandedIds, setExpandedIds] = useState<Set<string>>(new Set());

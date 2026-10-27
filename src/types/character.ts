@@ -96,19 +96,9 @@ export interface Coins {
   pp: number;
 }
 
-export interface CampaignNote {
-  id: string;
-  category: 'npcs' | 'locations' | 'events' | 'general';
-  title: string;
-  content: string;
-}
-
-export interface CustomField {
-  id: string;
-  section: string;
-  label: string;
-  value: string;
-}
+// Recursos do Grimório comuns a todos os sistemas (ver src/systems/shared/types.ts).
+import type { CampaignNote, CustomField } from '@/systems/shared/types';
+export type { CampaignNote, CustomField };
 
 export const DEFAULT_SKILLS: Skill[] = [
   { name: 'Acrobacia', ability: 'dexterity', proficient: false, expertise: false },

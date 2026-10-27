@@ -1,4 +1,5 @@
-import type {AbilityKey, CharacterSheet} from '@/types/character';
+import type { DndSectionProps } from '@/systems/dnd-common/types';
+import type {AbilityKey} from '@/types/character';
 import {ABILITY_ABBR} from '@/types/character';
 import {Card, CardContent, CardHeader, CardTitle} from '@/components/ui/card';
 import {NumericInput} from '@/components/ui/numeric-input';
@@ -8,11 +9,8 @@ import {formatModifier, getEffectiveProficiencyBonus, getModifier, getSavingThro
 import {Tooltip, TooltipContent, TooltipTrigger} from '@/components/ui/tooltip';
 import {HelpCircle} from 'lucide-react';
 
-interface Props {
-    sheet: CharacterSheet;
-    onChange: (patch: Partial<CharacterSheet>) => void;
-    onBlur?: () => void;
-}
+// Seção compartilhada pela família D&D (5e e 5.5e): ver src/systems/dnd-common/types.ts.
+type Props = DndSectionProps;
 
 const ABILITY_KEYS: AbilityKey[] = [
     'strength', 'dexterity', 'constitution',
