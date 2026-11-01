@@ -47,6 +47,9 @@ jobs:
           java-version: 21
 
       - uses: android-actions/setup-android@v3
+        with:
+          # O padrão inclui o pacote `tools`, que não existe mais no SDK.
+          packages: platform-tools
 
       - uses: gradle/actions/setup-gradle@v4
 
