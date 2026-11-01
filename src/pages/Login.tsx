@@ -26,6 +26,7 @@ export default function Login() {
   const [loading, setLoading] = useState(false);
   const [captchaToken, setCaptchaToken] = useState<string | null>(null);
   const [pendingGoogleCredential, setPendingGoogleCredential] = useState<string | null>(null);
+  const [pendingGoogleNonce, setPendingGoogleNonce] = useState<string | null>(null);
   const [acceptedTerms, setAcceptedTerms] = useState(false);
   const recaptchaRef = useRef<ReCAPTCHA>(null);
   const { login, loginWithGoogle } = useAuth();
@@ -59,6 +60,7 @@ export default function Login() {
     } catch (err: any) {
       if (err.message && err.message.toLowerCase().includes('termos')) {
         setPendingGoogleCredential(credential);
+        setPendingGoogleNonce(nonce);
         setAcceptedTerms(false);
       } else {
         toast({ title: 'Erro', description: err.message, variant: 'destructive' });
@@ -70,7 +72,7 @@ export default function Login() {
     if (!pendingGoogleCredential) return;
     setLoading(true);
     try {
-      await loginWithGoogle(pendingGoogleCredential, true);
+      await loginWithGoogle(pendingGoogleCredential, true, pendingGoogleNonce);
       navigate('/');
     } catch (err: any) {
       toast({ title: 'Erro', description: err.message, variant: 'destructive' });

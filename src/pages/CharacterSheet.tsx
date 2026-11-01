@@ -10,6 +10,7 @@ import {ArrowLeft, Check, Copy, Globe, Loader2, Lock, Maximize, Minimize, Share2
 import {toast} from 'sonner';
 import {useUserPreferences} from '@/hooks/useUserPreferences';
 import {FullscreenLoader} from '@/components/brand/FullscreenLoader';
+import {onAppBackground} from '@/native/platform';
 import {SheetChromeProvider, isFullscreenSupported, type SheetChrome} from '@/systems/shared/chrome/SheetChromeContext';
 
 type SaveStatus = 'idle' | 'saving' | 'saved';
@@ -200,6 +201,10 @@ export default function CharacterSheetPage() {
             flush();
         }
     }, [flush, autoSaveEnabled]);
+
+    // No APK, salva o que o salvamento automático ainda tinha na fila antes de o
+    // Android poder encerrar o app em segundo plano.
+    useEffect(() => onAppBackground(handleBlur), [handleBlur]);
 
     const handleDiscard = useCallback(() => {
         if (lastSavedRef.current) {
@@ -393,9 +398,11 @@ export default function CharacterSheetPage() {
                         )}
                     </div>
 
-                    <Button variant="outline" size="icon" onClick={toggleFullscreen} title="Tela cheia">
-                        {isFullscreen ? <Minimize className="h-4 w-4"/> : <Maximize className="h-4 w-4"/>}
-                    </Button>
+                    {isFullscreenSupported() && (
+                        <Button variant="outline" size="icon" onClick={toggleFullscreen} title="Tela cheia">
+                            {isFullscreen ? <Minimize className="h-4 w-4"/> : <Maximize className="h-4 w-4"/>}
+                        </Button>
+                    )}
                 </div>
             </div>
 

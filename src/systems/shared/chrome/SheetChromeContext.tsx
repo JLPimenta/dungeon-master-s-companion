@@ -1,4 +1,5 @@
 import { createContext, useContext, type ReactNode } from 'react';
+import { isNativeApp } from '@/native/platform';
 
 /*
  * O que a página da ficha entrega ao layout de um sistema com `ownsChrome`.
@@ -57,5 +58,6 @@ export function useSheetChrome(): SheetChrome {
 /** `document.fullscreenEnabled`, protegido para ambientes sem DOM completo. */
 // eslint-disable-next-line react-refresh/only-export-components
 export function isFullscreenSupported(): boolean {
-  return typeof document !== 'undefined' && !!document.fullscreenEnabled;
+  // No APK o app já ocupa a tela toda.
+  return !isNativeApp && typeof document !== 'undefined' && !!document.fullscreenEnabled;
 }

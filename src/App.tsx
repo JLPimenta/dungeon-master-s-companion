@@ -4,6 +4,9 @@ import { Toaster as Sonner } from "@/components/ui/sonner";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { GoogleOAuthProvider } from "@react-oauth/google";
+import type { ReactNode } from "react";
+import { NativeAppShell } from "@/native/NativeAppShell";
+import { isNativeApp } from "@/native/platform";
 import { AuthProvider } from "@/contexts/AuthContext";
 import { ProtectedRoute } from "@/components/auth/ProtectedRoute";
 import { ThemeProvider } from "next-themes";
@@ -22,14 +25,23 @@ import TermsOfUse from "./pages/TermsOfUse.tsx";
 
 const queryClient = new QueryClient();
 
+// No APK o login usa o Credential Manager, sem o script web do Google.
+const GoogleProvider = ({ children }: { children: ReactNode }) =>
+  isNativeApp ? (
+    <>{children}</>
+  ) : (
+    <GoogleOAuthProvider clientId={import.meta.env.VITE_GOOGLE_CLIENT_ID ?? ''}>{children}</GoogleOAuthProvider>
+  );
+
 const App = () => (
-  <GoogleOAuthProvider clientId={import.meta.env.VITE_GOOGLE_CLIENT_ID ?? ''}>
+  <GoogleProvider>
     <ThemeProvider attribute="class" defaultTheme="dark" enableSystem>
       <QueryClientProvider client={queryClient}>
         <TooltipProvider>
           <Toaster />
           <Sonner />
           <BrowserRouter>
+            <NativeAppShell />
             <AuthProvider>
               <div className="flex min-h-screen flex-col">
                 <div className="flex-auto relative w-full h-full">
@@ -59,7 +71,7 @@ const App = () => (
         </TooltipProvider>
       </QueryClientProvider>
     </ThemeProvider>
-  </GoogleOAuthProvider>
+  </GoogleProvider>
 );
 
 export default App;
