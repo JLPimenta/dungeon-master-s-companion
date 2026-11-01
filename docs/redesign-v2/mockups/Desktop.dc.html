@@ -1,0 +1,991 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<title>Ficha no computador</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600;700&amp;family=Crimson+Text:ital,wght@0,400;0,600;0,700;1,400&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+</style>
+</helmet>
+<div style="position: relative; width: 100%; height: 100vh; min-height: 720px; background: #12151B; color: #E6DCC8; font-family: 'Crimson Text', Georgia, serif; font-size: 16px; line-height: 1.4; overflow: hidden">
+<div onScroll="{{sc.kd}}" style="height: 100%; overflow-y: auto; scrollbar-width: thin; {{sb.kd}}; scroll-behavior: smooth">
+<header style="position: sticky; top: 0; z-index: 20; background: #151920; border-bottom: 1px solid #2E2A1E">
+<div style="max-width: 1200px; margin: 0 auto; padding: 0 24px; height: 64px; display: flex; align-items: center; gap: 14px">
+<button type="button" aria-label="Voltar aos personagens" style="width: 44px; height: 44px; border-radius: 8px; border: 0; background: transparent; cursor: pointer; flex-shrink: 0; display: flex; align-items: center; justify-content: center; padding: 0"><svg width="30" height="30" viewBox="0 0 64 64" aria-hidden="true" style="display: block; flex-shrink: 0"><g transform="translate(-2.5 0)"><rect x="21.5" y="6" width="29.5" height="52" rx="3" fill="#D9A62E"></rect><rect x="13" y="6" width="6" height="52" rx="3" fill="#D9A62E"></rect><rect x="19" y="3.5" width="34.5" height="50" rx="5.5" fill="#151920"></rect><rect x="21.5" y="6" width="29.5" height="45" rx="3" fill="#D9A62E"></rect><rect x="42.5" y="22" width="15" height="13" rx="3" fill="#151920"></rect><rect x="44" y="23.5" width="12" height="10" rx="2" fill="#D9A62E"></rect><polygon points="32,20.5 40,28.5 32,36.5 24,28.5" fill="#151920"></polygon><polygon points="32,24.25 36.25,28.5 32,32.75 27.75,28.5" fill="#D9A62E"></polygon></g></svg></button>
+<div style="min-width: 0; flex-shrink: 1">
+<div style="font-family: 'Cinzel', serif; font-weight: 700; font-size: 17px; color: #D9A62E; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{pf.name}}</div>
+<div style="font-size: 14px; color: #A0977F; white-space: nowrap">{{subtitle}}</div>
+</div>
+<nav aria-label="Ir para seção" style="flex: 1; min-width: 0; display: flex; gap: 2px; overflow-x: auto; scrollbar-width: none; margin-left: 12px">
+<a href="#topo" style="height: 40px; padding: 0 10px; display: flex; align-items: center; border-radius: 6px; color: #A0977F; text-decoration: none; font-size: 15px; white-space: nowrap">Ficha</a>
+<a href="#atributos" style="height: 40px; padding: 0 10px; display: flex; align-items: center; border-radius: 6px; color: #A0977F; text-decoration: none; font-size: 15px; white-space: nowrap">Atributos</a>
+<a href="#armas" style="height: 40px; padding: 0 10px; display: flex; align-items: center; border-radius: 6px; color: #A0977F; text-decoration: none; font-size: 15px; white-space: nowrap">Armas</a>
+<a href="#magias" style="height: 40px; padding: 0 10px; display: flex; align-items: center; border-radius: 6px; color: #A0977F; text-decoration: none; font-size: 15px; white-space: nowrap">Magias</a>
+<sc-if value="{{rw}}" hint-placeholder-val="{{ true }}"><a href="#inventario" style="height: 40px; padding: 0 10px; display: flex; align-items: center; border-radius: 6px; color: #A0977F; text-decoration: none; font-size: 15px; white-space: nowrap">Inventário</a></sc-if>
+<a href="#tracos" style="height: 40px; padding: 0 10px; display: flex; align-items: center; border-radius: 6px; color: #A0977F; text-decoration: none; font-size: 15px; white-space: nowrap">Traços</a>
+<a href="#personalidade" style="height: 40px; padding: 0 10px; display: flex; align-items: center; border-radius: 6px; color: #A0977F; text-decoration: none; font-size: 15px; white-space: nowrap">História</a>
+<sc-if value="{{rw}}" hint-placeholder-val="{{ true }}"><a href="#notas" style="height: 40px; padding: 0 10px; display: flex; align-items: center; border-radius: 6px; color: #A0977F; text-decoration: none; font-size: 15px; white-space: nowrap">Notas</a></sc-if>
+<sc-if value="{{rw}}" hint-placeholder-val="{{ true }}"><a href="#campos" style="height: 40px; padding: 0 10px; display: flex; align-items: center; border-radius: 6px; color: #A0977F; text-decoration: none; font-size: 15px; white-space: nowrap">Campos</a></sc-if>
+</nav>
+<div style="flex-shrink: 0; display: flex; align-items: center; gap: 12px; font-size: 15px">
+<label style="display: flex; align-items: baseline; gap: 4px; color: #A0977F; font-style: italic">PV
+<input type="text" inputMode="numeric" aria-label="Pontos de vida atuais" value="{{hpField}}" onChange="{{onHp}}" onFocus="{{selectAll}}" onBlur="{{blurHp}}" style="width: 40px; height: 34px; border: 0; border-bottom: 1px dashed #6B5524; background: transparent; color: #E6DCC8; font-family: 'Cinzel', serif; font-size: 18px; font-weight: 700; text-align: center; font-style: normal; padding: 0">
+<span style="font-style: normal">/ {{maxHp}}</span></label>
+<sc-if value="{{hasTemp}}" hint-placeholder-val="{{ false }}"><span style="color: #8FB4D6">+{{temp}}</span></sc-if>
+<span style="color: #A0977F; font-style: italic">CA</span><span style="font-family: 'Cinzel', serif; font-weight: 700">{{info.ac}}</span>
+<sc-if value="{{rw}}" hint-placeholder-val="{{ true }}"><button type="button" aria-label="{{shareAria}}" aria-expanded="{{shareExpanded}}" onClick="{{toggleShare}}" style="{{shareBtnStyle}}width: 40px; height: 40px"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="18" cy="5" r="3"></circle><circle cx="6" cy="12" r="3"></circle><circle cx="18" cy="19" r="3"></circle><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line></svg><sc-if value="{{shared}}" hint-placeholder-val="{{ true }}"><span aria-hidden="true" style="position: absolute; top: 7px; right: 7px; width: 7px; height: 7px; border-radius: 50%; background: #D9A62E"></span></sc-if></button></sc-if>
+<sc-if value="{{rw}}" hint-placeholder-val="{{ true }}"><button type="button" aria-label="Tela cheia" onClick="{{toggleFull}}" style="width: 40px; height: 40px; flex-shrink: 0; border-radius: 8px; border: 1px solid #3A3424; background: transparent; color: #E6DCC8; cursor: pointer; display: flex; align-items: center; justify-content: center; padding: 0"><sc-if value="{{notFull}}" hint-placeholder-val="{{ true }}"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 3H5a2 2 0 0 0-2 2v3"></path><path d="M21 8V5a2 2 0 0 0-2-2h-3"></path><path d="M3 16v3a2 2 0 0 0 2 2h3"></path><path d="M16 21h3a2 2 0 0 0 2-2v-3"></path></svg></sc-if><sc-if value="{{isFull}}" hint-placeholder-val="{{ false }}"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 3v3a2 2 0 0 1-2 2H3"></path><path d="M21 8h-3a2 2 0 0 1-2-2V3"></path><path d="M3 16h3a2 2 0 0 1 2 2v3"></path><path d="M16 21v-3a2 2 0 0 1 2-2h3"></path></svg></sc-if></button></sc-if>
+<sc-if value="{{ro}}" hint-placeholder-val="{{ false }}"><span style="flex-shrink: 0; display: flex; align-items: center; gap: 6px; height: 32px; padding: 0 12px; border-radius: 16px; border: 1px solid #6B5524; background: #2B2414; color: #EBC15A; font-size: 14px"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"></path><circle cx="12" cy="12" r="3"></circle></svg>Somente leitura</span></sc-if>
+<sc-if value="{{dirty}}" hint-placeholder-val="{{ false }}"><span style="display: flex; align-items: center; gap: 6px; color: #EBC15A"><span style="width: 7px; height: 7px; border-radius: 50%; background: #D9A62E"></span>Não salvo</span></sc-if>
+<sc-if value="{{clean}}" hint-placeholder-val="{{ true }}"><span style="display: flex; align-items: center; gap: 6px; color: #A0977F"><span style="width: 7px; height: 7px; border-radius: 50%; background: #7FB685"></span>Salvo</span></sc-if>
+</div>
+</div>
+</header>
+<div style="max-width: 1152px; margin: 16px auto 0; padding: 0 24px"><sc-if value="{{ro}}" hint-placeholder-val="{{ false }}"><div style=" border: 1px solid #4A4129; background: #1D1A12; border-radius: 8px; padding: 10px 14px; font-size: 15px; color: #D3C9B5">Você está visualizando a ficha de <strong style="color: #E6DCC8">{{pf.name}}</strong> em modo somente leitura. Nenhuma alteração será salva.</div></sc-if></div>
+<main style="max-width: 1152px; margin: 0 auto; padding: 20px 24px 140px; display: flex; flex-direction: column; gap: 20px; {{roStyle}}">
+<section id="topo" style="scroll-margin-top: 76px; background: #161A21; border: 1px solid #2A2619; border-radius: 10px; padding: 18px 20px; padding: 14px 20px">
+<div style="display: flex; align-items: center; gap: 18px">
+<div style="flex: 1; min-width: 0; display: grid; grid-template-columns: repeat(8, minmax(0, 1fr)); gap: 6px 16px; align-items: end">
+<sc-for list="{{identityDesk}}" as="f" hint-placeholder-count="7">
+<label style="{{f.span}}"><span style="display: block; font-size: 14px; color: #A0977F; font-style: italic">{{f.k}}</span>
+<sc-if value="{{profileViewing}}" hint-placeholder-val="{{ true }}"><span style="{{f.vstyle}}">{{f.v}}</span></sc-if>
+<sc-if value="{{profileEditing}}" hint-placeholder-val="{{ false }}"><input type="text" inputMode="{{f.mode}}" value="{{f.v}}" onChange="{{f.on}}" style="width: 100%; box-sizing: border-box; height: 40px; min-width: 0; border: 1px solid #6B5524; border-radius: 6px; background: #12151B; color: #E6DCC8; font-family: 'Crimson Text', serif; font-size: 16px; padding: 0 10px"></sc-if>
+</label>
+</sc-for>
+</div>
+<button type="button" onClick="{{openProf}}" aria-label="Proficiência: ver cálculo e bônus" style="flex-shrink: 0; width: 104px; height: 60px; border-radius: 8px; border: 1px solid #6B5524; background: #1D1A12; color: #D9A62E; cursor: pointer; padding: 0">
+<span style="display: flex; align-items: center; justify-content: center; gap: 4px; font-family: 'Cinzel', serif; font-size: 24px; font-weight: 700; line-height: 1.1">{{prof}}<sc-if value="{{profHasBonus}}" hint-placeholder-val="{{ false }}"><span style="width: 6px; height: 6px; background: #8FB4D6; transform: rotate(45deg)"></span></sc-if></span>
+<span style="display: block; font-size: 13px; color: #A0977F; font-style: italic">Proficiência</span>
+</button>
+<sc-if value="{{profileViewing}}" hint-placeholder-val="{{ true }}"><button type="button" onClick="{{editProfile}}" aria-label="Editar dados do personagem" style="height: 36px; padding: 0 10px; border-radius: 6px; border: 1px solid #3A3424; background: transparent; color: #E6DCC8; font: inherit; font-size: 15px; display: flex; align-items: center; gap: 6px; cursor: pointer"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 20h9"></path><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"></path></svg>Editar</button></sc-if>
+<sc-if value="{{profileEditing}}" hint-placeholder-val="{{ false }}"><button type="button" onClick="{{doneEdit}}" style="height: 36px; padding: 0 16px; border-radius: 6px; border: 1px solid #D9A62E; background: #2B2414; color: #EBC15A; font-family: 'Cinzel', serif; font-size: 12px; font-weight: 700; letter-spacing: 0.06em; cursor: pointer">CONCLUIR</button></sc-if>
+</div>
+</section>
+<div style="display: grid; grid-template-columns: 300px minmax(0, 1fr); gap: 20px; align-items: stretch">
+<div style="display: flex; flex-direction: column; gap: 20px">
+<section id="atributos" style="scroll-margin-top: 76px; background: #161A21; border: 1px solid #2A2619; border-radius: 10px; padding: 18px 20px">
+<h2 style="margin: 0 0 12px; font-family: 'Cinzel', serif; font-weight: 700; font-size: 15px; letter-spacing: 0.12em; color: #D9A62E">ATRIBUTOS</h2>
+<div style="display: flex; flex-direction: column; gap: 6px">
+<sc-for list="{{abilRows}}" as="ab" hint-placeholder-count="6">
+<button type="button" onClick="{{ab.open}}" style="display: grid; grid-template-columns: 52px minmax(0, 1fr) auto; gap: 10px; align-items: center; min-height: 48px; padding: 4px 8px 4px 4px; border-radius: 8px; border: 1px solid #2A2E38; background: #1A1F28; color: #E6DCC8; font: inherit; text-align: left; cursor: pointer">
+<span style="font-family: 'Cinzel', serif; font-size: 22px; font-weight: 700; text-align: center">{{ab.mod}}</span>
+<span style="min-width: 0"><span style="display: block; font-family: 'Cinzel', serif; font-size: 12px; font-weight: 700; letter-spacing: 0.1em; color: #A0977F">{{ab.title}}</span><span style="display: block; font-size: 14px; color: #A0977F">valor {{ab.score}}</span></span>
+<span style="display: flex; align-items: center; gap: 5px; font-size: 14px; color: #A0977F"><span style="{{ab.profMark}}"></span>salv. <span style="font-family: 'Cinzel', serif; font-weight: 600; color: #E6DCC8">{{ab.save}}</span><sc-if value="{{ab.hasBonus}}" hint-placeholder-val="{{ false }}"><span style="width: 6px; height: 6px; background: #8FB4D6; transform: rotate(45deg)"></span></sc-if></span>
+</button>
+</sc-for>
+</div>
+</section>
+<section id="pericias" style="scroll-margin-top: 76px; background: #161A21; border: 1px solid #2A2619; border-radius: 10px; padding: 18px 20px">
+<div style="display: flex; align-items: baseline; margin-bottom: 6px">
+<h2 style="flex: 1; margin: 0 0 12px; font-family: 'Cinzel', serif; font-weight: 700; font-size: 15px; letter-spacing: 0.12em; color: #D9A62E; margin: 0">PERÍCIAS</h2>
+<span style="font-size: 14px; color: #A0977F">Passiva <strong style="font-family: 'Cinzel', serif; color: #E6DCC8">{{passive}}</strong></span>
+</div>
+<sc-for list="{{skillsFlat}}" as="sk" hint-placeholder-count="18">
+<button type="button" onClick="{{sk.open}}" style="width: 100%; border: 0; border-bottom: 1px solid #1F2229; background: transparent; color: #E6DCC8; font: inherit; display: flex; align-items: center; gap: 8px; padding: 0 2px; min-height: 34px; cursor: pointer; text-align: left">
+<span style="display: flex; gap: 2px; width: 18px"><span style="{{sk.mark1}}"></span><span style="{{sk.mark2}}"></span></span>
+<span style="flex: 1">{{sk.label}}</span>
+<span style="font-size: 13px; color: #A0977F; letter-spacing: 0.06em">{{sk.abbr}}</span>
+<sc-if value="{{sk.hasBonus}}" hint-placeholder-val="{{ false }}"><span style="width: 6px; height: 6px; background: #8FB4D6; transform: rotate(45deg)"></span></sc-if>
+<span style="font-family: 'Cinzel', serif; font-weight: 600; width: 30px; text-align: right">{{sk.total}}</span>
+</button>
+</sc-for>
+</section>
+</div>
+<div style="display: flex; flex-direction: column; gap: 20px; min-width: 0">
+<section id="geral" style="scroll-margin-top: 76px; background: #161A21; border: 1px solid #2A2619; border-radius: 10px; padding: 18px 20px">
+<h2 style="margin: 0 0 12px; font-family: 'Cinzel', serif; font-weight: 700; font-size: 15px; letter-spacing: 0.12em; color: #D9A62E">INFORMAÇÕES GERAIS</h2>
+<section style="display: flex; flex-direction: column; gap: 14px">
+<div style="display: flex; align-items: flex-end; gap: 12px">
+<div style="flex: 1">
+<div style="font-size: 14px; color: #A0977F; font-style: italic">Pontos de vida</div>
+<div style="display: flex; align-items: baseline; gap: 6px">
+<input type="text" inputMode="numeric" aria-label="Pontos de vida atuais" value="{{hpField}}" onChange="{{onHp}}" onFocus="{{selectAll}}" onBlur="{{blurHp}}" style="width: 84px; height: 48px; border: 0; border-bottom: 1px dashed #6B5524; background: transparent; color: #E6DCC8; font-family: 'Cinzel', serif; font-size: 34px; font-weight: 700; padding: 0">
+<span style="font-family: 'Cinzel', serif; font-size: 17px; color: #A0977F">/</span>
+<input type="text" inputMode="numeric" aria-label="Pontos de vida máximos" value="{{maxField}}" onChange="{{onMax}}" onFocus="{{selectAll}}" onBlur="{{blurMax}}" style="width: 40px; height: 36px; border: 0; border-bottom: 1px dashed #3A3424; background: transparent; color: #A0977F; font-family: 'Cinzel', serif; font-size: 17px; padding: 0">
+</div>
+</div>
+<label style="display: flex; flex-direction: column; align-items: center; gap: 2px; font-size: 14px; color: #8FB4D6; font-style: italic">Temporários
+<input type="text" inputMode="numeric" aria-label="Pontos de vida temporários" value="{{tempField}}" onChange="{{onTemp}}" onFocus="{{selectAll}}" onBlur="{{blurTemp}}" style="width: 72px; height: 48px; border: 1px solid #3B4A5A; border-radius: 6px; background: #1C2633; color: #8FB4D6; font-family: 'Cinzel', serif; font-size: 24px; font-weight: 700; text-align: center; font-style: normal; padding: 0">
+</label>
+</div>
+<div style="height: 10px; border-radius: 3px; background: #262B35; display: flex; overflow: hidden"><div style="{{hpBar}}"></div><div style="{{tempBar}}"></div></div>
+
+<div style="display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 6px; text-align: center">
+<button type="button" onClick="{{openInfo}}" aria-label="Classe de Armadura: editar" style="border: 0; background: transparent; color: #E6DCC8; cursor: pointer; padding: 0; display: flex; flex-direction: column; align-items: center">
+<span style="position: relative; width: 44px; height: 48px; display: flex; align-items: center; justify-content: center">
+<svg width="44" height="48" viewBox="0 0 24 26" fill="#1A1F28" stroke="#D9A62E" stroke-width="1.3" stroke-linejoin="round" aria-hidden="true" style="position: absolute; inset: 0"><path d="M12 1.5 3 4.8v6.7c0 6 3.9 10.6 9 12.9 5.1-2.3 9-6.9 9-12.9V4.8z"></path></svg>
+<span style="position: relative; font-family: 'Cinzel', serif; font-size: 18px; font-weight: 700; margin-top: -2px">{{info.ac}}</span>
+</span>
+<span style="font-family: 'Crimson Text', serif; font-size: 14px; color: #A0977F; font-style: italic">CA</span>
+</button>
+<button type="button" onClick="{{openInit}}" aria-label="Iniciativa: ver cálculo e bônus" style="border: 0; background: transparent; color: #E6DCC8; cursor: pointer; padding: 0; display: flex; flex-direction: column; align-items: center">
+<span style="height: 48px; display: flex; align-items: center; gap: 4px; font-family: 'Cinzel', serif; font-size: 22px; font-weight: 700">{{init}}<sc-if value="{{initHasBonus}}" hint-placeholder-val="{{ true }}"><span title="Inclui bônus adicional" style="width: 6px; height: 6px; background: #8FB4D6; transform: rotate(45deg)"></span></sc-if></span>
+<span style="font-family: 'Crimson Text', serif; font-size: 14px; color: #A0977F; font-style: italic">Iniciativa</span>
+</button>
+<button type="button" onClick="{{openInfo}}" aria-label="Deslocamento: editar" style="border: 0; background: transparent; color: #E6DCC8; cursor: pointer; padding: 0; display: flex; flex-direction: column; align-items: center">
+<span style="height: 48px; display: flex; align-items: center; font-family: 'Cinzel', serif; font-size: 22px; font-weight: 700">{{info.speed}}<span style="font-family: 'Crimson Text', serif; font-size: 14px; font-weight: 400; color: #A0977F">&#160;m</span></span>
+<span style="font-family: 'Crimson Text', serif; font-size: 14px; color: #A0977F; font-style: italic">Deslocamento</span>
+</button>
+<button type="button" onClick="{{openProf}}" aria-label="Proficiência: ver cálculo e bônus" style="border: 0; background: transparent; color: #D9A62E; cursor: pointer; padding: 0; display: flex; flex-direction: column; align-items: center">
+<span style="height: 48px; display: flex; align-items: center; gap: 4px; font-family: 'Cinzel', serif; font-size: 22px; font-weight: 700">{{prof}}<sc-if value="{{profHasBonus}}" hint-placeholder-val="{{ false }}"><span title="Inclui bônus adicional" style="width: 6px; height: 6px; background: #8FB4D6; transform: rotate(45deg)"></span></sc-if></span>
+<span style="font-family: 'Crimson Text', serif; font-size: 14px; color: #A0977F; font-style: italic">Proficiência</span>
+</button>
+</div>
+
+<div style="display: flex; align-items: center; gap: 8px; font-size: 15px; padding-top: 2px">
+<span style="color: #A0977F; font-style: italic">Dados de vida</span>
+<button type="button" aria-label="Gastar um dado de vida" onClick="{{hdDec}}" style="width: 40px; height: 40px; margin-left: auto; border-radius: 6px; border: 1px solid #3A3424; background: transparent; color: #E6DCC8; font-family: 'Cinzel', serif; font-size: 18px; cursor: pointer">−</button>
+<span style="min-width: 64px; text-align: center"><span style="font-family: 'Cinzel', serif; font-weight: 700">{{hdLeft}}</span><span style="color: #A0977F"> / {{info.hdTotal}}</span></span>
+<button type="button" aria-label="Recuperar um dado de vida" onClick="{{hdInc}}" style="width: 40px; height: 40px; border-radius: 6px; border: 1px solid #3A3424; background: transparent; color: #E6DCC8; font-family: 'Cinzel', serif; font-size: 18px; cursor: pointer">+</button>
+</div>
+<div style="display: flex; align-items: center; gap: 8px; font-size: 15px">
+<span style="color: #A0977F; font-style: italic">Tamanho</span><span>{{info.size}}</span>
+<button type="button" onClick="{{openInfo}}" aria-label="Editar CA, deslocamento, tamanho e dados de vida" style="height: 40px; padding: 0 10px; border: 0; background: transparent; color: #A0977F; font: inherit; font-size: 15px; display: flex; align-items: center; gap: 4px; cursor: pointer"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 20h9"></path><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"></path></svg>editar</button>
+<div style="flex: 1"></div>
+<button type="button" aria-pressed="{{inspPressed}}" onClick="{{toggleInsp}}" style="{{inspStyle}}"><svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01z"></path></svg>Inspiração</button>
+</div>
+
+<sc-if value="{{isDown}}" hint-placeholder-val="{{ false }}">
+<div style="border: 1px solid #5A2E2A; border-radius: 6px; background: #22191A; padding: 8px 12px">
+<div style="font-size: 15px; color: #F0A39C">Salvaguardas contra morte</div>
+<div style="display: flex; align-items: center">
+<span style="font-size: 14px; color: #A0977F; width: 60px">Sucesso</span>
+<sc-for list="{{succ}}" as="m" hint-placeholder-count="3"><button type="button" aria-label="Marcar sucesso" onClick="{{m.toggle}}" style="width: 40px; height: 44px; border: 0; background: transparent; cursor: pointer; display: flex; align-items: center; justify-content: center; padding: 0"><span style="{{m.style}}"></span></button></sc-for>
+<span style="font-size: 14px; color: #A0977F; width: 44px; text-align: right">Falha</span>
+<sc-for list="{{fail}}" as="m" hint-placeholder-count="3"><button type="button" aria-label="Marcar falha" onClick="{{m.toggle}}" style="width: 40px; height: 44px; border: 0; background: transparent; cursor: pointer; display: flex; align-items: center; justify-content: center; padding: 0"><span style="{{m.style}}"></span></button></sc-for>
+</div>
+</div>
+</sc-if>
+</section>
+</section>
+<section id="armas" style="scroll-margin-top: 76px; background: #161A21; border: 1px solid #2A2619; border-radius: 10px; padding: 18px 20px">
+<h2 style="margin: 0 0 12px; font-family: 'Cinzel', serif; font-weight: 700; font-size: 15px; letter-spacing: 0.12em; color: #D9A62E; display: flex; align-items: baseline; gap: 8px">ARMAS E TRUQUES DE DANO<span style="font-family: 'Crimson Text', serif; font-weight: 400; letter-spacing: 0; font-size: 14px; color: #A0977F; font-style: italic">{{attackCount}}</span></h2>
+<button type="button" onClick="{{addWeapon}}" style="width: 100%; height: 40px; margin-bottom: 6px; border-radius: 6px; border: 1px dashed #4A4129; background: transparent; color: #D9A62E; font-family: 'Cinzel', serif; font-size: 12px; font-weight: 700; letter-spacing: 0.08em; cursor: pointer">+ NOVA ARMA</button>
+<div style="display: grid; gap: 12px; padding: 0 2px 4px; font-size: 14px; color: #A0977F; font-style: italic; border-bottom: 1px solid #262A33; grid-template-columns: minmax(0, 1.3fr) 90px 104px 100px minmax(0, 1.5fr) 16px"><span>Nome</span><span>+Atq / CD</span><span>Dano</span><span>Tipo</span><span>Notas</span><span></span></div>
+<div onScroll="{{sc.k2}}" style="max-height: 300px; overflow-y: auto; scrollbar-width: thin; {{sb.k2}}; padding-right: 4px">
+<sc-for list="{{weapons}}" as="w" hint-placeholder-count="8">
+<div style="border-bottom: 1px solid #262A33">
+<button type="button" onClick="{{w.toggle}}" style="width: 100%; min-height: 40px; border: 0; background: transparent; color: #E6DCC8; font: inherit; text-align: left; padding: 2px 2px; display: grid; gap: 12px; align-items: center; cursor: pointer; grid-template-columns: minmax(0, 1.3fr) 90px 104px 100px minmax(0, 1.5fr) 16px">
+<span style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{w.title}}</span>
+<span style="font-family: 'Cinzel', serif; font-size: 14px; font-weight: 700; color: #D9A62E">{{w.v.attackBonus}}</span>
+<span style="font-family: 'Cinzel', serif; font-size: 14px; font-weight: 600">{{w.v.damage}}</span>
+<span style="color: #D3C9B5">{{w.v.damageType}}</span>
+<span style="font-size: 15px; color: #A0977F; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{w.v.notes}}</span>
+<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#A0977F" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"></path></svg>
+</button>
+<sc-if value="{{w.open}}" hint-placeholder-val="{{ false }}">
+<div style="margin: 0 0 12px; padding: 12px; background: #1A1F28; border-radius: 8px; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px">
+<label style="grid-column: 1 / -1; display: flex; flex-direction: column; gap: 2px; font-size: 14px; color: #A0977F; font-style: italic">Nome<input type="text" placeholder="Nome da arma" value="{{w.v.name}}" onChange="{{w.on.name}}" style="height: 42px; min-width: 0; border: 1px solid #3A3424; border-radius: 6px; background: #12151B; color: #E6DCC8; font-family: 'Crimson Text', serif; font-size: 16px; font-style: normal; padding: 0 10px"></label>
+<label style="display: flex; flex-direction: column; gap: 2px; font-size: 14px; color: #A0977F; font-style: italic">+Atq / CD<input type="text" placeholder="+5 / CD 13" value="{{w.v.attackBonus}}" onChange="{{w.on.attackBonus}}" style="height: 42px; min-width: 0; border: 1px solid #3A3424; border-radius: 6px; background: #12151B; color: #E6DCC8; font-family: 'Crimson Text', serif; font-size: 16px; font-style: normal; padding: 0 10px"></label>
+<label style="display: flex; flex-direction: column; gap: 2px; font-size: 14px; color: #A0977F; font-style: italic">Dano<input type="text" placeholder="1d8+3" value="{{w.v.damage}}" onChange="{{w.on.damage}}" style="height: 42px; min-width: 0; border: 1px solid #3A3424; border-radius: 6px; background: #12151B; color: #E6DCC8; font-family: 'Crimson Text', serif; font-size: 16px; font-style: normal; padding: 0 10px"></label>
+<label style="display: flex; flex-direction: column; gap: 2px; font-size: 14px; color: #A0977F; font-style: italic">Tipo<input type="text" placeholder="Cortante" value="{{w.v.damageType}}" onChange="{{w.on.damageType}}" style="height: 42px; min-width: 0; border: 1px solid #3A3424; border-radius: 6px; background: #12151B; color: #E6DCC8; font-family: 'Crimson Text', serif; font-size: 16px; font-style: normal; padding: 0 10px"></label>
+<label style="display: flex; flex-direction: column; gap: 2px; font-size: 14px; color: #A0977F; font-style: italic">Notas<input type="text" placeholder="Propriedades…" value="{{w.v.notes}}" onChange="{{w.on.notes}}" style="height: 42px; min-width: 0; border: 1px solid #3A3424; border-radius: 6px; background: #12151B; color: #E6DCC8; font-family: 'Crimson Text', serif; font-size: 16px; font-style: normal; padding: 0 10px"></label>
+<button type="button" onClick="{{w.del}}" style="{{w.delStyle}}"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 6h18"></path><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"></path><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>{{w.delLabel}}</button>
+</div>
+</sc-if>
+</div>
+</sc-for>
+</div>
+</section>
+<section id="personalidade" style="scroll-margin-top: 76px; background: #161A21; border: 1px solid #2A2619; border-radius: 10px; padding: 18px 20px; flex: 1; display: flex; flex-direction: column; min-height: 220px">
+<div style="display: flex; align-items: center; margin-bottom: 8px">
+<h2 style="flex: 1; margin: 0 0 12px; font-family: 'Cinzel', serif; font-weight: 700; font-size: 15px; letter-spacing: 0.12em; color: #D9A62E; margin: 0">HISTÓRIA E PERSONALIDADE</h2>
+<sc-if value="{{historyViewing}}" hint-placeholder-val="{{ true }}"><button type="button" onClick="{{editHistory}}" aria-label="Editar história, alinhamento e idiomas" style="height: 36px; padding: 0 10px; border-radius: 6px; border: 1px solid #3A3424; background: transparent; color: #E6DCC8; font: inherit; font-size: 15px; display: flex; align-items: center; gap: 6px; cursor: pointer"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 20h9"></path><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"></path></svg>Editar</button></sc-if>
+<sc-if value="{{historyEditing}}" hint-placeholder-val="{{ false }}"><button type="button" onClick="{{doneEdit}}" style="height: 36px; padding: 0 16px; border-radius: 6px; border: 1px solid #D9A62E; background: #2B2414; color: #EBC15A; font-family: 'Cinzel', serif; font-size: 12px; font-weight: 700; letter-spacing: 0.06em; cursor: pointer">CONCLUIR</button></sc-if>
+</div>
+<sc-if value="{{historyViewing}}" hint-placeholder-val="{{ true }}"><p style="flex: 1; margin: 0; color: #D3C9B5; white-space: pre-line">{{pf.history}}</p></sc-if>
+<sc-if value="{{historyEditing}}" hint-placeholder-val="{{ false }}"><textarea aria-label="História e personalidade" placeholder="Era uma vez..." value="{{pf.history}}" onChange="{{onHistory}}" style="flex: 1; min-height: 120px; width: 100%; box-sizing: border-box; border: 1px solid #6B5524; border-radius: 6px; background: #12151B; color: #E6DCC8; font-family: 'Crimson Text', serif; font-size: 16px; line-height: 1.4; padding: 8px 10px; resize: none"></textarea></sc-if>
+<div style="margin-top: 14px; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px">
+<sc-for list="{{persona}}" as="f" hint-placeholder-count="2">
+<label style="display: block"><span style="display: block; font-size: 14px; color: #A0977F; font-style: italic">{{f.k}}</span>
+<sc-if value="{{historyViewing}}" hint-placeholder-val="{{ true }}"><span style="display: block; border-bottom: 1px solid #2E2A1E; padding: 0 0 4px">{{f.v}}</span></sc-if>
+<sc-if value="{{historyEditing}}" hint-placeholder-val="{{ false }}"><input type="text" value="{{f.v}}" onChange="{{f.on}}" style="width: 100%; box-sizing: border-box; height: 40px; min-width: 0; border: 1px solid #6B5524; border-radius: 6px; background: #12151B; color: #E6DCC8; font-family: 'Crimson Text', serif; font-size: 16px; padding: 0 10px"></sc-if>
+</label>
+</sc-for>
+</div>
+</section>
+</div>
+</div>
+<section id="magias" style="scroll-margin-top: 76px; background: #161A21; border: 1px solid #2A2619; border-radius: 10px; padding: 18px 20px">
+<div style="display: flex; align-items: center; margin-bottom: 12px">
+<h2 style="flex: 1; margin: 0 0 12px; font-family: 'Cinzel', serif; font-weight: 700; font-size: 15px; letter-spacing: 0.12em; color: #D9A62E; margin: 0">CONJURAÇÃO</h2>
+<button type="button" onClick="{{openSlots}}" aria-label="Editar espaços de magia" style="height: 36px; padding: 0 10px; border-radius: 6px; border: 1px solid #3A3424; background: transparent; color: #E6DCC8; font: inherit; font-size: 15px; display: flex; align-items: center; gap: 6px; cursor: pointer"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 20h9"></path><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"></path></svg>Editar espaços</button>
+</div>
+<div style="display: grid; grid-template-columns: repeat(4, 104px) minmax(0, 1fr); gap: 10px; align-items: stretch; margin-bottom: 16px">
+<button type="button" onClick="{{openCast}}" aria-label="Alterar atributo de conjuração" style="background: #1A1F28; border: 1px solid #6B5524; border-radius: 8px; padding: 6px; color: #E6DCC8; cursor: pointer; text-align: center">
+<span style="display: block; font-size: 14px; color: #A0977F; font-style: italic">Atributo</span>
+<span style="display: flex; align-items: center; justify-content: center; gap: 4px; font-family: 'Cinzel', serif; font-size: 20px; font-weight: 700">{{castAbbr}}<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#D9A62E" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"></path></svg></span>
+</button>
+<div style="background: #1A1F28; border: 1px solid #2A2E38; border-radius: 8px; padding: 6px; text-align: center"><div style="font-size: 14px; color: #A0977F; font-style: italic">Modificador</div><div style="font-family: 'Cinzel', serif; font-size: 20px; font-weight: 700">{{castMod}}</div></div>
+<div style="background: #1A1F28; border: 1px solid #2A2E38; border-radius: 8px; padding: 6px; text-align: center"><div style="font-size: 14px; color: #A0977F; font-style: italic">CD de magia</div><div style="font-family: 'Cinzel', serif; font-size: 20px; font-weight: 700; color: #D9A62E">{{dc}}</div></div>
+<div style="background: #1A1F28; border: 1px solid #2A2E38; border-radius: 8px; padding: 6px; text-align: center"><div style="font-size: 14px; color: #A0977F; font-style: italic">Ataque</div><div style="font-family: 'Cinzel', serif; font-size: 20px; font-weight: 700; color: #D9A62E">{{spellAtk}}</div></div>
+<div style="display: grid; grid-template-columns: repeat(9, minmax(0, 1fr)); gap: 6px">
+<sc-for list="{{slotCols}}" as="sl" hint-placeholder-count="9">
+<div style="{{sl.box}}">
+<span style="font-family: 'Cinzel', serif; font-size: 12px; font-weight: 700; color: #A0977F">{{sl.label}}</span>
+<span style="display: flex; flex-wrap: wrap; justify-content: center; min-height: 32px; align-items: center">
+<sc-for list="{{sl.pips}}" as="p" hint-placeholder-count="0"><button type="button" aria-label="{{p.aria}}" onClick="{{p.toggle}}" style="width: 28px; height: 32px; border: 0; background: transparent; cursor: pointer; display: flex; align-items: center; justify-content: center; padding: 0"><span style="{{p.style}}"></span></button></sc-for>
+<sc-if value="{{sl.none}}" hint-placeholder-val="{{ true }}"><span style="color: #4A4F5A">—</span></sc-if>
+</span>
+<span style="font-family: 'Cinzel', serif; font-size: 13px; font-weight: 700">{{sl.count}}</span>
+</div>
+</sc-for>
+</div>
+</div>
+<h2 style="margin: 0 0 8px; font-family: 'Cinzel', serif; font-weight: 700; font-size: 13px; letter-spacing: 0.12em; color: #D9A62E; display: flex; align-items: baseline; gap: 8px">MAGIAS<span style="font-family: 'Crimson Text', serif; font-weight: 400; letter-spacing: 0; font-size: 14px; color: #A0977F; font-style: italic">{{spellCount}}</span></h2>
+<div style="display: grid; grid-template-columns: 220px minmax(0, 1fr); gap: 12px; align-items: center; margin-bottom: 6px">
+<button type="button" onClick="{{addSpell}}" style="width: 100%; height: 40px; border-radius: 6px; border: 1px dashed #4A4129; background: transparent; color: #D9A62E; font-family: 'Cinzel', serif; font-size: 12px; font-weight: 700; letter-spacing: 0.08em; cursor: pointer">+ NOVA MAGIA</button>
+<div role="group" aria-label="Filtrar por círculo" style="display: flex; gap: 6px; flex-wrap: wrap">
+<sc-for list="{{chips}}" as="c" hint-placeholder-count="6"><button type="button" aria-pressed="{{c.pressed}}" onClick="{{c.pick}}" style="{{c.style}}">{{c.label}}</button></sc-for>
+</div>
+</div>
+<div style="display: grid; gap: 12px; padding: 0 2px 4px; font-size: 14px; color: #A0977F; font-style: italic; border-bottom: 1px solid #262A33; grid-template-columns: minmax(0, 1fr) 150px 150px 56px 16px; padding-top: 6px"><span>Nome</span><span>Tempo</span><span>Alcance</span><span></span><span></span></div>
+<sc-for list="{{groups}}" as="g" hint-placeholder-count="3">
+<div>
+<h3 style="margin: 8px 0 2px; font-family: 'Cinzel', serif; font-weight: 600; font-size: 12px; letter-spacing: 0.1em; color: #A0977F">{{g.title}}</h3>
+<div style="border-top: 1px solid #262A33">
+<sc-for list="{{g.spells}}" as="s" hint-placeholder-count="3">
+<div style="border-bottom: 1px solid #262A33">
+<button type="button" onClick="{{s.toggle}}" style="width: 100%; min-height: 40px; border: 0; background: transparent; color: #E6DCC8; font: inherit; text-align: left; padding: 2px 2px; display: grid; gap: 12px; align-items: center; cursor: pointer; grid-template-columns: minmax(0, 1fr) 150px 150px 56px 16px">
+<span style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{s.title}}</span>
+<span style="color: #D3C9B5">{{s.v.castingTime}}</span>
+<span style="color: #D3C9B5">{{s.v.range}}</span>
+<span style="display: flex; gap: 4px">
+<sc-if value="{{s.v.concentration}}" hint-placeholder-val="{{ false }}"><span title="Concentração" style="font-family: 'Cinzel', serif; font-size: 11px; font-weight: 700; color: #EBC15A; border: 1px solid #6B5524; border-radius: 3px; padding: 0 5px">C</span></sc-if>
+<sc-if value="{{s.v.ritual}}" hint-placeholder-val="{{ false }}"><span title="Ritual" style="font-family: 'Cinzel', serif; font-size: 11px; font-weight: 700; color: #8FB4D6; border: 1px solid #3B4A5A; border-radius: 3px; padding: 0 5px">R</span></sc-if>
+</span>
+<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#A0977F" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="{{s.chevron}}"><path d="m6 9 6 6 6-6"></path></svg>
+</button>
+<sc-if value="{{s.open}}" hint-placeholder-val="{{ false }}">
+<div style="margin: 0 0 12px; padding: 12px; background: #1A1F28; border-radius: 8px; display: grid; grid-template-columns: 120px minmax(0, 1fr); gap: 12px">
+<label style="display: flex; flex-direction: column; gap: 2px; font-size: 14px; color: #A0977F; font-style: italic">Círculo
+<select value="{{s.v.level}}" onChange="{{s.on.level}}" style="height: 42px; border: 1px solid #3A3424; border-radius: 6px; background: #12151B; color: #E6DCC8; font-family: 'Crimson Text', serif; font-size: 16px; font-style: normal; padding: 0 6px">
+<option value="0">Truque</option><option value="1">1º</option><option value="2">2º</option><option value="3">3º</option><option value="4">4º</option><option value="5">5º</option><option value="6">6º</option><option value="7">7º</option><option value="8">8º</option><option value="9">9º</option>
+</select></label>
+<label style="display: flex; flex-direction: column; gap: 2px; font-size: 14px; color: #A0977F; font-style: italic">Nome<input type="text" placeholder="Nome" value="{{s.v.name}}" onChange="{{s.on.name}}" style="height: 42px; min-width: 0; border: 1px solid #3A3424; border-radius: 6px; background: #12151B; color: #E6DCC8; font-family: 'Crimson Text', serif; font-size: 16px; font-style: normal; padding: 0 10px"></label>
+<div style="grid-column: 1 / -1; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px">
+<label style="display: flex; flex-direction: column; gap: 2px; font-size: 14px; color: #A0977F; font-style: italic">Tempo<input type="text" placeholder="1 ação" value="{{s.v.castingTime}}" onChange="{{s.on.castingTime}}" style="height: 42px; min-width: 0; border: 1px solid #3A3424; border-radius: 6px; background: #12151B; color: #E6DCC8; font-family: 'Crimson Text', serif; font-size: 16px; font-style: normal; padding: 0 10px"></label>
+<label style="display: flex; flex-direction: column; gap: 2px; font-size: 14px; color: #A0977F; font-style: italic">Alcance<input type="text" placeholder="30 pés" value="{{s.v.range}}" onChange="{{s.on.range}}" style="height: 42px; min-width: 0; border: 1px solid #3A3424; border-radius: 6px; background: #12151B; color: #E6DCC8; font-family: 'Crimson Text', serif; font-size: 16px; font-style: normal; padding: 0 10px"></label>
+</div>
+<label style="grid-column: 1 / -1; display: flex; flex-direction: column; gap: 2px; font-size: 14px; color: #A0977F; font-style: italic">Notas / Material<textarea placeholder="Componentes, observações…" value="{{s.v.notes}}" onChange="{{s.on.notes}}" rows="3" style="min-width: 0; border: 1px solid #3A3424; border-radius: 6px; background: #12151B; color: #E6DCC8; font-family: 'Crimson Text', serif; font-size: 16px; font-style: normal; line-height: 1.4; padding: 8px 10px; resize: vertical"></textarea></label>
+<div style="grid-column: 1 / -1; display: flex; align-items: center; gap: 16px; flex-wrap: wrap">
+<label style="display: flex; align-items: center; gap: 8px; min-height: 44px; cursor: pointer"><input type="checkbox" checked="{{s.v.concentration}}" onChange="{{s.on.concentration}}" style="width: 20px; height: 20px; accent-color: #D9A62E">Concentração</label>
+<label style="display: flex; align-items: center; gap: 8px; min-height: 44px; cursor: pointer"><input type="checkbox" checked="{{s.v.ritual}}" onChange="{{s.on.ritual}}" style="width: 20px; height: 20px; accent-color: #D9A62E">Ritual</label>
+<div style="flex: 1"></div>
+<button type="button" onClick="{{s.del}}" style="{{s.delStyle}}"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 6h18"></path><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"></path><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>{{s.delLabel}}</button>
+</div>
+</div>
+</sc-if>
+</div>
+</sc-for>
+</div>
+</div>
+</sc-for>
+</section>
+<sc-if value="{{rw}}" hint-placeholder-val="{{ true }}">
+<section id="inventario" style="scroll-margin-top: 76px; background: #161A21; border: 1px solid #2A2619; border-radius: 10px; padding: 18px 20px">
+<h2 style="margin: 0 0 12px; font-family: 'Cinzel', serif; font-weight: 700; font-size: 15px; letter-spacing: 0.12em; color: #D9A62E">INVENTÁRIO</h2>
+<div style="display: grid; grid-template-columns: minmax(0, 1fr) 400px; gap: 28px; align-items: start; margin-bottom: 18px">
+<div>
+<h3 style="margin: 0 0 8px; font-family: 'Cinzel', serif; font-weight: 700; font-size: 13px; letter-spacing: 0.12em; color: #D9A62E; display: flex; align-items: baseline; gap: 8px; flex-wrap: wrap">ITENS SINTONIZADOS<span style="font-family: 'Crimson Text', serif; font-weight: 400; letter-spacing: 0; font-size: 14px; color: #EBC15A">{{attuneCount}}</span><span style="font-family: 'Crimson Text', serif; font-weight: 400; letter-spacing: 0; font-size: 14px; color: #A0977F; font-style: italic">· limite = bônus de proficiência</span></h3>
+<button type="button" onClick="{{addAttuned}}" disabled="{{attuneFull}}" style="{{attuneAddStyle}}">{{attuneAddLabel}}</button>
+<div style="display: grid; gap: 12px; padding: 0 2px 4px; font-size: 14px; color: #A0977F; font-style: italic; border-bottom: 1px solid #262A33; grid-template-columns: minmax(0, 1fr) minmax(0, 1.6fr) 16px"><span>Nome</span><span>Descrição / Efeito</span><span></span></div>
+<sc-for list="{{attuned}}" as="it" hint-placeholder-count="4">
+<div style="border-bottom: 1px solid #262A33">
+<button type="button" onClick="{{it.toggle}}" style="width: 100%; min-height: 40px; border: 0; background: transparent; color: #E6DCC8; font: inherit; text-align: left; padding: 2px 2px; display: grid; gap: 12px; align-items: center; cursor: pointer; grid-template-columns: minmax(0, 1fr) minmax(0, 1.6fr) 16px"><span style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{it.title}}</span><span style="color: #A0977F; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{it.v.description}}</span><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#A0977F" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"></path></svg></button>
+<sc-if value="{{it.open}}" hint-placeholder-val="{{ false }}">
+<div style="margin: 0 0 12px; padding: 12px; background: #1A1F28; border-radius: 8px; display: flex; flex-direction: column; gap: 10px">
+<label style="display: flex; flex-direction: column; gap: 2px; font-size: 14px; color: #A0977F; font-style: italic">Nome<input type="text" placeholder="Nome do item" value="{{it.v.name}}" onChange="{{it.on.name}}" style="height: 42px; min-width: 0; border: 1px solid #3A3424; border-radius: 6px; background: #12151B; color: #E6DCC8; font-family: 'Crimson Text', serif; font-size: 16px; font-style: normal; padding: 0 10px"></label>
+<label style="display: flex; flex-direction: column; gap: 2px; font-size: 14px; color: #A0977F; font-style: italic">Descrição / Efeito<input type="text" placeholder="Propriedade ou efeito…" value="{{it.v.description}}" onChange="{{it.on.description}}" style="height: 42px; min-width: 0; border: 1px solid #3A3424; border-radius: 6px; background: #12151B; color: #E6DCC8; font-family: 'Crimson Text', serif; font-size: 16px; font-style: normal; padding: 0 10px"></label>
+<button type="button" onClick="{{it.del}}" style="{{it.delStyle}}"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 6h18"></path><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"></path><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>{{it.delLabel}}</button>
+</div>
+</sc-if>
+</div>
+</sc-for>
+</div>
+<div>
+<h3 style="margin: 0 0 8px; font-family: 'Cinzel', serif; font-weight: 700; font-size: 13px; letter-spacing: 0.12em; color: #D9A62E">MOEDAS</h3>
+<div style="display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 8px">
+<sc-for list="{{coins}}" as="c" hint-placeholder-count="5"><label style="display: flex; flex-direction: column; align-items: center; gap: 2px; font-size: 14px; color: #A0977F; font-style: italic">{{c.k}}<input type="text" inputMode="numeric" value="{{c.v}}" onChange="{{c.on}}" onFocus="{{selectAll}}" style="width: 100%; box-sizing: border-box; height: 42px; border: 1px solid #3A3424; border-radius: 6px; background: #1A1F28; color: #E6DCC8; font-family: 'Cinzel', serif; font-size: 16px; font-weight: 700; font-style: normal; text-align: center; padding: 0"></label></sc-for>
+</div>
+</div>
+</div>
+<h3 style="margin: 0 0 8px; font-family: 'Cinzel', serif; font-weight: 700; font-size: 13px; letter-spacing: 0.12em; color: #D9A62E; display: flex; align-items: baseline; gap: 8px">EQUIPAMENTO<span style="font-family: 'Crimson Text', serif; font-weight: 400; letter-spacing: 0; font-size: 14px; color: #A0977F; font-style: italic">{{totalWeight}}</span></h3>
+<button type="button" onClick="{{addItem}}" style="width: 100%; height: 40px; margin-bottom: 6px; border-radius: 6px; border: 1px dashed #4A4129; background: transparent; color: #D9A62E; font-family: 'Cinzel', serif; font-size: 12px; font-weight: 700; letter-spacing: 0.08em; cursor: pointer">+ NOVO ITEM</button>
+<div style="display: grid; gap: 12px; padding: 0 2px 4px; font-size: 14px; color: #A0977F; font-style: italic; border-bottom: 1px solid #262A33; grid-template-columns: minmax(0, 1.4fr) 72px 88px minmax(0, 1.6fr) 16px"><span>Item</span><span>Qtd</span><span>Peso (lb)</span><span>Notas</span><span></span></div>
+<sc-for list="{{items}}" as="it" hint-placeholder-count="2">
+<div style="border-bottom: 1px solid #262A33">
+<button type="button" onClick="{{it.toggle}}" style="width: 100%; min-height: 40px; border: 0; background: transparent; color: #E6DCC8; font: inherit; text-align: left; padding: 2px 2px; display: grid; gap: 12px; align-items: center; cursor: pointer; grid-template-columns: minmax(0, 1.4fr) 72px 88px minmax(0, 1.6fr) 16px"><span style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{it.title}}</span><span style="font-family: 'Cinzel', serif; font-weight: 700; color: #D9A62E">{{it.v.quantity}}</span><span style="color: #A0977F">{{it.weight}}</span><span style="color: #A0977F; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{it.v.notes}}</span><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#A0977F" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"></path></svg></button>
+<sc-if value="{{it.open}}" hint-placeholder-val="{{ false }}">
+<div style="margin: 0 0 12px; padding: 12px; background: #1A1F28; border-radius: 8px; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px">
+<label style="grid-column: 1 / -1; display: flex; flex-direction: column; gap: 2px; font-size: 14px; color: #A0977F; font-style: italic">Item<input type="text" placeholder="Nome do item" value="{{it.v.name}}" onChange="{{it.on.name}}" style="height: 42px; min-width: 0; border: 1px solid #3A3424; border-radius: 6px; background: #12151B; color: #E6DCC8; font-family: 'Crimson Text', serif; font-size: 16px; font-style: normal; padding: 0 10px"></label>
+<label style="display: flex; flex-direction: column; gap: 2px; font-size: 14px; color: #A0977F; font-style: italic">Quantidade<input type="text" inputMode="numeric" value="{{it.v.quantity}}" onChange="{{it.on.quantity}}" onFocus="{{selectAll}}" style="height: 42px; min-width: 0; border: 1px solid #3A3424; border-radius: 6px; background: #12151B; color: #E6DCC8; font-family: 'Crimson Text', serif; font-size: 16px; font-style: normal; padding: 0 10px"></label>
+<label style="display: flex; flex-direction: column; gap: 2px; font-size: 14px; color: #A0977F; font-style: italic">Peso (lb)<input type="text" inputMode="decimal" value="{{it.v.weight}}" onChange="{{it.on.weight}}" onFocus="{{selectAll}}" style="height: 42px; min-width: 0; border: 1px solid #3A3424; border-radius: 6px; background: #12151B; color: #E6DCC8; font-family: 'Crimson Text', serif; font-size: 16px; font-style: normal; padding: 0 10px"></label>
+<label style="grid-column: 1 / -1; display: flex; flex-direction: column; gap: 2px; font-size: 14px; color: #A0977F; font-style: italic">Notas<input type="text" placeholder="Observações…" value="{{it.v.notes}}" onChange="{{it.on.notes}}" style="height: 42px; min-width: 0; border: 1px solid #3A3424; border-radius: 6px; background: #12151B; color: #E6DCC8; font-family: 'Crimson Text', serif; font-size: 16px; font-style: normal; padding: 0 10px"></label>
+<button type="button" onClick="{{it.del}}" style="{{it.delStyle}}"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 6h18"></path><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"></path><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>{{it.delLabel}}</button>
+</div>
+</sc-if>
+</div>
+</sc-for>
+</section>
+</sc-if>
+<section id="tracos" style="scroll-margin-top: 76px; background: #161A21; border: 1px solid #2A2619; border-radius: 10px; padding: 18px 20px">
+<h2 style="margin: 0 0 12px; font-family: 'Cinzel', serif; font-weight: 700; font-size: 15px; letter-spacing: 0.12em; color: #D9A62E">CARACTERÍSTICAS E TRAÇOS</h2>
+<h3 style="margin: 0 0 8px; font-family: 'Cinzel', serif; font-weight: 700; font-size: 13px; letter-spacing: 0.12em; color: #D9A62E">CARACTERÍSTICAS DE CLASSE</h3>
+<button type="button" onClick="{{addFeature}}" style="width: 100%; height: 40px; margin-bottom: 6px; border-radius: 6px; border: 1px dashed #4A4129; background: transparent; color: #D9A62E; font-family: 'Cinzel', serif; font-size: 12px; font-weight: 700; letter-spacing: 0.08em; cursor: pointer">+ NOVA CARACTERÍSTICA</button>
+<div style="border-top: 1px solid #262A33">
+<sc-for list="{{features}}" as="f" hint-placeholder-count="5">
+<div style="border-bottom: 1px solid #262A33">
+<button type="button" onClick="{{f.toggle}}" style="width: 100%; min-height: 48px; border: 0; background: transparent; color: #E6DCC8; font: inherit; text-align: left; padding: 4px 2px; display: flex; align-items: center; gap: 10px; cursor: pointer"><span style="flex: 1">{{f.title}}</span><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#A0977F" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="{{f.chevron}}"><path d="m6 9 6 6 6-6"></path></svg></button>
+<sc-if value="{{f.open}}" hint-placeholder-val="{{ false }}">
+<div style="padding: 0 0 12px; display: flex; flex-direction: column; gap: 8px">
+<textarea aria-label="Texto da característica" placeholder="Descreva a característica…" value="{{f.text}}" onChange="{{f.onText}}" rows="6" style="width: 100%; box-sizing: border-box; border: 1px solid #3A3424; border-radius: 6px; background: #12151B; color: #E6DCC8; font-family: 'Crimson Text', serif; font-size: 16px; line-height: 1.4; padding: 8px 10px; resize: vertical"></textarea>
+<button type="button" onClick="{{f.del}}" style="{{f.delStyle}}"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 6h18"></path><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"></path><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>{{f.delLabel}}</button>
+</div>
+</sc-if>
+</div>
+</sc-for>
+</div>
+<div style="margin-top: 20px; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 28px; align-items: start">
+<sc-for list="{{textBlocks}}" as="tb" hint-placeholder-count="2">
+<section style="display: flex; flex-direction: column">
+<div style="display: flex; align-items: center; margin-bottom: 6px">
+<h2 style="flex: 1; margin: 0; font-family: 'Cinzel', serif; font-weight: 700; font-size: 13px; letter-spacing: 0.12em; color: #D9A62E">{{tb.title}}</h2>
+<sc-if value="{{tb.viewing}}" hint-placeholder-val="{{ true }}"><button type="button" onClick="{{tb.edit}}" aria-label="{{tb.editLabel}}" style="height: 40px; padding: 0 10px; border-radius: 6px; border: 1px solid #3A3424; background: transparent; color: #E6DCC8; font: inherit; font-size: 15px; display: flex; align-items: center; gap: 6px; cursor: pointer"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 20h9"></path><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"></path></svg>Editar</button></sc-if>
+<sc-if value="{{tb.editing}}" hint-placeholder-val="{{ false }}"><button type="button" onClick="{{doneEdit}}" style="height: 40px; padding: 0 16px; border-radius: 6px; border: 1px solid #D9A62E; background: #2B2414; color: #EBC15A; font-family: 'Cinzel', serif; font-size: 12px; font-weight: 700; letter-spacing: 0.06em; cursor: pointer">CONCLUIR</button></sc-if>
+</div>
+<sc-if value="{{tb.viewing}}" hint-placeholder-val="{{ true }}"><p style="margin: 0; font-size: 15px; color: #D3C9B5; white-space: pre-line">{{tb.value}}</p></sc-if>
+<sc-if value="{{tb.editing}}" hint-placeholder-val="{{ false }}"><textarea aria-label="{{tb.title}}" value="{{tb.value}}" onChange="{{tb.onText}}" rows="9" style="width: 100%; box-sizing: border-box; border: 1px solid #6B5524; border-radius: 6px; background: #12151B; color: #E6DCC8; font-family: 'Crimson Text', serif; font-size: 16px; line-height: 1.4; padding: 8px 10px; resize: vertical"></textarea></sc-if>
+</section>
+</sc-for>
+<section>
+<div style="display: flex; align-items: center; margin-bottom: 6px">
+<h2 style="flex: 1; margin: 0; font-family: 'Cinzel', serif; font-weight: 700; font-size: 13px; letter-spacing: 0.12em; color: #D9A62E">TREINAMENTO EM EQUIPAMENTO</h2>
+<sc-if value="{{trainViewing}}" hint-placeholder-val="{{ true }}"><button type="button" onClick="{{editTraining}}" aria-label="Editar treinamento em equipamento" style="height: 40px; padding: 0 10px; border-radius: 6px; border: 1px solid #3A3424; background: transparent; color: #E6DCC8; font: inherit; font-size: 15px; display: flex; align-items: center; gap: 6px; cursor: pointer"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 20h9"></path><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"></path></svg>Editar</button></sc-if>
+<sc-if value="{{trainEditing}}" hint-placeholder-val="{{ false }}"><button type="button" onClick="{{doneEdit}}" style="height: 40px; padding: 0 16px; border-radius: 6px; border: 1px solid #D9A62E; background: #2B2414; color: #EBC15A; font-family: 'Cinzel', serif; font-size: 12px; font-weight: 700; letter-spacing: 0.06em; cursor: pointer">CONCLUIR</button></sc-if>
+</div>
+<sc-for list="{{training}}" as="tr" hint-placeholder-count="3">
+<label style="display: grid; grid-template-columns: 96px minmax(0, 1fr); align-items: center; min-height: 44px; border-bottom: 1px solid #1F2229; font-size: 15px">
+<span style="color: #A0977F; font-style: italic">{{tr.k}}</span>
+<sc-if value="{{trainViewing}}" hint-placeholder-val="{{ true }}"><span>{{tr.v}}</span></sc-if>
+<sc-if value="{{trainEditing}}" hint-placeholder-val="{{ false }}"><input type="text" value="{{tr.v}}" onChange="{{tr.onText}}" style="height: 38px; min-width: 0; border: 1px solid #6B5524; border-radius: 6px; background: #12151B; color: #E6DCC8; font-family: 'Crimson Text', serif; font-size: 16px; padding: 0 8px"></sc-if>
+</label>
+</sc-for>
+</section>
+</div>
+</section>
+<sc-if value="{{rw}}" hint-placeholder-val="{{ true }}">
+<section id="notas" style="scroll-margin-top: 76px; background: #161A21; border: 1px solid #2A2619; border-radius: 10px; padding: 18px 20px">
+<h2 style="margin: 0 0 12px; font-family: 'Cinzel', serif; font-weight: 700; font-size: 15px; letter-spacing: 0.12em; color: #D9A62E">NOTAS DA CAMPANHA</h2>
+<div style="display: grid; grid-template-columns: 220px minmax(0, 1fr); gap: 12px; align-items: center; margin-bottom: 10px">
+<button type="button" onClick="{{addNote}}" style="width: 100%; height: 40px; border-radius: 6px; border: 1px dashed #4A4129; background: transparent; color: #D9A62E; font-family: 'Cinzel', serif; font-size: 12px; font-weight: 700; letter-spacing: 0.08em; cursor: pointer">+ NOVA NOTA</button>
+<div role="group" aria-label="Filtrar notas" style="display: flex; gap: 6px; flex-wrap: wrap">
+<sc-for list="{{noteChips}}" as="c" hint-placeholder-count="5"><button type="button" aria-pressed="{{c.pressed}}" onClick="{{c.pick}}" style="{{c.style}}">{{c.label}}</button></sc-for>
+</div>
+</div>
+<div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 10px">
+<sc-for list="{{notes}}" as="n" hint-placeholder-count="4">
+<div style="{{n.span}}background: #1A1F28; border-radius: 8px">
+<button type="button" onClick="{{n.toggle}}" style="width: 100%; text-align: left; border: 0; background: transparent; padding: 10px 12px; color: #E6DCC8; font: inherit; cursor: pointer">
+<span style="display: block; font-size: 13px; color: #D9A62E; font-style: italic">{{n.cat}}</span>
+<span style="display: block; font-weight: 600">{{n.title}}</span>
+<sc-if value="{{n.closed}}" hint-placeholder-val="{{ true }}"><span style="display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; font-size: 15px; color: #D3C9B5">{{n.v.content}}</span></sc-if>
+</button>
+<sc-if value="{{n.open}}" hint-placeholder-val="{{ false }}">
+<div style="padding: 0 12px 12px; display: flex; flex-direction: column; gap: 10px">
+<div style="display: grid; grid-template-columns: 120px minmax(0, 1fr); gap: 10px">
+<label style="display: flex; flex-direction: column; gap: 2px; font-size: 14px; color: #A0977F; font-style: italic">Categoria
+<select value="{{n.v.category}}" onChange="{{n.on.category}}" style="height: 42px; border: 1px solid #3A3424; border-radius: 6px; background: #12151B; color: #E6DCC8; font-family: 'Crimson Text', serif; font-size: 16px; font-style: normal; padding: 0 6px">
+<option value="npcs">NPCs</option><option value="locations">Locais</option><option value="events">Eventos</option><option value="general">Geral</option>
+</select></label>
+<label style="display: flex; flex-direction: column; gap: 2px; font-size: 14px; color: #A0977F; font-style: italic">Título<input type="text" placeholder="Título" value="{{n.v.title}}" onChange="{{n.on.title}}" style="height: 42px; min-width: 0; border: 1px solid #3A3424; border-radius: 6px; background: #12151B; color: #E6DCC8; font-family: 'Crimson Text', serif; font-size: 16px; font-style: normal; padding: 0 10px"></label>
+</div>
+<label style="display: flex; flex-direction: column; gap: 2px; font-size: 14px; color: #A0977F; font-style: italic">Conteúdo<textarea placeholder="Conteúdo…" value="{{n.v.content}}" onChange="{{n.on.content}}" rows="7" style="min-width: 0; border: 1px solid #3A3424; border-radius: 6px; background: #12151B; color: #E6DCC8; font-family: 'Crimson Text', serif; font-size: 16px; font-style: normal; line-height: 1.4; padding: 8px 10px; resize: vertical"></textarea></label>
+<button type="button" onClick="{{n.del}}" style="{{n.delStyle}}"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 6h18"></path><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"></path><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>{{n.delLabel}}</button>
+</div>
+</sc-if>
+</div>
+</sc-for>
+</div>
+<sc-if value="{{noNotes}}" hint-placeholder-val="{{ false }}"><p style="margin: 8px 0; text-align: center; color: #A0977F; font-style: italic">Nenhuma nota nesta categoria.</p></sc-if>
+</section>
+</sc-if>
+<sc-if value="{{rw}}" hint-placeholder-val="{{ true }}">
+<section id="campos" style="scroll-margin-top: 76px; background: #161A21; border: 1px solid #2A2619; border-radius: 10px; padding: 18px 20px">
+<h2 style="margin: 0 0 12px; font-family: 'Cinzel', serif; font-weight: 700; font-size: 15px; letter-spacing: 0.12em; color: #D9A62E">CAMPOS PERSONALIZÁVEIS</h2>
+<button type="button" onClick="{{addField}}" style="width: 100%; height: 40px; margin-bottom: 6px; border-radius: 6px; border: 1px dashed #4A4129; background: transparent; color: #D9A62E; font-family: 'Cinzel', serif; font-size: 12px; font-weight: 700; letter-spacing: 0.08em; cursor: pointer">+ NOVO CAMPO</button>
+<div style="border-top: 1px solid #262A33">
+<sc-for list="{{custom}}" as="cf" hint-placeholder-count="5">
+<div style="border-bottom: 1px solid #262A33">
+<button type="button" onClick="{{cf.toggle}}" style="width: 100%; min-height: 48px; border: 0; background: transparent; color: #E6DCC8; font: inherit; text-align: left; padding: 4px 2px; display: flex; align-items: center; gap: 10px; cursor: pointer"><span style="flex: 1">{{cf.title}}</span><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#A0977F" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="{{cf.chevron}}"><path d="m6 9 6 6 6-6"></path></svg></button>
+<sc-if value="{{cf.open}}" hint-placeholder-val="{{ false }}">
+<div style="padding: 0 0 12px; display: flex; flex-direction: column; gap: 10px">
+<label style="display: flex; flex-direction: column; gap: 2px; font-size: 14px; color: #A0977F; font-style: italic">Nome do campo<input type="text" placeholder="Nome do campo" value="{{cf.v.label}}" onChange="{{cf.on.label}}" style="height: 42px; min-width: 0; border: 1px solid #3A3424; border-radius: 6px; background: #12151B; color: #E6DCC8; font-family: 'Crimson Text', serif; font-size: 16px; font-style: normal; padding: 0 10px"></label>
+<label style="display: flex; flex-direction: column; gap: 2px; font-size: 14px; color: #A0977F; font-style: italic">Valor<textarea placeholder="Valor" value="{{cf.v.value}}" onChange="{{cf.on.value}}" rows="6" style="min-width: 0; border: 1px solid #3A3424; border-radius: 6px; background: #12151B; color: #E6DCC8; font-family: 'Crimson Text', serif; font-size: 16px; font-style: normal; line-height: 1.4; padding: 8px 10px; resize: vertical"></textarea></label>
+<button type="button" onClick="{{cf.del}}" style="{{cf.delStyle}}"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 6h18"></path><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"></path><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>{{cf.delLabel}}</button>
+</div>
+</sc-if>
+</div>
+</sc-for>
+</div>
+</section>
+</sc-if>
+</main>
+</div>
+<!-- Alterações não salvas -->
+<sc-if value="{{dirty}}" hint-placeholder-val="{{ false }}">
+<div role="status" style="position: absolute; left: 50%; bottom: 24px; transform: translateX(-50%); z-index: 25; background: #222833; border: 1px solid #D9A62E; border-radius: 10px; box-shadow: 0 10px 28px rgba(0,0,0,0.55); padding: 8px 8px 8px 18px; display: flex; align-items: center; gap: 14px; white-space: nowrap">
+<span style="font-size: 17px">Alterações foram realizadas, deseja salvá-las?</span>
+<button type="button" onClick="{{discard}}" style="height: 44px; padding: 0 16px; border-radius: 6px; border: 1px solid #5A2E2A; background: transparent; color: #E2766F; font-family: 'Cinzel', serif; font-size: 12px; font-weight: 700; letter-spacing: 0.06em; cursor: pointer">DESCARTAR</button>
+<button type="button" onClick="{{save}}" style="height: 44px; padding: 0 18px; border-radius: 6px; border: 0; background: #D9A62E; color: #1A1408; font-family: 'Cinzel', serif; font-size: 12px; font-weight: 700; letter-spacing: 0.06em; cursor: pointer">SALVAR ALTERAÇÕES</button>
+</div>
+</sc-if>
+<!-- Compartilhar -->
+<sc-if value="{{shareOpen}}" hint-placeholder-val="{{ false }}">
+<div style="position: absolute; inset: 0; z-index: 40">
+<button type="button" aria-label="Fechar compartilhamento" onClick="{{toggleShare}}" style="position: absolute; inset: 0; border: 0; background: transparent; cursor: default"></button>
+<div role="dialog" aria-label="Compartilhar ficha" style="position: absolute; top: 66px; right: 24px; width: 340px; max-width: calc(100% - 20px); box-sizing: border-box; background: #1A1F28; border: 1px solid #3A3424; border-radius: 10px; box-shadow: 0 16px 40px rgba(0,0,0,0.55); padding: 14px 16px; display: flex; flex-direction: column; gap: 12px">
+<div style="display: flex; align-items: center; gap: 8px; font-weight: 600">
+<sc-if value="{{shared}}" hint-placeholder-val="{{ true }}"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#D9A62E" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"></circle><path d="M2 12h20"></path><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path></svg></sc-if>
+<sc-if value="{{notShared}}" hint-placeholder-val="{{ false }}"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#A0977F" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect width="18" height="11" x="3" y="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg></sc-if>
+<span>{{shareTitle}}</span>
+</div>
+<div style="display: flex; align-items: center; justify-content: space-between; gap: 10px; border: 1px solid #2A2E38; border-radius: 8px; background: #151920; padding: 6px 10px 6px 12px">
+<span id="share-label" style="font-size: 15px; color: #A0977F">Permitir acesso via link</span>
+<button type="button" role="switch" aria-checked="{{sharedAria}}" aria-labelledby="share-label" onClick="{{toggleShared}}" style="{{switchTrack}}"><span style="{{switchThumb}}"></span></button>
+</div>
+<sc-if value="{{shared}}" hint-placeholder-val="{{ true }}">
+<div style="display: flex; flex-direction: column; gap: 8px">
+<p style="margin: 0; font-size: 14px; color: #A0977F">Qualquer pessoa com o link poderá visualizar esta ficha em modo somente leitura.</p>
+<div style="display: flex; gap: 8px">
+<input type="text" readOnly="readOnly" aria-label="Link de compartilhamento" value="https://[SEU-DOMÍNIO]/character/shared/4212fb3f-6865-4bf8-961d-bdfbf6196d42" onFocus="{{selectAll}}" style="flex: 1; min-width: 0; height: 40px; border: 1px solid #3A3424; border-radius: 6px; background: #12151B; color: #A0977F; font-family: 'Crimson Text', serif; font-size: 14px; padding: 0 10px">
+<button type="button" onClick="{{copyLink}}" style="height: 40px; padding: 0 12px; border-radius: 6px; border: 1px solid #6B5524; background: #2B2414; color: #EBC15A; font: inherit; font-size: 15px; display: flex; align-items: center; gap: 6px; cursor: pointer"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect width="14" height="14" x="8" y="8" rx="2" ry="2"></rect><path d="M4 16c0-1.1.9-2 2-2h2"></path><path d="M4 8c0-1.1.9-2 2-2h8c1.1 0 2 .9 2 2v2"></path></svg>Copiar</button>
+</div>
+</div>
+</sc-if>
+</div>
+</div>
+</sc-if>
+<sc-if value="{{toastOn}}" hint-placeholder-val="{{ false }}">
+<div role="status" style="position: absolute; left: 50%; top: 72px; transform: translateX(-50%); z-index: 45; max-width: calc(100% - 24px); box-sizing: border-box; background: #222833; border: 1px solid #4A4129; border-radius: 8px; box-shadow: 0 8px 24px rgba(0,0,0,0.5); padding: 10px 14px; font-size: 15px; color: #E6DCC8; text-align: center">{{toastMsg}}</div>
+</sc-if>
+<!-- Painéis -->
+<sc-if value="{{sheetOpen}}" hint-placeholder-val="{{ false }}">
+<div style="position: absolute; inset: 0; z-index: 30; display: flex; align-items: center; justify-content: center">
+<button type="button" aria-label="Fechar painel" onClick="{{closeSheet}}" style="position: absolute; inset: 0; border: 0; background: rgba(6,8,12,0.72); cursor: pointer"></button>
+<div role="dialog" aria-label="{{sheetTitle}}" onScroll="{{sc.k1}}" style="position: relative; width: 480px; max-height: 88%; overflow-y: auto; scrollbar-width: thin; {{sb.k1}}; background: #1A1F28; border: 1px solid #D9A62E; border-radius: 12px; box-shadow: 0 20px 48px rgba(0,0,0,0.6); padding: 16px 20px 20px">
+<div style="display: flex; align-items: center; gap: 8px; margin-bottom: 6px">
+<h2 style="flex: 1; margin: 0; font-family: 'Cinzel', serif; font-weight: 700; font-size: 15px; letter-spacing: 0.1em; color: #D9A62E">{{sheetTitle}}</h2>
+<button type="button" aria-label="Fechar" onClick="{{closeSheet}}" style="width: 44px; height: 44px; border: 0; background: transparent; color: #A0977F; cursor: pointer; display: flex; align-items: center; justify-content: center; padding: 0"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M18 6 6 18"></path><path d="m6 6 12 12"></path></svg></button>
+</div>
+
+<!-- Informações gerais -->
+<sc-if value="{{isInfoSheet}}" hint-placeholder-val="{{ false }}">
+<div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px">
+<label style="display: flex; flex-direction: column; gap: 2px; font-size: 14px; color: #A0977F; font-style: italic">CA<input type="text" inputMode="numeric" value="{{info.ac}}" onChange="{{onInfo.ac}}" onFocus="{{selectAll}}" style="height: 44px; min-width: 0; border: 1px solid #3A3424; border-radius: 6px; background: #12151B; color: #E6DCC8; font-family: 'Cinzel', serif; font-size: 18px; font-weight: 700; font-style: normal; padding: 0 10px"></label>
+<label style="display: flex; flex-direction: column; gap: 2px; font-size: 14px; color: #A0977F; font-style: italic">Deslocamento (m)<input type="text" inputMode="numeric" value="{{info.speed}}" onChange="{{onInfo.speed}}" onFocus="{{selectAll}}" style="height: 44px; min-width: 0; border: 1px solid #3A3424; border-radius: 6px; background: #12151B; color: #E6DCC8; font-family: 'Cinzel', serif; font-size: 18px; font-weight: 700; font-style: normal; padding: 0 10px"></label>
+<label style="display: flex; flex-direction: column; gap: 2px; font-size: 14px; color: #A0977F; font-style: italic">Tamanho<input type="text" value="{{info.size}}" onChange="{{onInfo.size}}" style="height: 44px; min-width: 0; border: 1px solid #3A3424; border-radius: 6px; background: #12151B; color: #E6DCC8; font-family: 'Crimson Text', serif; font-size: 16px; font-style: normal; padding: 0 10px"></label>
+<label style="display: flex; flex-direction: column; gap: 2px; font-size: 14px; color: #A0977F; font-style: italic">Dado de vida (total)<input type="text" placeholder="11d8" value="{{info.hdTotal}}" onChange="{{onInfo.hdTotal}}" style="height: 44px; min-width: 0; border: 1px solid #3A3424; border-radius: 6px; background: #12151B; color: #E6DCC8; font-family: 'Crimson Text', serif; font-size: 16px; font-style: normal; padding: 0 10px"></label>
+<p style="grid-column: 1 / -1; margin: 0; font-size: 14px; color: #A0977F; font-style: italic">Iniciativa e proficiência são calculadas; toque nelas para ver o cálculo e o bônus adicional.</p>
+</div>
+</sc-if>
+
+<!-- Espaços de magia -->
+<sc-if value="{{isSlotsSheet}}" hint-placeholder-val="{{ false }}">
+<div style="display: flex; flex-direction: column">
+<div style="display: grid; grid-template-columns: 52px minmax(0, 1fr) minmax(0, 1fr); gap: 8px; padding-bottom: 4px; font-size: 14px; color: #A0977F; font-style: italic; text-align: center"><span></span><span>Usados</span><span>Total</span></div>
+<sc-for list="{{slotEdit}}" as="r" hint-placeholder-count="9">
+<div style="display: grid; grid-template-columns: 52px minmax(0, 1fr) minmax(0, 1fr); gap: 8px; align-items: center; min-height: 48px; border-bottom: 1px solid #262A33">
+<span style="font-family: 'Cinzel', serif; font-weight: 700; color: #D9A62E">{{r.label}}</span>
+<span style="display: flex; align-items: center; justify-content: center; gap: 4px"><button type="button" aria-label="Menos usados" onClick="{{r.usedDec}}" style="width: 40px; height: 40px; border-radius: 6px; border: 1px solid #3A3424; background: transparent; color: #E6DCC8; font-size: 18px; cursor: pointer">−</button><span style="font-family: 'Cinzel', serif; font-weight: 700; width: 24px; text-align: center">{{r.used}}</span><button type="button" aria-label="Mais usados" onClick="{{r.usedInc}}" style="width: 40px; height: 40px; border-radius: 6px; border: 1px solid #3A3424; background: transparent; color: #E6DCC8; font-size: 18px; cursor: pointer">+</button></span>
+<span style="display: flex; align-items: center; justify-content: center; gap: 4px"><button type="button" aria-label="Menos espaços" onClick="{{r.totalDec}}" style="width: 40px; height: 40px; border-radius: 6px; border: 1px solid #3A3424; background: transparent; color: #E6DCC8; font-size: 18px; cursor: pointer">−</button><span style="font-family: 'Cinzel', serif; font-weight: 700; width: 24px; text-align: center">{{r.total}}</span><button type="button" aria-label="Mais espaços" onClick="{{r.totalInc}}" style="width: 40px; height: 40px; border-radius: 6px; border: 1px solid #3A3424; background: transparent; color: #E6DCC8; font-size: 18px; cursor: pointer">+</button></span>
+</div>
+</sc-for>
+</div>
+</sc-if>
+
+<!-- Atributo de conjuração -->
+<sc-if value="{{isCastSheet}}" hint-placeholder-val="{{ false }}">
+<div style="display: flex; flex-direction: column; gap: 6px">
+<sc-for list="{{castOpts}}" as="o" hint-placeholder-count="7">
+<button type="button" aria-pressed="{{o.pressed}}" onClick="{{o.pick}}" style="{{o.style}}">
+<span style="flex: 1; text-align: left">{{o.label}} <span style="color: #A0977F">{{o.mod}}</span></span>
+<span style="font-size: 14px; color: #A0977F">{{o.result}}</span>
+</button>
+</sc-for>
+</div>
+</sc-if>
+
+<!-- Cálculo + bônus adicional -->
+<sc-if value="{{isBonusSheet}}" hint-placeholder-val="{{ false }}">
+<div style="display: flex; flex-direction: column; gap: 12px">
+<sc-if value="{{bs.hasScore}}" hint-placeholder-val="{{ false }}">
+<div style="display: flex; align-items: center; gap: 10px; padding-bottom: 6px; border-bottom: 1px solid #262A33">
+<span style="flex: 1">Valor do atributo</span>
+<button type="button" aria-label="Diminuir valor" onClick="{{bs.scoreDec}}" style="width: 44px; height: 44px; border-radius: 6px; border: 1px solid #3A3424; background: #222833; color: #E6DCC8; font-family: 'Cinzel', serif; font-size: 20px; cursor: pointer">−</button>
+<span style="font-family: 'Cinzel', serif; font-size: 22px; font-weight: 700; width: 40px; text-align: center">{{bs.score}}</span>
+<button type="button" aria-label="Aumentar valor" onClick="{{bs.scoreInc}}" style="width: 44px; height: 44px; border-radius: 6px; border: 1px solid #3A3424; background: #222833; color: #E6DCC8; font-family: 'Cinzel', serif; font-size: 20px; cursor: pointer">+</button>
+</div>
+</sc-if>
+<sc-if value="{{bs.hasToggle}}" hint-placeholder-val="{{ false }}">
+<div>
+<div style="font-size: 14px; color: #A0977F; font-style: italic; margin-bottom: 6px">{{bs.toggleLabel}}</div>
+<div role="group" style="display: flex; gap: 6px"><sc-for list="{{bs.opts}}" as="o" hint-placeholder-count="2"><button type="button" aria-pressed="{{o.pressed}}" onClick="{{o.pick}}" style="{{o.style}}">{{o.label}}</button></sc-for></div>
+</div>
+</sc-if>
+<div style="display: flex; flex-direction: column">
+<sc-for list="{{bs.rows}}" as="r" hint-placeholder-count="2"><div style="display: flex; align-items: center; min-height: 40px; border-bottom: 1px solid #262A33"><span style="flex: 1; color: #D3C9B5">{{r.k}}</span><span style="font-family: 'Cinzel', serif; font-weight: 600">{{r.v}}</span></div></sc-for>
+<div style="display: flex; align-items: center; gap: 10px; min-height: 60px; border-bottom: 1px solid #262A33">
+<span style="flex: 1"><span style="display: block; color: #8FB4D6; font-weight: 600">Bônus adicional</span><span style="display: block; font-size: 14px; color: #A0977F">antecedente, item, talento…</span></span>
+<button type="button" aria-label="Diminuir bônus" onClick="{{bs.bonusDec}}" style="width: 44px; height: 44px; border-radius: 6px; border: 1px solid #3B4A5A; background: #1C2633; color: #8FB4D6; font-family: 'Cinzel', serif; font-size: 20px; cursor: pointer">−</button>
+<span style="{{bs.bonusStyle}}">{{bs.bonus}}</span>
+<button type="button" aria-label="Aumentar bônus" onClick="{{bs.bonusInc}}" style="width: 44px; height: 44px; border-radius: 6px; border: 1px solid #3B4A5A; background: #1C2633; color: #8FB4D6; font-family: 'Cinzel', serif; font-size: 20px; cursor: pointer">+</button>
+</div>
+<div style="display: flex; align-items: center; min-height: 56px"><span style="flex: 1; color: #A0977F; font-style: italic">{{bs.totalLabel}}</span><span style="font-family: 'Cinzel', serif; font-size: 30px; font-weight: 700; color: #D9A62E">{{bs.total}}</span></div>
+</div>
+<sc-if value="{{bs.hasNote}}" hint-placeholder-val="{{ false }}"><p style="margin: 0; font-size: 14px; color: #A0977F; font-style: italic">{{bs.note}}</p></sc-if>
+</div>
+</sc-if>
+</div>
+</div>
+</sc-if>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"tab":{"editor":"enum","options":["sessao","pericias","tracos","mochila","diario"],"default":"sessao"},"sheet":{"editor":"enum","options":["","init","abil","cast","info","slots"],"default":""},"readonly":{"editor":"enum","options":["","1"],"default":""},"demo":{"editor":"enum","options":["","share","dirty","edit","weapon","spell","delete"],"default":""},"$preview":{"width":1440,"height":900}}'>
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    const W = (id, name, attackBonus, damage, damageType, notes) => ({ id, name, attackBonus, damage, damageType, notes });
+    const S = (id, level, name, castingTime, range, concentration, ritual, notes) => ({ id, level, name, castingTime, range, concentration: !!concentration, ritual: !!ritual, notes, materialRequired: '' });
+    const slots = {}; for (let i = 1; i <= 9; i++) slots[i] = { total: 0, used: 0 }; slots[5] = { total: 3, used: 3 };
+    const base = {
+      hp: 89, maxHp: 89, temp: 0, insp: true, hdUsed: 0, succ: 0, fail: 0,
+      info: { ac: 19, speed: 9, size: 'Médio', hdTotal: '11d8' },
+      castAbil: 'cha', spellSlots: slots,
+      scores: { str: 20, dex: 19, con: 14, int: 9, wis: 10, cha: 22 },
+      saveProf: { str: false, dex: false, con: false, int: false, wis: true, cha: true },
+      skillLv: { 'Acrobacia': 1, 'Atletismo': 1, 'Enganação': 1, 'Furtividade': 1, 'Investigação': 1, 'Percepção': 1, 'Prestidigitação': 1 },
+      bonuses: { prof: 0, init: 4, saves: { str: 1 }, skills: {} },
+      weapons: [
+        W('w1', 'Raio Místico', '+10', '1d10 + 6', 'Força', 'Nvl 5 (2 raios) Nvl 11 (3 raios)'),
+        W('w2', 'Toque Necrótico', '+10', '2d10', 'Necrótico', 'COM A MÃO (+2d8 Gelo); nvl 5 (2d10), 11 (3d10) e 17 (4d10)'),
+        W('w3', 'Badalar Fúnebre (5º)', 'SAB', '2d8 ou 2d12', 'Necrótico', 'd12 Caso tenha perdido algum de seus Pontos de Vida'),
+        W('w4', 'Repreensão Diabólica (5º)', 'DES', '6d10', 'Fogo', 'Reação (Metade se salvar)'),
+        W('w5', 'Malogro (5º)', 'CON', '9d8', 'Necrótico', '(Metade se salvar)'),
+        W('w6', 'Nuvem de Adagas (5º)', '-', '10d4', 'Cortante', ''),
+        W('w7', 'Estática Sináptica', 'INT', '8d6', 'Psíquico', '(Se falhar) Subtrai 1d6 de todas as suas jogadas de ataque e testes de atributo.'),
+        W('w8', 'Círculo da Morte [LIVRO] [MÃO]', 'CON (18)', '8d8', 'Necrótico', ''),
+        W('w9', 'Discurso do Mal', '-', '4d8', 'Psíquico', 'Raio 4.5m - Sofro 2d12'),
+        W('w10', 'Toque Chocante', '+10', '2d8', 'Elétrico', 'COM A MÃO (+2d8 Gelo); nvl 5 (2d8), 11 (3d8) e 17 (4d8)'),
+        W('w11', 'Dedo da Morte Mão/Livro', 'CON', '7d8 + 30', 'Necrótico', ''),
+        W('w12', 'Bola de Fogo', 'DES', '10d6', 'Fogo', ''),
+        W('w13', 'Muralha de fogo', 'DES', '6d8', 'Fogo', 'Quem termina a ate 3m toma dano')
+      ],
+      spells: [
+        S('s1', 0, 'Raio Místico', 'Ação', '54m', 0, 0, 'Dois feixes no nível 5, três feixes no nível 11 e quatro feixes no nível 17'),
+        S('s2', 0, 'Toque Necrótico', 'Ação', 'Pessoal', 0, 0, 'nível 5 (2d10), 11 (3d10) e 17 (4d10).'),
+        S('s3', 0, 'Prestidigitação Arcana', 'Ação', '21m', 0, 0, '- 1d4 p/ jog. ataq. inimigo'),
+        S('s4', 0, 'Badalar Fúnebre', 'Ação', '18m', 0, 0, '(TEST SAB, SE TIVER TOMADO DANO, D12) níveis 5 (2d8 ou 2d12), 11 (3d8 ou 3d12) e 17 (4d8 ou 4d12)'),
+        S('s5', 0, 'Toque Chocante [LIVRO]', 'Ação', 'Pesssoal', 0, 0, ''),
+        S('s6', 1, 'Armadura Arcana (INV)', 'Ação', 'Pessoal', 0, 0, '13 + Mod. DES'),
+        S('s7', 1, 'Repreensão Diabólica', 'Reação', '36m', 0, 1, ''),
+        S('s8', 1, 'Escudo Arcano [LIVRO]', 'Reação', 'Pessoal', 0, 1, '+5 CA até o meu próximo turno; 1d6, 6 = recupera a magia'),
+        S('s9', 1, 'Sono [MÃO]', 'Ação', '18m', 0, 0, ''),
+        S('s10', 1, 'Danação', 'Ação Bônus', '27m', 1, 0, ''),
+        S('s11', 2, 'Escuridão', 'Ação', '36m', 1, 0, 'Esfera de 4,5 metros de raio'),
+        S('s12', 2, 'Nuvem de Adagas', 'Ação', '45m', 1, 0, 'Cubo de 1,5 metro'),
+        S('s13', 3, 'Contramagia', 'Reação', '36m', 0, 1, 'Você tenta interromper uma criatura no processo de conjurar uma magia. A criatura realiza uma salvaguarda de Constituição.'),
+        S('s14', 3, 'Invocar Morto-vivo', 'Ação', '45m', 1, 0, 'Ver ficha "Espírito Morto-Vivo" (302)'),
+        S('s15', 3, 'Remover Maldição', 'Ação', 'Toque', 0, 0, 'Ao seu toque, todas as maldições que afetam uma criatura ou objeto se encerram.'),
+        S('s16', 3, 'Animar Mortos [LIVRO]', 'Ação', '3m', 0, 0, '[FICHA APENDICE B] Esqueleto (358) ou Zumbi (365)'),
+        S('s17', 3, 'Lentidão [MÃO]', 'Ação', '36m', 1, 0, 'TESTE SAB Cubo de 12 metros de lado no alcance da magia'),
+        S('s18', 3, 'Bola de Fogo', 'Ação', '45m', 0, 0, 'Teste de destreza, diâmetro de 6 metros, 8d6 pontos de dado igneo'),
+        S('s19', 4, 'Malogro', 'Ação', '45m', 0, 0, ''),
+        S('s20', 4, 'Banimento (até 2)', 'Ação', '24m', 1, 0, 'Se o alvo for uma Aberração, Celestial, Elemental, Feérico ou Ínfero, o alvo não retorna se a magia durar 1 minuto.'),
+        S('s21', 4, 'Muralha de Fogo', '1 ação', '36m', 1, 0, '6 metros de altura e 30 centímetros de espessura. 5d8 base'),
+        S('s22', 5, 'Paralisar Monstro', 'Ação', '45m', 1, 0, '(TEST SAB) Uma criatura adicional para cada círculo de espaço de magia acima de 5.'),
+        S('s23', 5, 'Estática Sinaptica', 'Ação', '54m', 0, 0, '(TEST INT) Esfera de 6 metros de raio centrada no alvo'),
+        S('s24', 6, 'Círculo da Morte [LIVRO] [MÃO]', 'Ação', '45m', 0, 0, 'Esfera de 18 metros de raio; [MÃO] 1d6, 6 = recupera a magia'),
+        S('s25', 6, 'Mau Olhado', 'Ação', 'Pessoal (18m)', 1, 0, ''),
+        S('s26', 7, 'Dedo da Morte [MÃO] [LIVRO]', 'Ação', '36m', 0, 0, 'TESTE CON; Um Humanoide morto pela magia = Zumbi'),
+        S('s27', 7, 'Teleporte [MÃO]', 'Ação', '3m', 0, 0, 'Até 8 criaturas (PAG. 342)'),
+        S('s28', 8, 'Dominar Monstro [LIVRO]', 'Ação', '18m', 1, 0, 'TESTE SAB')
+      ],
+      classFeatures: [
+        'Astúcia Mágica\nAo final de um rito esotérico que você pode realizar por 1 minuto, você recupera os espaços de magia das Magias de Pacto gastos em um número igual à metade da sua quantidade máxima (arredondado para cima). Você pode usar esta característica novamente após completar um Descanso Longo.',
+        'Contatar Patrono\nVocê sempre tem a magia Contato Extraplanar preparada. Com esta característica, você pode conjurar a magia sem gastar um espaço de magia para entrar em contato com seu patrono.',
+        'Imunidade a Envenenamento [MÃO], Encantamento, Amedrontamento e Exaustão.',
+        '[LIVRO] Conhecimento do Mal\nVantagem em testes de história envolvendo corruptores e mortos vivos (busca essas informações no livro)',
+        'Benção do tenebroso\nAdquire pontos de vida temporários iguais ao modificador de carisma + lvl de bruxo. Também recebe quando um aliado mata um inimigo que está até 3 metros',
+        'Sorte do próprio antigo\nEm testes de atributos e salvaguardas, adiciona 1d10 a jogada. Pode usar o número de vezes igual ao modificador de carisma. Recupera tudo no descanso longo.',
+        'Resistência infera\nDepois de um descanso curto ou longo, escolhe um tipo de dano para ter Resistência, exceto energético.',
+        'Presente dos protetores\nQuando um aliado cai a 0 pontos de vida, se estiver com o nome escrito no livro, fica com 1 ponto. Pode conter o número de nomes igual ao modificador de carisma',
+        'Uno com a sombra\nPode conjurar Invisibilidade sem gastar um espaço de magia'
+      ],
+      speciesTraits: 'Eficiente. Você adquire Inspiração Heroica sempre que completar um Descanso Longo.\nHábil. Você adquire proficiência em uma perícia à sua escolha.\nVersátil. Você adquire um talento de Origem à sua escolha. Habilidoso é recomendado.',
+      feats: 'Alerta (Origem) — Proficiência em Iniciativa: quando você joga Iniciativa, pode adicionar seu Bônus de Proficiência. Troca de Iniciativa com um aliado voluntário.\n\nHabilidoso (Origem) — Proficiência em qualquer combinação de três perícias ou ferramentas.\n\nAtirador Arcano — +1 em INT, SAB ou CAR. Ataques com magia ignoram cobertura parcial e de três quartos; sem desvantagem a 1,5 m; alcance +18 m.',
+      training: { armor: 'Leve', weapon: 'Armas Simples', tool: 'Ferramentas de Ladrão' },
+      profile: { name: 'Silas Cole', cls: 'Bruxo', subclass: 'Grande Antigo', level: 12, xp: 0, species: 'Humano', background: 'Criminoso', alignment: 'Caótico/Bom', languages: 'Comum, Gnomo, Halfling', history: 'Teste de inserção' },
+      coins: { cp: 0, sp: 0, ep: 0, gp: 0, pp: 0 },
+      inventory: [{ id: 'i1', name: 'Rações', quantity: 24, weight: 0, notes: '' }, { id: 'i2', name: 'Bag of Holding', quantity: 1, weight: 0, notes: '' }],
+      attuned: [{ id: 'a1', name: 'Mão Esquerda de Vecna', description: '' }, { id: 'a2', name: 'Tomo Esquecido', description: '' }, { id: 'a3', name: 'Elmo de Ossário Negro', description: '' }, { id: 'a4', name: 'Olho de Vecna', description: '' }],
+      notes: [
+        { id: 'n1', category: 'npcs', title: 'Drago', content: 'Drago é uma figura imponente, e Silas o considera um grande aliado em sua busca para se livrar dos pactos. É um ancião que compartilha informações úteis, que direcionam o grupo, mas permanece sempre como um espectador.' },
+        { id: 'n2', category: 'npcs', title: 'Howard (Pai do Silas)', content: 'O pai de Silas ainda segue como uma incógnita: o homem que concordou em vender sua consciência e liberdade pela saúde de sua mulher e família, abruptamente, volta a ser um humano funcional.' },
+        { id: 'n3', category: 'events', title: 'Conversa com o Drago', content: 'Neste dia, após sairmos das ruinas do fundo no mar, parto em viagem para Grimholt, em busca de mais informações com o Dragão de Bronze Draco.' },
+        { id: 'n4', category: 'general', title: 'PROTOCOLO DE OMISSÃO — 3', content: 'Assunto: Vigilância Prolongada\nA exposição contínua à condição mortal produziu respostas empáticas recorrentes.' },
+        { id: 'n5', category: 'general', title: 'PROTOCOLO DE OMISSÃO — 7', content: 'Assunto: Supressão de Registro\nQuando uma autoridade divina demonstra empatia incompatível com sua função, o evento deve ser classificado como erro de interpretação mortal.' },
+        { id: 'n6', category: 'npcs', title: 'Rin', content: 'Rin não causou uma boa primeira impressão em Silas e, aliás, no grupo todo: mostrou-se prepotente e competitivo demais com um dos amigos de Silas, Melech.' },
+        { id: 'n7', category: 'npcs', title: 'Jaime', content: 'Inicialmente, Silas tinha algum respeito por ele, pois Jaime esteve presente na batalha contra o peão Mosquito.' }
+      ],
+      custom: [
+        { id: 'c1', label: 'Explosão Repulsiva (Raio Místico)', value: 'Ao atingir uma criatura Grande ou menor com esse truque, você pode empurrá-la até 3 metros para longe de você.' },
+        { id: 'c2', label: 'Explosão Agonizante (Raio Místico)', value: 'Você pode adicionar seu modificador de Carisma às jogadas de dano dessa magia.' },
+        { id: 'c3', label: 'Visão Diabólica', value: 'Você pode ver normalmente em Meia-luz e Escuridão — mágicas e não mágicas — a até 36 metros de você.' },
+        { id: 'c4', label: 'Mente Mística', value: 'Você tem Vantagem em salvaguardas de Constituição que realiza para manter a Concentração.' },
+        { id: 'c5', label: 'Armadura das Sombras', value: 'Você pode conjurar Armadura Arcana em si sem gastar um espaço de magia.' },
+        { id: 'c6', label: 'Buffs do Livro', value: 'Nível 5\n- Magia Animar Mortos (CD 18, uma vez ao dia)\n- Mão esquelética\n- Discurso do Mal: 4d8 psíquico em até 4.5m; você sofre 2d12\n\nNível 7\n- Magia Círculo da Morte (CD 18, uma vez ao dia)\n- Toque chocante à vontade' },
+        { id: 'c7', label: 'Buffs da Mão', value: '- Seu valor de Força se torna 20\n- Imunidade a Envenenamento\n- Ataques corpo a corpo com a mão causam 2d8 de dano frio extra\n- Uma vez ao dia: Lentidão, Sono, Dedo da Morte (CD 18), Teletransporte' }
+      ]
+    };
+    const st = JSON.parse(JSON.stringify(base));
+    let edit = null, open = { weapons: null, spells: null, inventory: null, attuned: null, notes: null, custom: null, features: null }, confirm = null;
+    if (props.demo === 'dirty') st.hp = 77;
+    if (props.demo === 'edit') edit = 'feats';
+    if (props.demo === 'weapon') open.weapons = 'w1';
+    if (props.demo === 'spell') open.spells = 's7';
+    if (props.demo === 'delete') { open.weapons = 'w6'; confirm = 'weapons:w6'; }
+    let sheet = null;
+    if (props.sheet) sheet = props.sheet === 'abil' ? { kind: 'abil', key: 'str' } : { kind: props.sheet };
+    this.state = Object.assign(st, { ro: props.readonly === '1', shared: true, shareOpen: props.demo === 'share', toast: '', full: false, saved: base, tab: props.tab || 'sessao', more: props.readonly === '1' ? 'perfil' : (props.more || 'mochila'), sheet, edit, open, confirm, raw: {}, lvl: 'all', noteFilter: 'all' });
+  }
+
+  renderVals() {
+    const st = this.state, set = (p) => this.setState(p), tab = st.tab;
+    // barras de rolagem: ocultas, aparecem só enquanto a área rola
+    const sb = {}, sc = {};
+    ['kd', 'k0', 'k1', 'k2', 'k3', 'k4', 'k5', 'k6', 'k7', 'k8'].forEach(k => {
+      sb[k] = 'scrollbar-color: ' + (st.scrollKey === k ? '#6B5524' : 'transparent') + ' transparent';
+      sc[k] = () => {
+        if (this.state.scrollKey !== k) this.setState({ scrollKey: k });
+        clearTimeout(this._sbTimer);
+        this._sbTimer = setTimeout(() => this.setState({ scrollKey: null }), 900);
+      };
+    });
+    const TRACK = ['hp', 'maxHp', 'temp', 'insp', 'hdUsed', 'succ', 'fail', 'info', 'castAbil', 'spellSlots', 'scores', 'saveProf', 'skillLv', 'bonuses', 'weapons', 'spells', 'classFeatures', 'speciesTraits', 'feats', 'training', 'profile', 'coins', 'inventory', 'attuned', 'notes', 'custom'];
+    const pick = (o) => { const r = {}; TRACK.forEach(k => { r[k] = o[k]; }); return r; };
+    const canon = (v) => (v && typeof v === 'object') ? '{' + Object.keys(v).sort().map(k => k + ':' + canon(v[k])).join(',') + '}' : String(v);
+    const dirty = canon(pick(st)) !== canon(st.saved);
+    const fmt = (n) => n >= 0 ? '+' + n : '−' + Math.abs(n);
+    const pf = st.profile, LEVEL = Math.max(1, Math.min(20, parseInt(pf.level, 10) || 1));
+    const modOf = (k) => Math.floor((st.scores[k] - 10) / 2);
+    const B = st.bonuses;
+    const profBase = LEVEL <= 4 ? 2 : LEVEL <= 8 ? 3 : LEVEL <= 12 ? 4 : LEVEL <= 16 ? 5 : 6;
+    const prof = profBase + B.prof;
+    const saveOf = (k) => modOf(k) + (st.saveProf[k] ? prof : 0) + (B.saves[k] || 0);
+    const AB = [['str', 'FOR', 'FORÇA', 'Força'], ['dex', 'DES', 'DESTREZA', 'Destreza'], ['con', 'CON', 'CONSTITUIÇÃO', 'Constituição'], ['int', 'INT', 'INTELIGÊNCIA', 'Inteligência'], ['wis', 'SAB', 'SABEDORIA', 'Sabedoria'], ['cha', 'CAR', 'CARISMA', 'Carisma']];
+    const SK = [['Acrobacia', 'dex'], ['Arcanismo', 'int'], ['Atletismo', 'str'], ['Atuação', 'cha'], ['Enganação', 'cha'], ['Furtividade', 'dex'], ['História', 'int'], ['Intimidação', 'cha'], ['Intuição', 'wis'], ['Investigação', 'int'], ['Lidar com Animais', 'wis'], ['Medicina', 'wis'], ['Natureza', 'int'], ['Percepção', 'wis'], ['Persuasão', 'cha'], ['Prestidigitação', 'dex'], ['Religião', 'int'], ['Sobrevivência', 'wis']];
+    const skillOf = (n, a) => { const lv = st.skillLv[n] || 0; return modOf(a) + (lv === 2 ? prof * 2 : lv === 1 ? prof : 0) + (B.skills[n] || 0); };
+    const init = modOf('dex') + B.init;
+    const hasCast = !!st.castAbil;
+    const dc = hasCast ? 8 + modOf(st.castAbil) + prof : '—', spellAtk = hasCast ? fmt(modOf(st.castAbil) + prof) : '—';
+    const setMap = (obj, k, v) => { const o = Object.assign({}, obj); if (!v) delete o[k]; else o[k] = v; return o; };
+    const adjBonus = (kind, key, d) => () => {
+      const b = Object.assign({}, st.bonuses);
+      if (kind === 'init') b.init = b.init + d;
+      if (kind === 'prof') b.prof = b.prof + d;
+      if (kind === 'save') b.saves = setMap(b.saves, key, (b.saves[key] || 0) + d);
+      if (kind === 'skill') b.skills = setMap(b.skills, key, (b.skills[key] || 0) + d);
+      set({ bonuses: b });
+    };
+    const dOn = 'display: inline-block; width: 7px; height: 7px; background: #D9A62E; transform: rotate(45deg)';
+    const dOff = 'display: inline-block; width: 7px; height: 7px; border: 1.2px solid #5A5240; box-sizing: border-box; transform: rotate(45deg)';
+    const dNone = 'display: inline-block; width: 7px; height: 7px';
+    const optStyle = (on) => 'flex: 1; height: 44px; border-radius: 6px; font-family: \'Crimson Text\', serif; font-size: 15px; cursor: pointer; ' + (on ? 'border: 1px solid #D9A62E; background: #2B2414; color: #EBC15A' : 'border: 1px solid #3A3424; background: transparent; color: #A0977F');
+    const chipStyle = (on) => 'flex-shrink: 0; height: 40px; padding: 0 14px; border-radius: 20px; font-family: \'Crimson Text\', serif; font-size: 15px; cursor: pointer; ' + (on ? 'border: 1px solid #D9A62E; background: #2B2414; color: #EBC15A' : 'border: 1px solid #2E2A1E; background: transparent; color: #A0977F');
+    const chev = (o) => o ? 'transform: rotate(180deg); flex-shrink: 0' : 'flex-shrink: 0';
+
+    // ---------- listas: abrir, editar, excluir (padrão da v1) ----------
+    const DEL_OFF = 'grid-column: 1 / -1; justify-self: start; height: 40px; padding: 0 12px; border-radius: 6px; border: 1px solid transparent; background: transparent; color: #A0977F; font: inherit; font-size: 15px; display: flex; align-items: center; gap: 6px; cursor: pointer';
+    const DEL_ON = 'grid-column: 1 / -1; justify-self: start; height: 40px; padding: 0 14px; border-radius: 6px; border: 1px solid #B8423C; background: #B8423C; color: #FFF4F2; font: inherit; font-size: 15px; font-weight: 600; display: flex; align-items: center; gap: 6px; cursor: pointer';
+    const toggle = (key, id) => () => set({ open: Object.assign({}, st.open, { [key]: st.open[key] === id ? null : id }), confirm: null });
+    const upd = (key, id, field, kind) => (e) => {
+      let v = kind === 'bool' ? e.target.checked : e.target.value;
+      if (kind === 'int') { v = parseInt(String(v).replace(/[^0-9]/g, ''), 10); if (isNaN(v)) v = 0; }
+      if (kind === 'num') { v = parseFloat(String(v).replace(',', '.')); if (isNaN(v)) v = 0; }
+      set({ [key]: st[key].map(x => x.id === id ? Object.assign({}, x, { [field]: v }) : x) });
+    };
+    const delOf = (key, id) => {
+      const ck = key + ':' + id, c = st.confirm === ck;
+      return { delLabel: c ? 'Confirmar exclusão' : 'Remover', delStyle: c ? DEL_ON : DEL_OFF, del: () => c ? set({ [key]: st[key].filter(x => x.id !== id), confirm: null }) : set({ confirm: ck }) };
+    };
+    const addTo = (key, tmpl) => () => { const id = key + Date.now(); set({ [key]: [Object.assign({ id }, tmpl)].concat(st[key]), open: Object.assign({}, st.open, { [key]: id }), confirm: null }); };
+    const fieldsOn = (key, id, spec) => { const o = {}; Object.keys(spec).forEach(f => { o[f] = upd(key, id, f, spec[f]); }); return o; };
+
+    // navegação
+    const navBase = 'height: 72px; border: 0; background: transparent; font-family: \'Crimson Text\', serif; font-size: 13px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 3px; cursor: pointer; padding: 0; ';
+    const nav = {}, navP = {}, go = {};
+    ['sessao', 'pericias', 'tracos', 'mochila', 'diario'].forEach(id => {
+      const on = tab === id;
+      nav[id] = navBase + (on ? 'color: #EBC15A; background: #1A1D24; box-shadow: inset 3px 0 0 #D9A62E' : 'color: #A0977F');
+      navP[id] = on ? 'true' : 'false';
+      go[id] = () => set({ tab: id, edit: null, confirm: null });
+    });
+
+    // PV
+    const numField = (key, max) => (e) => {
+      const v = String(e.target.value).replace(/[^0-9]/g, '').slice(0, 3);
+      const patch = { raw: Object.assign({}, st.raw, { [key]: v }) };
+      if (v !== '') patch[key] = max ? Math.min(max, parseInt(v, 10)) : parseInt(v, 10);
+      set(patch);
+    };
+    const blurField = (key) => () => set({ raw: Object.assign({}, st.raw, { [key]: undefined }) });
+    const shown = (key) => st.raw[key] !== undefined ? st.raw[key] : String(st[key]);
+    const total = Math.max(st.maxHp, st.hp + st.temp) || 1;
+    const hdCount = parseInt(st.info.hdTotal, 10) || 0;
+    const marks = (count, key, color) => [0, 1, 2].map(i => ({
+      style: i < count ? 'width: 20px; height: 20px; border-radius: 50%; background: ' + color + '; border: 1.5px solid ' + color + '; box-sizing: border-box' : 'width: 20px; height: 20px; border-radius: 50%; border: 1.5px solid #5A5240; box-sizing: border-box',
+      toggle: () => set({ [key]: i < count ? i : i + 1 })
+    }));
+    const infoOn = (f, kind) => (e) => { let v = e.target.value; if (kind === 'int') { v = parseInt(String(v).replace(/[^0-9]/g, ''), 10); if (isNaN(v)) v = 0; } set({ info: Object.assign({}, st.info, { [f]: v }) }); };
+
+    // painéis
+    const sh = st.sheet;
+    let bs = { title: '', rows: [], hasScore: false, hasToggle: false, opts: [], bonus: '+0', bonusStyle: '', totalLabel: '', total: '', hasNote: false, note: '', toggleLabel: '' };
+    const bonusStyle = (v) => 'font-family: \'Cinzel\', serif; font-size: 22px; font-weight: 700; width: 48px; text-align: center; color: ' + (v ? '#8FB4D6' : '#5A5F6A');
+    if (sh && sh.kind === 'init') bs = Object.assign(bs, { title: 'INICIATIVA', rows: [{ k: 'Modificador de Destreza', v: fmt(modOf('dex')) }], bonus: fmt(B.init), bonusStyle: bonusStyle(B.init), bonusDec: adjBonus('init', null, -1), bonusInc: adjBonus('init', null, 1), totalLabel: 'Total', total: fmt(init) });
+    if (sh && sh.kind === 'prof') bs = Object.assign(bs, { title: 'PROFICIÊNCIA', rows: [{ k: 'Pelo nível ' + LEVEL, v: fmt(profBase) }], bonus: fmt(B.prof), bonusStyle: bonusStyle(B.prof), bonusDec: adjBonus('prof', null, -1), bonusInc: adjBonus('prof', null, 1), totalLabel: 'Total', total: fmt(prof), hasNote: true, note: 'Afeta perícias, salvaguardas, CD e ataque de magia e o limite de itens sintonizados.' });
+    if (sh && sh.kind === 'abil') {
+      const k = sh.key, a = AB.find(x => x[0] === k), bv = B.saves[k] || 0;
+      bs = Object.assign(bs, {
+        title: a[2], hasScore: true, score: st.scores[k],
+        scoreDec: () => set({ scores: Object.assign({}, st.scores, { [k]: Math.max(1, st.scores[k] - 1) }) }),
+        scoreInc: () => set({ scores: Object.assign({}, st.scores, { [k]: Math.min(30, st.scores[k] + 1) }) }),
+        hasToggle: true, toggleLabel: 'Salvaguarda',
+        opts: [[false, 'Sem proficiência'], [true, 'Proficiente']].map(([v, label]) => ({ label, pressed: st.saveProf[k] === v ? 'true' : 'false', style: optStyle(st.saveProf[k] === v), pick: () => set({ saveProf: Object.assign({}, st.saveProf, { [k]: v }) }) })),
+        rows: [{ k: 'Modificador de ' + a[3], v: fmt(modOf(k)) }, { k: 'Proficiência', v: st.saveProf[k] ? fmt(prof) : '—' }],
+        bonus: fmt(bv), bonusStyle: bonusStyle(bv), bonusDec: adjBonus('save', k, -1), bonusInc: adjBonus('save', k, 1),
+        totalLabel: 'Salvaguarda', total: fmt(saveOf(k))
+      });
+    }
+    if (sh && sh.kind === 'skill') {
+      const nm = sh.key, ak = SK.find(x => x[0] === nm)[1], a = AB.find(x => x[0] === ak), lv = st.skillLv[nm] || 0, bv = B.skills[nm] || 0;
+      bs = Object.assign(bs, {
+        title: nm.toUpperCase(), hasToggle: true, toggleLabel: 'Treinamento',
+        opts: [[0, 'Nenhum'], [1, 'Proficiente'], [2, 'Especialista']].map(([v, label]) => ({ label, pressed: lv === v ? 'true' : 'false', style: optStyle(lv === v), pick: () => set({ skillLv: setMap(st.skillLv, nm, v) }) })),
+        rows: [{ k: 'Modificador de ' + a[3], v: fmt(modOf(ak)) }, { k: lv === 2 ? 'Especialização (2 × prof.)' : 'Proficiência', v: lv ? fmt(lv === 2 ? prof * 2 : prof) : '—' }],
+        bonus: fmt(bv), bonusStyle: bonusStyle(bv), bonusDec: adjBonus('skill', nm, -1), bonusInc: adjBonus('skill', nm, 1),
+        totalLabel: 'Total', total: fmt(skillOf(nm, ak))
+      });
+    }
+    const castOpts = [['', '—', '', 'Nenhum']].concat(AB).map(([k, abbr, title, name]) => {
+      const on = st.castAbil === k;
+      return {
+        label: name, mod: k ? '(' + fmt(modOf(k)) + ')' : '', result: k ? 'CD ' + (8 + modOf(k) + prof) + ' · Ataque ' + fmt(modOf(k) + prof) : 'sem conjuração', pressed: on ? 'true' : 'false',
+        pick: () => set({ castAbil: k, sheet: null }),
+        style: 'min-height: 50px; border-radius: 8px; padding: 0 14px; display: flex; align-items: center; gap: 8px; font: inherit; font-size: 16px; cursor: pointer; ' + (on ? 'border: 1px solid #D9A62E; background: #2B2414; color: #EBC15A' : 'border: 1px solid #2A2E38; background: #12151B; color: #E6DCC8')
+      };
+    });
+    const castName = AB.find(x => x[0] === st.castAbil);
+    const slotSet = (lv, f, d) => () => {
+      const cur = st.spellSlots[lv], nx = Object.assign({}, cur);
+      nx[f] = Math.max(0, Math.min(9, cur[f] + d));
+      if (f === 'total' && nx.used > nx.total) nx.used = nx.total;
+      if (f === 'used' && nx.used > nx.total) nx.used = nx.total;
+      set({ spellSlots: Object.assign({}, st.spellSlots, { [lv]: nx }) });
+    };
+    const slotEdit = [1, 2, 3, 4, 5, 6, 7, 8, 9].map(lv => ({ label: lv + 'º', used: st.spellSlots[lv].used, total: st.spellSlots[lv].total, usedDec: slotSet(lv, 'used', -1), usedInc: slotSet(lv, 'used', 1), totalDec: slotSet(lv, 'total', -1), totalInc: slotSet(lv, 'total', 1) }));
+    const sheetTitles = { cast: 'ATRIBUTO DE CONJURAÇÃO', info: 'INFORMAÇÕES GERAIS', slots: 'ESPAÇOS DE MAGIA' };
+
+    // atributos e perícias
+    const abilities = AB.map(([k, abbr]) => ({ abbr, score: st.scores[k], mod: fmt(modOf(k)), save: fmt(saveOf(k)), profMark: st.saveProf[k] ? dOn : dOff, hasBonus: !!B.saves[k], open: () => set({ sheet: { kind: 'abil', key: k } }) }));
+    const abilityBlocks = AB.map(([k, abbr, title]) => {
+      const skills = SK.filter(s => s[1] === k).map(([nm]) => {
+        const lv = st.skillLv[nm] || 0, bv = B.skills[nm] || 0;
+        return { label: nm, total: fmt(skillOf(nm, k)), mark1: lv ? dOn : dOff, mark2: lv === 2 ? dOn : dNone, hasBonus: !!bv, open: () => set({ sheet: { kind: 'skill', key: nm } }) };
+      });
+      return { title, score: st.scores[k], mod: fmt(modOf(k)), save: fmt(saveOf(k)), profMark: st.saveProf[k] ? dOn : dOff, hasBonus: !!B.saves[k], skills, open: () => set({ sheet: { kind: 'abil', key: k } }) };
+    });
+
+    const ABBR = { str: 'FOR', dex: 'DES', con: 'CON', int: 'INT', wis: 'SAB', cha: 'CAR' };
+    const skillsFlat = SK.map(([nm, k]) => {
+      const lv = st.skillLv[nm] || 0;
+      return { label: nm, abbr: ABBR[k], total: fmt(skillOf(nm, k)), mark1: lv ? dOn : dOff, mark2: lv === 2 ? dOn : dNone, hasBonus: !!B.skills[nm], open: () => set({ sheet: { kind: 'skill', key: nm } }) };
+    });
+
+    // armas
+    const weapons = st.weapons.map(w => Object.assign({
+      v: w, title: w.name || 'Nova arma', open: st.open.weapons === w.id, toggle: toggle('weapons', w.id),
+      on: fieldsOn('weapons', w.id, { name: 's', attackBonus: 's', damage: 's', damageType: 's', notes: 's' })
+    }, delOf('weapons', w.id)));
+
+    // magias
+    const usedSlots = [1, 2, 3, 4, 5, 6, 7, 8, 9].filter(lv => st.spellSlots[lv].total > 0);
+    const slotRows = usedSlots.map(lv => {
+      const t = st.spellSlots[lv].total, a = t - st.spellSlots[lv].used;
+      return {
+        label: lv + 'º círculo', count: a + ' / ' + t,
+        pips: Array.from({ length: t }, (_, i) => ({
+          aria: i < a ? 'Gastar espaço' : 'Recuperar espaço',
+          style: i < a ? 'width: 18px; height: 18px; background: #D9A62E; transform: rotate(45deg)' : 'width: 18px; height: 18px; border: 1.5px solid #5A5240; box-sizing: border-box; transform: rotate(45deg)',
+          toggle: () => set({ spellSlots: Object.assign({}, st.spellSlots, { [lv]: { total: t, used: i < a ? t - i : t - i - 1 } }) })
+        }))
+      };
+    });
+    const levels = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9];
+    const present = levels.filter(l => st.spells.some(s => Number(s.level) === l));
+    const chips = [['all', 'Todas']].concat(present.map(l => [String(l), l === 0 ? 'Truques' : l + 'º'])).map(([k, label]) => ({ label, pressed: st.lvl === k ? 'true' : 'false', pick: () => set({ lvl: k }), style: chipStyle(st.lvl === k) }));
+    const groups = present.filter(lv => st.lvl === 'all' || String(lv) === st.lvl).map(lv => ({
+      title: lv === 0 ? 'TRUQUES' : lv + 'º CÍRCULO',
+      spells: st.spells.filter(s => Number(s.level) === lv).map(s => Object.assign({
+        v: s, title: s.name || 'Nova magia', sub: [s.castingTime, s.range].filter(Boolean).join(' · ') || '—',
+        open: st.open.spells === s.id, chevron: chev(st.open.spells === s.id), toggle: toggle('spells', s.id),
+        on: fieldsOn('spells', s.id, { level: 'int', name: 's', castingTime: 's', range: 's', notes: 's', concentration: 'bool', ritual: 'bool' })
+      }, delOf('spells', s.id)))
+    }));
+
+    // traços
+    const features = st.classFeatures.map((txt, i) => {
+      const nl = txt.indexOf('\n'), title = (nl < 0 ? txt : txt.slice(0, nl)) || 'Nova característica', open = st.open.features === i;
+      const ck = 'features:' + i, c = st.confirm === ck;
+      return {
+        title, text: txt, open, chevron: chev(open),
+        toggle: () => set({ open: Object.assign({}, st.open, { features: open ? null : i }), confirm: null }),
+        onText: (e) => set({ classFeatures: st.classFeatures.map((t, j) => j === i ? e.target.value : t) }),
+        delLabel: c ? 'Confirmar exclusão' : 'Remover', delStyle: c ? DEL_ON : DEL_OFF,
+        del: () => c ? set({ classFeatures: st.classFeatures.filter((_, j) => j !== i), confirm: null, open: Object.assign({}, st.open, { features: null }) }) : set({ confirm: ck })
+      };
+    });
+    const tblock = (key, title) => ({ title, value: st[key], editing: st.edit === key, viewing: st.edit !== key, editLabel: 'Editar ' + title.toLowerCase(), edit: () => set({ edit: key }), onText: (e) => set({ [key]: e.target.value }) });
+    const training = [['armor', 'Armaduras'], ['weapon', 'Armas'], ['tool', 'Ferramentas']].map(([k, label]) => ({ k: label, v: st.training[k], onText: (e) => set({ training: Object.assign({}, st.training, { [k]: e.target.value }) }) }));
+
+    // mais
+    const moreTabs = (st.ro ? [['perfil', 'Perfil']] : [['perfil', 'Perfil'], ['mochila', 'Mochila'], ['notas', 'Notas'], ['campos', 'Campos']]).map(([k, label]) => {
+      const on = st.more === k;
+      return { label, pressed: on ? 'true' : 'false', pick: () => set({ more: k, confirm: null }), style: 'height: 44px; border: 0; font-family: \'Crimson Text\', serif; font-size: 15px; cursor: pointer; ' + (on ? 'background: #2B2414; color: #EBC15A' : 'background: transparent; color: #A0977F') };
+    });
+    const pfOn = (f, kind) => (e) => { let v = e.target.value; if (kind === 'int') { v = parseInt(String(v).replace(/[^0-9]/g, ''), 10); if (isNaN(v)) v = 0; } set({ profile: Object.assign({}, st.profile, { [f]: v }) }); };
+    const idf = (k, f, wide, kind) => ({ k, v: pf[f], span: wide ? 'grid-column: 1 / -1' : '', mode: kind === 'int' ? 'numeric' : 'text', on: pfOn(f, kind) });
+    const CAT = { npcs: 'NPC', events: 'Evento', locations: 'Local', general: 'Geral' };
+    const noteChips = [['all', 'Todas'], ['npcs', 'NPCs'], ['locations', 'Locais'], ['events', 'Eventos'], ['general', 'Geral']].map(([k, label]) => ({ label, pressed: st.noteFilter === k ? 'true' : 'false', pick: () => set({ noteFilter: k }), style: chipStyle(st.noteFilter === k) }));
+    const notes = st.notes.filter(n => st.noteFilter === 'all' || n.category === st.noteFilter).map(n => Object.assign({
+      v: n, span: st.open.notes === n.id ? 'grid-column: 1 / -1; ' : '', cat: CAT[n.category] || 'Geral', title: n.title || 'Nova nota', open: st.open.notes === n.id, closed: st.open.notes !== n.id, toggle: toggle('notes', n.id),
+      on: fieldsOn('notes', n.id, { category: 's', title: 's', content: 's' })
+    }, delOf('notes', n.id)));
+    const custom = st.custom.map(c => Object.assign({ v: c, title: c.label || 'Novo campo', open: st.open.custom === c.id, chevron: chev(st.open.custom === c.id), toggle: toggle('custom', c.id), on: fieldsOn('custom', c.id, { label: 's', value: 's' }) }, delOf('custom', c.id)));
+    const items = st.inventory.map(it => Object.assign({ v: it, title: it.name || 'Novo item', weight: it.weight ? it.weight + ' lb' : '—', open: st.open.inventory === it.id, toggle: toggle('inventory', it.id), on: fieldsOn('inventory', it.id, { name: 's', quantity: 'int', weight: 'num', notes: 's' }) }, delOf('inventory', it.id)));
+    const attuned = st.attuned.map(a => Object.assign({ v: a, title: a.name || 'Novo item sintonizado', open: st.open.attuned === a.id, chevron: chev(st.open.attuned === a.id), toggle: toggle('attuned', a.id), on: fieldsOn('attuned', a.id, { name: 's', description: 's' }) }, delOf('attuned', a.id)));
+    const full = st.attuned.length >= prof;
+    const tw = st.inventory.reduce((s, it) => s + (Number(it.weight) || 0) * (Number(it.quantity) || 0), 0);
+
+
+    // computador: cabeçalho compacto, atributos em linhas, 9 círculos numa linha
+    const VS = 'display: block; border-bottom: 1px solid #2E2A1E; padding: 0 0 4px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis';
+    const identityDesk = [['Nome', 'name', 'grid-column: span 2', 0], ['Classe', 'cls'], ['Subclasse', 'subclass'], ['Nível', 'level', '', 'int'], ['Espécie', 'species'], ['Antecedente', 'background'], ['XP', 'xp', '', 'int']].map(([k, f, span, kind]) => ({
+      k, v: pf[f], span: span || '', mode: kind === 'int' ? 'numeric' : 'text', on: pfOn(f, kind),
+      vstyle: f === 'name' ? VS + '; font-family: \'Cinzel\', serif; font-size: 20px; font-weight: 700; color: #D9A62E' : VS
+    }));
+    const persona = [['Alinhamento', 'alignment'], ['Idiomas', 'languages']].map(([k, f]) => ({ k, v: pf[f], on: pfOn(f) }));
+    const abilRows = AB.map(([k, abbr, title]) => ({ title, score: st.scores[k], mod: fmt(modOf(k)), save: fmt(saveOf(k)), profMark: st.saveProf[k] ? dOn : dOff, hasBonus: !!B.saves[k], open: () => set({ sheet: { kind: 'abil', key: k } }) }));
+    const slotCols = [1, 2, 3, 4, 5, 6, 7, 8, 9].map(lv => {
+      const t = st.spellSlots[lv].total, a = t - st.spellSlots[lv].used;
+      return {
+        label: lv + 'º', count: t ? a + '/' + t : '0', none: t === 0,
+        box: 'display: flex; flex-direction: column; align-items: center; justify-content: space-between; gap: 2px; padding: 6px 2px; border-radius: 8px; border: 1px solid ' + (t ? '#4A4129' : '#22262E') + '; background: ' + (t ? '#1A1F28' : 'transparent') + '; opacity: ' + (t ? 1 : 0.6),
+        pips: Array.from({ length: t }, (_, i) => ({
+          aria: i < a ? 'Gastar espaço' : 'Recuperar espaço',
+          style: i < a ? 'width: 14px; height: 14px; background: #D9A62E; transform: rotate(45deg)' : 'width: 14px; height: 14px; border: 1.5px solid #5A5240; box-sizing: border-box; transform: rotate(45deg)',
+          toggle: () => set({ spellSlots: Object.assign({}, st.spellSlots, { [lv]: { total: t, used: i < a ? t - i : t - i - 1 } }) })
+        }))
+      };
+    });
+    // compartilhar (como na v1: muda na hora, sem passar pela barra de salvar)
+    const showToast = (msg) => { clearTimeout(this._toastT); this.setState({ toast: msg }); this._toastT = setTimeout(() => this.setState({ toast: '' }), 2600); };
+    const shareStuff = {
+      ro: st.ro, rw: !st.ro, roStyle: st.ro ? 'pointer-events: none; opacity: 0.85; ' : '',
+      shareOpen: st.shareOpen, shared: st.shared, notShared: !st.shared, sharedAria: st.shared ? 'true' : 'false', shareExpanded: st.shareOpen ? 'true' : 'false',
+      shareTitle: st.shared ? 'Ficha pública' : 'Ficha privada',
+      shareBtnStyle: 'position: relative; flex-shrink: 0; border-radius: 8px; cursor: pointer; display: flex; align-items: center; justify-content: center; padding: 0; border: 1px solid #3A3424; background: transparent; color: #E6DCC8; ',
+      shareAria: st.shared ? 'Compartilhar ficha (pública)' : 'Compartilhar ficha (privada)',
+      switchTrack: 'position: relative; width: 48px; height: 28px; flex-shrink: 0; border-radius: 14px; border: 0; cursor: pointer; padding: 0; background: ' + (st.shared ? '#D9A62E' : '#3A3F4A'),
+      switchThumb: 'position: absolute; top: 3px; left: ' + (st.shared ? '23px' : '3px') + '; width: 22px; height: 22px; border-radius: 50%; background: #12151B; transition: left 0.15s',
+      toggleShare: () => set({ shareOpen: !st.shareOpen }),
+      toggleShared: () => { const v = !st.shared; set({ shared: v }); showToast(v ? 'Ficha agora está pública via link de compartilhamento.' : 'Ficha agora está privada. Apenas você pode acessá-la.'); },
+      copyLink: () => { try { navigator.clipboard.writeText('https://[SEU-DOMÍNIO]/character/shared/4212fb3f-6865-4bf8-961d-bdfbf6196d42'); } catch (e) {} showToast('Link copiado para a área de transferência!'); },
+      toastOn: !!st.toast, toastMsg: st.toast,
+      isFull: !!st.full, notFull: !st.full,
+      toggleFull: () => { try { if (!document.fullscreenElement) document.documentElement.requestFullscreen(); else document.exitFullscreen(); } catch (e) {} set({ full: !st.full }); }
+    };
+    return {
+      sb, sc, skillsFlat, identityDesk, persona, abilRows, slotCols,
+      castMod: st.castAbil ? fmt(modOf(st.castAbil)) : '—',
+      historyEditing: st.edit === 'history', historyViewing: st.edit !== 'history', editHistory: () => set({ edit: 'history' }),
+      ...shareStuff,
+      dirty, clean: !dirty,
+      save: () => set({ saved: JSON.parse(JSON.stringify(pick(st))), edit: null, confirm: null }),
+      discard: () => set(Object.assign(JSON.parse(JSON.stringify(st.saved)), { edit: null, raw: {}, confirm: null })),
+      isSessao: tab === 'sessao', isMochilaTab: tab === 'mochila', isDiario: tab === 'diario', alwaysTrue: true, isCombate: tab === 'combate', notCombate: tab !== 'combate', isMagias: tab === 'magias', isPericias: tab === 'pericias', isTracos: tab === 'tracos', isMais: tab === 'mais',
+      nav, navP, go, pf, info: st.info,
+      subtitle: [pf.cls + ' ' + LEVEL, pf.subclass].filter(Boolean).join(' · '),
+      maxHp: st.maxHp, temp: st.temp, hasTemp: st.temp > 0,
+      hpField: shown('hp'), maxField: shown('maxHp'), tempField: shown('temp'),
+      onHp: numField('hp', st.maxHp), onMax: numField('maxHp', 0), onTemp: numField('temp', 0),
+      blurHp: blurField('hp'), blurMax: blurField('maxHp'), blurTemp: blurField('temp'),
+      selectAll: (e) => e.target.select(),
+      hpBar: 'height: 100%; width: ' + (st.hp / total * 100) + '%; background: #B8423C; transition: width 0.25s',
+      tempBar: 'height: 100%; width: ' + (st.temp / total * 100) + '%; background: #5E86AB; transition: width 0.25s',
+      isDown: st.hp === 0,
+      init: fmt(init), initHasBonus: B.init !== 0, prof: fmt(prof), profHasBonus: B.prof !== 0,
+      dc, spellAtk, castAbbr: castName ? castName[1] : '—',
+      passive: 10 + skillOf('Percepção', 'wis'),
+      inspPressed: st.insp ? 'true' : 'false',
+      inspStyle: 'height: 40px; padding: 0 12px; border-radius: 20px; font-family: \'Crimson Text\', serif; font-size: 15px; display: flex; align-items: center; gap: 6px; cursor: pointer; ' + (st.insp ? 'border: 1px solid #D9A62E; background: #2B2414; color: #EBC15A' : 'border: 1px solid #3A3424; background: transparent; color: #7A7462'),
+      toggleInsp: () => set({ insp: !st.insp }),
+      hdLeft: Math.max(0, hdCount - st.hdUsed),
+      hdDec: () => set({ hdUsed: Math.min(hdCount, st.hdUsed + 1) }),
+      hdInc: () => set({ hdUsed: Math.max(0, st.hdUsed - 1) }),
+      succ: marks(st.succ, 'succ', '#D9A62E'), fail: marks(st.fail, 'fail', '#B8423C'),
+      abilities, abilityBlocks,
+      weapons, attackCount: st.weapons.length + ' ataques', addWeapon: addTo('weapons', { name: '', attackBonus: '', damage: '', damageType: '', notes: '' }),
+      slotRows, noSlots: usedSlots.length === 0, chips, groups, spellCount: st.spells.length + ' magias',
+      addSpell: addTo('spells', { level: 0, name: '', castingTime: '', range: '', concentration: false, ritual: false, notes: '', materialRequired: '' }),
+      features, addFeature: () => set({ classFeatures: [''].concat(st.classFeatures), open: Object.assign({}, st.open, { features: 0 }), confirm: null }),
+      textBlocks: [tblock('speciesTraits', 'TRAÇOS DE ESPÉCIE'), tblock('feats', 'TALENTOS')],
+      training, trainEditing: st.edit === 'training', trainViewing: st.edit !== 'training', editTraining: () => set({ edit: 'training' }),
+      doneEdit: () => set({ edit: null }),
+      moreTabs, isPerfil: st.more === 'perfil', isMochila: st.more === 'mochila', isNotas: st.more === 'notas', isCampos: st.more === 'campos',
+      profileEditing: st.edit === 'profile', profileViewing: st.edit !== 'profile', editProfile: () => set({ edit: 'profile' }),
+      identity: [idf('Nome', 'name', true), idf('Classe', 'cls'), idf('Subclasse', 'subclass'), idf('Nível', 'level', false, 'int'), idf('XP', 'xp', false, 'int'), idf('Espécie', 'species'), idf('Antecedente', 'background'), idf('Alinhamento', 'alignment'), idf('Idiomas', 'languages')],
+      onHistory: pfOn('history'),
+      coins: [['cp', 'PC'], ['sp', 'PP'], ['ep', 'PE'], ['gp', 'PO'], ['pp', 'PL']].map(([k, label]) => ({ k: label, v: st.coins[k], on: (e) => { const v = parseInt(String(e.target.value).replace(/[^0-9]/g, ''), 10) || 0; set({ coins: Object.assign({}, st.coins, { [k]: v }) }); } })),
+      items, addItem: addTo('inventory', { name: '', quantity: 1, weight: 0, notes: '' }), totalWeight: (Math.round(tw * 10) / 10) + ' lb',
+      attuned, attuneCount: st.attuned.length + ' / ' + prof + (full ? ' · limite atingido' : ''), attuneFull: full,
+      addAttuned: () => { if (!full) addTo('attuned', { name: '', description: '' })(); },
+      attuneAddLabel: full ? 'LIMITE DE SINTONIZAÇÃO ATINGIDO' : '+ SINTONIZAR ITEM',
+      attuneAddStyle: 'width: 100%; height: 44px; margin-bottom: 8px; border-radius: 6px; font-family: \'Cinzel\', serif; font-size: 12px; font-weight: 700; letter-spacing: 0.08em; background: transparent; ' + (full ? 'border: 1px dashed #2E2A1E; color: #6E6858; cursor: not-allowed' : 'border: 1px dashed #4A4129; color: #D9A62E; cursor: pointer'),
+      notes, noteChips, noNotes: notes.length === 0, addNote: addTo('notes', { category: st.noteFilter === 'all' ? 'general' : st.noteFilter, title: '', content: '' }),
+      custom, addField: addTo('custom', { label: '', value: '', section: 'geral' }),
+      sheetOpen: !!sh, isCastSheet: !!sh && sh.kind === 'cast', isInfoSheet: !!sh && sh.kind === 'info', isSlotsSheet: !!sh && sh.kind === 'slots',
+      isBonusSheet: !!sh && ['init', 'prof', 'abil', 'skill'].indexOf(sh.kind) >= 0,
+      sheetTitle: !sh ? '' : (sheetTitles[sh.kind] || bs.title), castOpts, slotEdit,
+      onInfo: { ac: infoOn('ac', 'int'), speed: infoOn('speed', 'int'), size: infoOn('size'), hdTotal: infoOn('hdTotal') },
+      closeSheet: () => set({ sheet: null }),
+      openInit: () => set({ sheet: { kind: 'init' } }),
+      openProf: () => set({ sheet: { kind: 'prof' } }),
+      openCast: () => set({ sheet: { kind: 'cast' } }),
+      openInfo: () => set({ sheet: { kind: 'info' } }),
+      openSlots: () => set({ sheet: { kind: 'slots' } }),
+      bs
+    };
+  }
+}
+</script>
+</body>
+</html>

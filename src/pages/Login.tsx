@@ -1,12 +1,9 @@
 import { useState, useRef } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import ReCAPTCHA from 'react-google-recaptcha';
-import { AuthLayout } from '@/components/auth/AuthLayout';
+import { AuthLayout, useWidgetTheme } from '@/components/auth/AuthLayout';
 import { GoogleSignInButton } from '@/components/auth/GoogleSignInButton';
-import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Separator } from '@/components/ui/separator';
 import { Checkbox } from '@/components/ui/checkbox';
 import {
   Dialog,
@@ -15,6 +12,11 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog';
+import { cn } from '@/lib/utils';
+import {
+  AccountField, OrDivider, PasswordInput, accountInput, accountLink, dialogContent, dialogDescription, dialogTitle,
+  outlineButton, primaryButton,
+} from '@/components/account/ui';
 import { useAuth } from '@/hooks/useAuth';
 import { useToast } from '@/hooks/use-toast';
 
@@ -29,6 +31,7 @@ export default function Login() {
   const { login, loginWithGoogle } = useAuth();
   const navigate = useNavigate();
   const { toast } = useToast();
+  const widgetTheme = useWidgetTheme();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -83,38 +86,34 @@ export default function Login() {
 
   return (
     <AuthLayout title="Entrar" subtitle="Acesse sua conta para gerenciar suas fichas">
-      <form onSubmit={handleSubmit} className="space-y-4">
-        <div className="space-y-2">
-          <Label htmlFor="email">Email</Label>
+      <form onSubmit={handleSubmit} className="flex flex-col gap-3.5">
+        <AccountField label="Email" htmlFor="email">
           <Input
             id="email"
             type="email"
+            autoComplete="email"
             placeholder="seu@email.com"
             value={email}
             onChange={e => setEmail(e.target.value)}
             required
+            className={accountInput}
           />
-        </div>
+        </AccountField>
 
-        <div className="space-y-2">
-          <div className="flex items-center justify-between">
-            <Label htmlFor="password">Senha</Label>
-            <Link
-              to="/forgot-password"
-              className="text-xs text-primary hover:underline"
-            >
-              Esqueceu sua senha?
-            </Link>
-          </div>
-          <Input
+        <AccountField
+          label="Senha"
+          htmlFor="password"
+          aside={<Link to="/forgot-password" className={cn(accountLink, 'text-[15px]')}>Esqueceu sua senha?</Link>}
+        >
+          <PasswordInput
             id="password"
-            type="password"
+            autoComplete="current-password"
             placeholder="••••••••"
             value={password}
             onChange={e => setPassword(e.target.value)}
             required
           />
-        </div>
+        </AccountField>
 
         {/* reCAPTCHA */}
         <div className="flex justify-center">
@@ -123,56 +122,55 @@ export default function Login() {
             sitekey={import.meta.env.VITE_RECAPTCHA_SITE_KEY}
             onChange={setCaptchaToken}
             onExpired={() => setCaptchaToken(null)}
-            theme="dark"
+            theme={widgetTheme}
           />
         </div>
 
-        <Button type="submit" className="w-full" disabled={loading || !captchaToken}>
+        <button type="submit" className={cn(primaryButton, 'w-full')} disabled={loading || !captchaToken}>
           {loading ? 'Entrando...' : 'Entrar'}
-        </Button>
+        </button>
 
-        <div className="relative my-4">
-          <Separator />
-          <span className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 bg-card px-2 text-xs text-muted-foreground">
-            ou
-          </span>
-        </div>
+        <OrDivider />
 
         <GoogleSignInButton onSuccess={handleGoogleSuccess} onError={handleGoogleError} disabled={loading} />
 
-        <p className="text-center text-sm text-muted-foreground">
+        <p className="mt-1 text-center text-muted-foreground">
           Não tem uma conta?{' '}
-          <Link to="/register" className="text-primary hover:underline">
-            Criar conta
-          </Link>
+          <Link to="/register" className={accountLink}>Criar conta</Link>
         </p>
       </form>
 
       <Dialog open={!!pendingGoogleCredential} onOpenChange={(open) => !open && setPendingGoogleCredential(null)}>
-        <DialogContent className="sm:max-w-md">
-          <DialogHeader>
-            <DialogTitle>Complete seu cadastro</DialogTitle>
-            <DialogDescription>
+        <DialogContent className={cn(dialogContent, 'max-w-[440px]')}>
+          <DialogHeader className="space-y-0 text-left">
+            <DialogTitle className={dialogTitle}>Complete seu cadastro</DialogTitle>
+            <DialogDescription className={dialogDescription}>
               Vimos que você ainda não tem uma conta. Para continuar com o Google, você precisa aceitar nossos Termos de Uso.
             </DialogDescription>
           </DialogHeader>
-          <div className="flex items-center space-x-2 py-4">
+          <div className="mt-3 flex min-h-[44px] items-center gap-2.5">
             <Checkbox
               id="terms-modal"
               checked={acceptedTerms}
               onCheckedChange={(checked) => setAcceptedTerms(checked as boolean)}
+              className="h-5 w-5"
             />
-            <Label htmlFor="terms-modal" className="text-sm font-normal">
-              Li e aceito os <Link to="/terms-of-use" target="_blank" className="text-primary hover:underline">Termos de Uso</Link>
-            </Label>
+            <label htmlFor="terms-modal" className="cursor-pointer text-base">
+              Li e aceito os <Link to="/terms-of-use" target="_blank" className={accountLink}>Termos de Uso</Link>
+            </label>
           </div>
-          <div className="flex justify-end space-x-2">
-            <Button variant="outline" onClick={() => setPendingGoogleCredential(null)} disabled={loading}>
+          <div className="mt-4 flex flex-wrap justify-end gap-2">
+            <button type="button" className={cn(outlineButton, 'h-11')} onClick={() => setPendingGoogleCredential(null)} disabled={loading}>
               Cancelar
-            </Button>
-            <Button onClick={handleConfirmGoogleRegistration} disabled={loading || !acceptedTerms}>
+            </button>
+            <button
+              type="button"
+              className={cn(primaryButton, 'h-11 font-body text-base font-semibold tracking-normal')}
+              onClick={handleConfirmGoogleRegistration}
+              disabled={loading || !acceptedTerms}
+            >
               {loading ? 'Confirmando...' : 'Confirmar e Entrar'}
-            </Button>
+            </button>
           </div>
         </DialogContent>
       </Dialog>

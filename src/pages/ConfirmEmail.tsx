@@ -1,7 +1,8 @@
 import { useEffect, useState } from 'react';
 import { Link, useSearchParams, useLocation } from 'react-router-dom';
 import { AuthLayout } from '@/components/auth/AuthLayout';
-import { Button } from '@/components/ui/button';
+import { cn } from '@/lib/utils';
+import { ResultIcon, outlineButton, primaryButton } from '@/components/account/ui';
 import { useAuth } from '@/hooks/useAuth';
 import { useToast } from '@/hooks/use-toast';
 import { Mail, CheckCircle, XCircle, RefreshCw } from 'lucide-react';
@@ -57,9 +58,9 @@ export default function ConfirmEmail() {
     // Shown after registration — no token yet
     return (
       <AuthLayout title="Verifique seu Email" subtitle="Quase lá!">
-        <div className="flex flex-col items-center gap-4 text-center">
-          <Mail className="h-12 w-12 text-primary" />
-          <p className="text-sm text-muted-foreground">
+        <div className="flex flex-col items-center gap-3.5 text-center">
+          <ResultIcon><Mail /></ResultIcon>
+          <p className="text-foreground/85">
             Enviamos um link de confirmação para{' '}
             {emailFromState ? (
               <strong className="text-foreground">{emailFromState}</strong>
@@ -68,30 +69,27 @@ export default function ConfirmEmail() {
             )}
             . Verifique sua caixa de entrada e clique no link para ativar sua conta.
           </p>
-          <p className="text-xs text-muted-foreground/70">
-            💡 Não encontrou? Verifique a pasta de <strong>spam</strong> ou <strong>lixo eletrônico</strong>.
+          <p className="text-sm text-muted-foreground">
+            Não encontrou? Verifique a pasta de <strong>spam</strong> ou <strong>lixo eletrônico</strong>.
           </p>
 
           {emailFromState && (
-            <Button
-              variant="outline"
-              size="sm"
+            <button
+              type="button"
               onClick={handleResend}
               disabled={resending || resendCooldown > 0}
-              className="gap-2"
+              className={cn(outlineButton, 'w-full')}
             >
-              <RefreshCw className={`h-3.5 w-3.5 ${resending ? 'animate-spin' : ''}`} />
+              <RefreshCw className={resending ? 'animate-spin' : ''} />
               {resending
                 ? 'Reenviando...'
                 : resendCooldown > 0
                   ? `Reenviar em ${resendCooldown}s`
                   : 'Reenviar email de confirmação'}
-            </Button>
+            </button>
           )}
 
-          <Button variant="outline" asChild className="mt-2">
-            <Link to="/login">Voltar para Login</Link>
-          </Button>
+          <Link to="/login" className={cn(outlineButton, 'w-full')}>Voltar para Login</Link>
         </div>
       </AuthLayout>
     );
@@ -101,30 +99,26 @@ export default function ConfirmEmail() {
     <AuthLayout
       title={status === 'success' ? 'Email Confirmado!' : status === 'error' ? 'Erro na Confirmação' : 'Confirmando...'}
     >
-      <div className="flex flex-col items-center gap-4 text-center">
+      <div className="flex flex-col items-center gap-3.5 text-center">
         {status === 'pending' && (
-          <p className="text-sm text-muted-foreground">Confirmando seu email...</p>
+          <p className="text-muted-foreground" role="status">Confirmando seu email...</p>
         )}
         {status === 'success' && (
           <>
-            <CheckCircle className="h-12 w-12 text-green-500" />
-            <p className="text-sm text-muted-foreground">
+            <ResultIcon tone="success"><CheckCircle /></ResultIcon>
+            <p className="text-foreground/85">
               Seu email foi confirmado com sucesso. Agora você pode acessar sua conta.
             </p>
-            <Button asChild className="mt-2">
-              <Link to="/login">Ir para Login</Link>
-            </Button>
+            <Link to="/login" className={cn(primaryButton, 'w-full')}>Ir para Login</Link>
           </>
         )}
         {status === 'error' && (
           <>
-            <XCircle className="h-12 w-12 text-destructive" />
-            <p className="text-sm text-muted-foreground">
+            <ResultIcon tone="danger"><XCircle /></ResultIcon>
+            <p className="text-foreground/85">
               {errorMsg || 'Não foi possível confirmar seu email. O link pode ter expirado.'}
             </p>
-            <Button variant="outline" asChild className="mt-2">
-              <Link to="/login">Voltar para Login</Link>
-            </Button>
+            <Link to="/login" className={cn(outlineButton, 'w-full')}>Voltar para Login</Link>
           </>
         )}
       </div>

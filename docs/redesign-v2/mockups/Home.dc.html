@@ -1,0 +1,232 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<title>Início · Minhas fichas</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600;700&amp;family=Crimson+Text:ital,wght@0,400;0,600;0,700;1,400&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+</style>
+</helmet>
+<div style="position: relative; width: 100%; height: 100vh; min-height: 640px; overflow: hidden; background: {{c.bg}}; color: {{c.text}}; font-family: 'Crimson Text', Georgia, serif; font-size: 16px; line-height: 1.4">
+<div onScroll="{{onScroll}}" style="height: 100%; overflow-y: auto; scrollbar-width: thin; scrollbar-color: {{sbColor}} transparent; display: flex; flex-direction: column">
+
+<!-- Cabeçalho (AppHeader da v1) -->
+<header style="position: sticky; top: 0; z-index: 20; background: {{c.surface}}; border-bottom: 1px solid {{c.border}}">
+<div style="max-width: 1024px; margin: 0 auto; padding: 0 16px; height: 60px; display: flex; align-items: center; gap: 12px">
+<a href="#" aria-label="Grimório — início" style="display: flex; align-items: center; gap: 10px; text-decoration: none; color: {{c.gold}}">
+<svg width="30" height="30" viewBox="0 0 64 64" aria-hidden="true" style="display: block; flex-shrink: 0"><g transform="translate(-2.5 0)"><rect x="21.5" y="6" width="29.5" height="52" rx="3" fill="{{c.gold}}"></rect><rect x="13" y="6" width="6" height="52" rx="3" fill="{{c.gold}}"></rect><rect x="19" y="3.5" width="34.5" height="50" rx="5.5" fill="{{c.surface}}"></rect><rect x="21.5" y="6" width="29.5" height="45" rx="3" fill="{{c.gold}}"></rect><rect x="42.5" y="22" width="15" height="13" rx="3" fill="{{c.surface}}"></rect><rect x="44" y="23.5" width="12" height="10" rx="2" fill="{{c.gold}}"></rect><polygon points="32,20.5 40,28.5 32,36.5 24,28.5" fill="{{c.surface}}"></polygon><polygon points="32,24.25 36.25,28.5 32,32.75 27.75,28.5" fill="{{c.gold}}"></polygon></g></svg>
+<span style="font-family: 'Cinzel', serif; font-weight: 700; font-size: 18px; letter-spacing: 0.06em">Grimório</span>
+</a>
+<div style="flex: 1"></div>
+<div style="position: relative">
+<button type="button" aria-haspopup="menu" aria-expanded="{{menuAria}}" onClick="{{toggleMenu}}" style="height: 44px; padding: 0 10px 0 4px; border-radius: 22px; border: 1px solid {{c.border}}; background: transparent; color: {{c.text}}; font: inherit; display: flex; align-items: center; gap: 8px; cursor: pointer">
+<span style="width: 34px; height: 34px; border-radius: 50%; background: {{c.goldFill}}; color: {{c.onGold}}; display: flex; align-items: center; justify-content: center; font-family: 'Cinzel', serif; font-size: 13px; font-weight: 700">JL</span>
+<span style="{{nameStyle}}">João Luiz</span>
+<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"></path></svg>
+</button>
+<sc-if value="{{menuOpen}}" hint-placeholder-val="{{ false }}">
+<div role="menu" style="position: absolute; right: 0; top: 52px; z-index: 30; width: 240px; background: {{c.card}}; border: 1px solid {{c.borderStrong}}; border-radius: 10px; box-shadow: 0 14px 36px rgba(0,0,0,0.35); padding: 6px">
+<div style="padding: 8px 10px; font-size: 14px; color: {{c.muted}}; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">[seu-email@exemplo.com]</div>
+<div style="height: 1px; background: {{c.border}}; margin: 4px 0"></div>
+<a role="menuitem" href="Profile.dc.html" style="display: flex; align-items: center; gap: 10px; height: 44px; padding: 0 10px; border-radius: 6px; color: {{c.text}}; text-decoration: none"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>Meu Perfil</a>
+<div style="height: 1px; background: {{c.border}}; margin: 4px 0"></div>
+<button type="button" role="menuitem" onClick="{{openLogout}}" style="width: 100%; display: flex; align-items: center; gap: 10px; height: 44px; padding: 0 10px; border: 0; border-radius: 6px; background: transparent; color: {{c.danger}}; font: inherit; cursor: pointer; text-align: left"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" x2="9" y1="12" y2="12"></line></svg>Sair</button>
+</div>
+</sc-if>
+</div>
+</div>
+</header>
+
+<main style="flex: 1; width: 100%; max-width: 1024px; box-sizing: border-box; margin: 0 auto; padding: 28px 16px 48px">
+<div style="display: flex; flex-wrap: wrap; align-items: flex-end; gap: 14px; margin-bottom: 22px">
+<div style="flex: 1 1 280px; min-width: 0">
+<h1 style="margin: 0; font-family: 'Cinzel', serif; font-weight: 700; font-size: 26px; letter-spacing: 0.04em; color: {{c.gold}}">Suas fichas</h1>
+<p style="margin: 4px 0 0; color: {{c.muted}}; font-style: italic">Gerenciador de Fichas — D&amp;D 5.5e, D&amp;D 5e e Tormenta20. Em breve: Ferramentas de Campanha e muito mais!</p>
+</div>
+<sc-if value="{{hasChars}}" hint-placeholder-val="{{ true }}">
+<button type="button" onClick="{{openCreate}}" style="height: 48px; padding: 0 20px; border-radius: 8px; border: 0; background: {{c.goldFill}}; color: {{c.onGold}}; font-family: 'Cinzel', serif; font-size: 13px; font-weight: 700; letter-spacing: 0.08em; display: flex; align-items: center; gap: 8px; cursor: pointer"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"></path><path d="M12 5v14"></path></svg>CRIAR NOVA FICHA</button>
+</sc-if>
+</div>
+
+<!-- Carregando -->
+<sc-if value="{{isLoading}}" hint-placeholder-val="{{ false }}">
+<div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 16px">
+<div style="height: 186px; border-radius: 12px; background: {{c.card}}; opacity: 0.6"></div>
+<div style="height: 186px; border-radius: 12px; background: {{c.card}}; opacity: 0.6"></div>
+<div style="height: 186px; border-radius: 12px; background: {{c.card}}; opacity: 0.6"></div>
+</div>
+</sc-if>
+
+<!-- Vazio -->
+<sc-if value="{{isEmpty}}" hint-placeholder-val="{{ false }}">
+<div style="display: flex; flex-direction: column; align-items: center; gap: 14px; padding: 72px 16px; text-align: center; border: 1px dashed {{c.borderStrong}}; border-radius: 12px">
+<svg width="56" height="56" viewBox="0 0 24 24" fill="none" stroke="{{c.muted}}" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 17V5a2 2 0 0 0-2-2H4"></path><path d="M8 21h12a2 2 0 0 0 2-2v-1a1 1 0 0 0-1-1H11a1 1 0 0 0-1 1v1a2 2 0 1 1-4 0V5a2 2 0 1 0-4 0v2a1 1 0 0 0 1 1h3"></path></svg>
+<p style="margin: 0; font-size: 18px; color: {{c.muted}}">Nenhuma ficha criada ainda.</p>
+<button type="button" onClick="{{openCreate}}" style="height: 46px; padding: 0 18px; border-radius: 8px; border: 1px solid {{c.goldBorder}}; background: {{c.goldBg}}; color: {{c.gold}}; font-family: 'Cinzel', serif; font-size: 13px; font-weight: 700; letter-spacing: 0.06em; display: flex; align-items: center; gap: 8px; cursor: pointer"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"></path><path d="M12 5v14"></path></svg>CRIAR SUA PRIMEIRA FICHA</button>
+</div>
+</sc-if>
+
+<!-- Fichas -->
+<sc-if value="{{hasChars}}" hint-placeholder-val="{{ true }}">
+<div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 16px">
+<sc-for list="{{chars}}" as="ch" hint-placeholder-count="3">
+<article style="position: relative; display: flex; flex-direction: column; background: {{c.card}}; border: 1px solid {{c.border}}; border-radius: 12px; overflow: hidden">
+<a href="{{ch.href}}" aria-label="{{ch.openLabel}}" style="flex: 1; display: flex; flex-direction: column; gap: 10px; padding: 16px 16px 14px; color: {{c.text}}; text-decoration: none">
+<span style="align-self: flex-start; font-family: 'Cinzel', serif; font-size: 11px; font-weight: 700; letter-spacing: 0.08em; color: {{c.gold}}; border: 1px solid {{c.goldBorder}}; border-radius: 12px; padding: 1px 9px">{{ch.system}}</span>
+<span style="font-family: 'Cinzel', serif; font-size: 20px; font-weight: 700; color: {{c.gold}}; padding-right: 40px">{{ch.name}}</span>
+<span style="display: flex; flex-direction: column; gap: 4px; font-size: 15px">
+<span style="display: flex; align-items: center; gap: 8px"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="{{c.gold}}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14.5 17.5 3 6V3h3l11.5 11.5"></path><path d="m13 19 6-6"></path><path d="m16 16 4 4"></path><path d="m19 21 2-2"></path></svg>{{ch.cls}}</span>
+<span style="display: flex; align-items: center; gap: 8px"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="{{c.gold}}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"></path></svg>{{ch.origin}}</span>
+</span>
+<span style="margin-top: auto; padding-top: 10px; border-top: 1px solid {{c.border}}; display: flex; flex-wrap: wrap; align-items: center; gap: 6px 14px; font-size: 14px; color: {{c.muted}}">
+<span>Nível <strong style="font-family: 'Cinzel', serif; color: {{c.text}}">{{ch.level}}</strong></span>
+<sc-for list="{{ch.stats}}" as="st" hint-placeholder-count="2"><span>{{st}}</span></sc-for>
+<sc-if value="{{ch.shared}}" hint-placeholder-val="{{ false }}"><span style="margin-left: auto; display: flex; align-items: center; gap: 4px; color: {{c.gold}}"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"></circle><path d="M2 12h20"></path><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path></svg>Pública</span></sc-if>
+</span>
+</a>
+<button type="button" aria-label="{{ch.delLabel}}" title="Excluir ficha" onClick="{{ch.del}}" style="position: absolute; top: 8px; right: 8px; width: 40px; height: 40px; border-radius: 8px; border: 0; background: transparent; color: {{c.muted}}; cursor: pointer; display: flex; align-items: center; justify-content: center; padding: 0"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 6h18"></path><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"></path><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg></button>
+</article>
+</sc-for>
+</div>
+</sc-if>
+</main>
+
+<!-- Rodapé (AppFooter da v1) -->
+<footer style="border-top: 1px solid {{c.border}}; background: {{c.surface}}">
+<div style="max-width: 1024px; margin: 0 auto; padding: 18px 16px; display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 10px; font-size: 15px; color: {{c.muted}}">
+<span style="display: flex; align-items: center; gap: 8px"><span style="font-family: 'Cinzel', serif; font-weight: 700; letter-spacing: 0.06em">Grimório</span>© 2026</span>
+<span style="display: flex; gap: 20px"><a href="#" style="color: {{c.muted}}">Termos de Uso</a><a href="#" style="color: {{c.muted}}">Contato</a></span>
+</div>
+</footer>
+</div>
+
+<!-- Fechar menu ao tocar fora -->
+<sc-if value="{{menuOpen}}" hint-placeholder-val="{{ false }}"><button type="button" aria-label="Fechar menu" onClick="{{toggleMenu}}" style="position: absolute; inset: 60px 0 0 0; z-index: 10; border: 0; background: transparent; cursor: default"></button></sc-if>
+
+<!-- Criar Nova Ficha -->
+<sc-if value="{{createOpen}}" hint-placeholder-val="{{ false }}">
+<div style="position: absolute; inset: 0; z-index: 40; display: flex; align-items: center; justify-content: center; padding: 16px">
+<button type="button" aria-label="Cancelar" onClick="{{closeCreate}}" style="position: absolute; inset: 0; border: 0; background: {{c.overlay}}; cursor: pointer"></button>
+<div role="dialog" aria-label="Criar nova ficha" style="position: relative; width: 460px; max-width: 100%; max-height: 100%; overflow-y: auto; box-sizing: border-box; background: {{c.card}}; border: 1px solid {{c.goldBorder}}; border-radius: 12px; box-shadow: 0 20px 48px rgba(0,0,0,0.4); padding: 20px">
+<h2 style="margin: 0; font-family: 'Cinzel', serif; font-weight: 700; font-size: 18px; color: {{c.gold}}">Criar Nova Ficha</h2>
+<p style="margin: 4px 0 18px; color: {{c.muted}}">Dê um nome ao seu personagem e escolha o sistema de jogo.</p>
+<label style="display: flex; flex-direction: column; gap: 4px; font-size: 15px">Nome do Personagem
+<input type="text" placeholder="Ex: Thorin Escudo de Carvalho" value="{{newName}}" onChange="{{onName}}" style="height: 44px; border: 1px solid {{c.borderStrong}}; border-radius: 8px; background: {{c.input}}; color: {{c.text}}; font: inherit; padding: 0 12px">
+</label>
+<div id="sys-label" style="margin: 16px 0 6px; font-size: 15px">Sistema</div>
+<div role="radiogroup" aria-labelledby="sys-label" style="display: flex; flex-direction: column; gap: 8px">
+<sc-for list="{{systems}}" as="s" hint-placeholder-count="3">
+<button type="button" role="radio" aria-checked="{{s.checked}}" onClick="{{s.pick}}" style="{{s.style}}">
+<span style="display: block; font-family: 'Cinzel', serif; font-size: 14px; font-weight: 700; color: {{c.gold}}">{{s.label}}</span>
+<sc-if value="{{s.hasDesc}}" hint-placeholder-val="{{ true }}"><span style="display: block; margin-top: 2px; font-size: 14px; color: {{c.muted}}">{{s.desc}}</span></sc-if>
+</button>
+</sc-for>
+</div>
+<div style="display: flex; justify-content: flex-end; gap: 8px; margin-top: 20px">
+<button type="button" onClick="{{closeCreate}}" style="height: 44px; padding: 0 16px; border-radius: 8px; border: 1px solid {{c.borderStrong}}; background: transparent; color: {{c.text}}; font: inherit; cursor: pointer">Cancelar</button>
+<button type="button" onClick="{{confirmCreate}}" disabled="{{createDisabled}}" style="{{createBtnStyle}}">Criar</button>
+</div>
+</div>
+</div>
+</sc-if>
+
+<!-- Excluir Ficha -->
+<sc-if value="{{deleteOpen}}" hint-placeholder-val="{{ false }}">
+<div style="position: absolute; inset: 0; z-index: 40; display: flex; align-items: center; justify-content: center; padding: 16px">
+<button type="button" aria-label="Cancelar" onClick="{{closeDelete}}" style="position: absolute; inset: 0; border: 0; background: {{c.overlay}}; cursor: pointer"></button>
+<div role="alertdialog" aria-label="Excluir ficha" style="position: relative; width: 440px; max-width: 100%; box-sizing: border-box; background: {{c.card}}; border: 1px solid {{c.dangerBorder}}; border-radius: 12px; box-shadow: 0 20px 48px rgba(0,0,0,0.4); padding: 20px">
+<h2 style="margin: 0; font-family: 'Cinzel', serif; font-weight: 700; font-size: 18px; color: {{c.danger}}">Excluir Ficha</h2>
+<p style="margin: 8px 0 20px; color: {{c.text2}}">Tem certeza que deseja excluir <strong style="color: {{c.text}}">{{deleteName}}</strong>? Essa ação não pode ser desfeita.</p>
+<div style="display: flex; justify-content: flex-end; gap: 8px">
+<button type="button" onClick="{{closeDelete}}" style="height: 44px; padding: 0 16px; border-radius: 8px; border: 1px solid {{c.borderStrong}}; background: transparent; color: {{c.text}}; font: inherit; cursor: pointer">Cancelar</button>
+<button type="button" onClick="{{confirmDelete}}" style="height: 44px; padding: 0 16px; border-radius: 8px; border: 0; background: {{c.dangerFill}}; color: #FFF6F4; font: inherit; font-weight: 600; cursor: pointer">Excluir</button>
+</div>
+</div>
+</div>
+</sc-if>
+
+<!-- Sair da conta -->
+<sc-if value="{{logoutOpen}}" hint-placeholder-val="{{ false }}">
+<div style="position: absolute; inset: 0; z-index: 40; display: flex; align-items: center; justify-content: center; padding: 16px">
+<button type="button" aria-label="Cancelar" onClick="{{closeLogout}}" style="position: absolute; inset: 0; border: 0; background: {{c.overlay}}; cursor: pointer"></button>
+<div role="alertdialog" aria-label="Sair da conta" style="position: relative; width: 420px; max-width: 100%; box-sizing: border-box; background: {{c.card}}; border: 1px solid {{c.goldBorder}}; border-radius: 12px; box-shadow: 0 20px 48px rgba(0,0,0,0.4); padding: 20px">
+<h2 style="margin: 0; font-family: 'Cinzel', serif; font-weight: 700; font-size: 18px; color: {{c.gold}}">Sair da conta?</h2>
+<p style="margin: 8px 0 20px; color: {{c.text2}}">Você será redirecionado para a página de login.</p>
+<div style="display: flex; justify-content: flex-end; gap: 8px">
+<button type="button" onClick="{{closeLogout}}" style="height: 44px; padding: 0 16px; border-radius: 8px; border: 1px solid {{c.borderStrong}}; background: transparent; color: {{c.text}}; font: inherit; cursor: pointer">Cancelar</button>
+<a href="Auth.dc.html" style="height: 44px; padding: 0 18px; border-radius: 8px; background: {{c.goldFill}}; color: {{c.onGold}}; font-weight: 600; display: flex; align-items: center; text-decoration: none">Sair</a>
+</div>
+</div>
+</div>
+</sc-if>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"theme":{"editor":"enum","options":["dark","light"],"default":"dark"},"demo":{"editor":"enum","options":["","empty","loading","create","delete","menu"],"default":""},"$preview":{"width":1440,"height":900}}'>
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    const demo = props.demo || '';
+    this.state = {
+      chars: demo === 'empty' ? [] : [
+        { id: '4212fb3f', name: 'Silas Cole', system: 'D&D 5.5e', cls: 'Bruxo — Grande Antigo', origin: 'Humano', level: 12, stats: ['Proficiência +4', 'PV 89/89'], shared: true },
+        { id: 'ex-1', name: 'Iara Sombraverde', system: 'Tormenta20', cls: 'Caçadora', origin: 'Elfa', level: 4, stats: ['Defesa 17', 'PV 28/40'], shared: false },
+        { id: 'ex-2', name: 'Brom Martelo-de-Pedra', system: 'D&D 5e', cls: 'Guerreiro — Campeão', origin: 'Anão da Montanha', level: 5, stats: ['Proficiência +3', 'PV 52/52'], shared: false }
+      ],
+      loading: demo === 'loading', menuOpen: demo === 'menu', createOpen: demo === 'create', newName: demo === 'create' ? 'Kael' : '', system: 'dnd5_5e',
+      deleteId: demo === 'delete' ? '4212fb3f' : null, logoutOpen: false, scrolling: false
+    };
+  }
+  renderVals() {
+    const st = this.state, set = (p) => this.setState(p);
+    const dark = (this.props.theme || 'dark') !== 'light';
+    const c = dark ? {
+      bg: '#12151B', surface: '#151920', card: '#1A1F28', input: '#12151B', border: '#2A2E38', borderStrong: '#3A3424',
+      text: '#E6DCC8', text2: '#D3C9B5', muted: '#A0977F', gold: '#D9A62E', goldFill: '#D9A62E', onGold: '#1A1408', goldBg: '#2B2414', goldBorder: '#6B5524',
+      danger: '#E2766F', dangerFill: '#B8423C', dangerBorder: '#5A2E2A', overlay: 'rgba(6,8,12,0.72)', thumb: '#6B5524'
+    } : {
+      bg: '#F4EFE4', surface: '#EDE6D6', card: '#FBF9F4', input: '#FFFFFF', border: '#DDD3C0', borderStrong: '#CBBE9F',
+      text: '#252B37', text2: '#3A4150', muted: '#5F6879', gold: '#8A6510', goldFill: '#C8961E', onGold: '#1A1408', goldBg: '#F5E9C8', goldBorder: '#C8A24A',
+      danger: '#A82A2A', dangerFill: '#B83030', dangerBorder: '#E3B4B4', overlay: 'rgba(40,32,20,0.45)', thumb: '#C8A24A'
+    };
+    const SYS = [
+      ['dnd5_5e', 'Dungeons & Dragons 5.5e (2024)', ''],
+      ['dnd5e', 'Dungeons & Dragons 5e (2014)', 'Regras de 2014: raças, tendência, traços de personalidade, ideais, ligações e defeitos.'],
+      ['tormenta20', 'Tormenta20 (Jogo do Ano)', 'Mana, perícias por treino e ½ nível, magias por círculo e carga em espaços.']
+    ];
+    const target = st.chars.find(x => x.id === st.deleteId);
+    return {
+      c, sbColor: st.scrolling ? c.thumb : 'transparent',
+      onScroll: () => { if (!this.state.scrolling) set({ scrolling: true }); clearTimeout(this._t); this._t = setTimeout(() => this.setState({ scrolling: false }), 900); },
+      nameStyle: 'max-width: 160px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis',
+      menuOpen: st.menuOpen, menuAria: st.menuOpen ? 'true' : 'false', toggleMenu: () => set({ menuOpen: !st.menuOpen }),
+      openLogout: () => set({ menuOpen: false, logoutOpen: true }), logoutOpen: st.logoutOpen, closeLogout: () => set({ logoutOpen: false }),
+      isLoading: st.loading, isEmpty: !st.loading && st.chars.length === 0, hasChars: !st.loading && st.chars.length > 0,
+      chars: st.chars.map(ch => Object.assign({}, ch, {
+        href: ch.id === '4212fb3f' ? 'Desktop.dc.html' : '#', openLabel: 'Abrir ficha de ' + ch.name, delLabel: 'Excluir ficha de ' + ch.name,
+        del: () => set({ deleteId: ch.id })
+      })),
+      openCreate: () => set({ createOpen: true }), closeCreate: () => set({ createOpen: false, newName: '', system: 'dnd5_5e' }),
+      createOpen: st.createOpen, newName: st.newName, onName: (e) => set({ newName: e.target.value }),
+      systems: SYS.map(([id, label, desc]) => {
+        const on = st.system === id;
+        return { label, desc, hasDesc: !!desc, checked: on ? 'true' : 'false', pick: () => set({ system: id }),
+          style: 'width: 100%; text-align: left; padding: 10px 12px; border-radius: 8px; cursor: pointer; font: inherit; ' + (on ? 'border: 1px solid ' + c.gold + '; background: ' + c.goldBg : 'border: 1px solid ' + c.border + '; background: transparent') };
+      }),
+      createDisabled: !st.newName.trim(),
+      createBtnStyle: 'height: 44px; padding: 0 20px; border-radius: 8px; border: 0; background: ' + c.goldFill + '; color: ' + c.onGold + '; font: inherit; font-weight: 600; ' + (st.newName.trim() ? 'cursor: pointer' : 'opacity: 0.45; cursor: not-allowed'),
+      confirmCreate: () => { if (st.newName.trim()) set({ createOpen: false, chars: [{ id: 'n' + Date.now(), name: st.newName.trim(), system: SYS.find(s => s[0] === st.system)[1].replace('Dungeons & Dragons', 'D&D').replace(/ \(.*\)/, ''), cls: 'Sem classe', origin: '—', level: 1, stats: [], shared: false }].concat(st.chars), newName: '' }); },
+      deleteOpen: !!target, deleteName: target ? target.name : '', closeDelete: () => set({ deleteId: null }),
+      confirmDelete: () => set({ chars: st.chars.filter(x => x.id !== st.deleteId), deleteId: null })
+    };
+  }
+}
+</script>
+</body>
+</html>

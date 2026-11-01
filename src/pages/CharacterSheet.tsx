@@ -9,6 +9,8 @@ import {Switch} from '@/components/ui/switch';
 import {ArrowLeft, Check, Copy, Globe, Loader2, Lock, Maximize, Minimize, Share2} from 'lucide-react';
 import {toast} from 'sonner';
 import {useUserPreferences} from '@/hooks/useUserPreferences';
+import {FullscreenLoader} from '@/components/brand/FullscreenLoader';
+import {SheetChromeProvider, isFullscreenSupported, type SheetChrome} from '@/systems/shared/chrome/SheetChromeContext';
 
 type SaveStatus = 'idle' | 'saving' | 'saved';
 
@@ -209,6 +211,13 @@ export default function CharacterSheetPage() {
         }
     }, []);
 
+    // Mantém o estado em sincronia quando o usuário sai da tela cheia com Esc.
+    useEffect(() => {
+        const onChange = () => setIsFullscreen(!!document.fullscreenElement);
+        document.addEventListener('fullscreenchange', onChange);
+        return () => document.removeEventListener('fullscreenchange', onChange);
+    }, []);
+
     const toggleFullscreen = async () => {
         if (!document.fullscreenElement) {
             await document.documentElement.requestFullscreen();
@@ -242,11 +251,7 @@ export default function CharacterSheetPage() {
     };
 
     if (isLoading) {
-        return (
-            <div className="flex min-h-screen items-center justify-center">
-                <div className="h-8 w-8 animate-spin rounded-full border-2 border-primary border-t-transparent"/>
-            </div>
-        );
+        return <FullscreenLoader/>;
     }
 
     if (!local) {
@@ -273,8 +278,40 @@ export default function CharacterSheetPage() {
     }
     const SystemSheet = system.SheetComponent;
 
+    const chrome: SheetChrome = {
+        readOnly: false,
+        onBack: () => navigate('/'),
+        save: {
+            status: saveStatus,
+            hasUnsavedChanges,
+            autoSaveEnabled,
+            showUnsavedBar: hasUnsavedChanges && !autoSaveEnabled,
+            isSaving: saveStatus === 'saving',
+            onSave: flush,
+            onDiscard: handleDiscard,
+        },
+        share: {
+            isShared: !!local.isShared,
+            link: `${window.location.origin}/character/shared/${local.id}`,
+            onToggle: handleToggleShared,
+            onCopyLink: handleCopyShareLink,
+        },
+        fullscreen: isFullscreenSupported()
+            ? {active: isFullscreen, onToggle: () => { void toggleFullscreen(); }}
+            : undefined,
+    };
+
+    // Layout do redesign v2: desenha a própria barra superior e a barra de salvar.
+    if (system.ownsChrome) {
+        return (
+            <SheetChromeProvider value={chrome}>
+                <SystemSheet sheet={local} onChange={update} onBlur={handleBlur}/>
+            </SheetChromeProvider>
+        );
+    }
+
     return (
-        <>
+        <SheetChromeProvider value={chrome}>
             <UnsavedChangesBar 
                 isVisible={hasUnsavedChanges && !autoSaveEnabled} 
                 onSave={flush} 
@@ -367,6 +404,6 @@ export default function CharacterSheetPage() {
 
             {scrolled && <FloatingSaveIndicator status={saveStatus} />}
         </div>
-        </>
+        </SheetChromeProvider>
     );
 }

@@ -94,3 +94,29 @@ export function getInitiativeBonus(sheet: Pick<CharacterSheet, 'abilities' | 'bo
 export function getAbilityModifier(sheet: Pick<CharacterSheet, 'abilities'>, ability: AbilityKey): number {
   return getModifier(sheet.abilities[ability].value);
 }
+
+/**
+ * Quantidade de dados de vida a partir do texto livre do campo "Dado de Vida (total)".
+ * Lê o número antes do "d": "11d8" → 11, "3d10 + 2d8" → 5 (soma os grupos), "d8" → 1.
+ * Texto sem dado reconhecível: tenta um número puro ("12" → 12); senão 0.
+ */
+export function parseHitDiceCount(total: string | null | undefined): number {
+  const text = (total ?? '').toLowerCase();
+  const groups = [...text.matchAll(/(\d*)\s*d\s*\d+/g)];
+  if (groups.length > 0) {
+    return groups.reduce((sum, m) => sum + (m[1] ? parseInt(m[1], 10) : 1), 0);
+  }
+  const plain = text.match(/^\s*(\d+)\s*$/);
+  return plain ? parseInt(plain[1], 10) : 0;
+}
+
+/** Dados de vida ainda disponíveis (nunca negativo). */
+export function getHitDiceRemaining(total: string | null | undefined, used: number): number {
+  return Math.max(0, parseHitDiceCount(total) - Math.max(0, used || 0));
+}
+
+/** Peso total do equipamento (peso × quantidade), arredondado a 1 casa decimal. */
+export function getTotalWeight(items: { weight: number; quantity: number }[] | null | undefined): number {
+  const total = (items ?? []).reduce((sum, it) => sum + (Number(it.weight) || 0) * (Number(it.quantity) || 0), 0);
+  return Math.round(total * 10) / 10;
+}

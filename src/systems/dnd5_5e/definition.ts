@@ -53,5 +53,8 @@ export const dnd55System = defineSystem<Dnd55Sheet>({
 
     SheetComponent: Dnd55SheetLayout,
 
+    // Redesign v2: o layout desenha a própria barra superior e a barra de salvar.
+    ownsChrome: true,
+
     buildCard,
 });

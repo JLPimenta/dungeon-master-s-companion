@@ -1,14 +1,13 @@
 import { useState, useRef } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import ReCAPTCHA from 'react-google-recaptcha';
-import { AuthLayout } from '@/components/auth/AuthLayout';
+import { AuthLayout, useWidgetTheme } from '@/components/auth/AuthLayout';
 import { GoogleSignInButton } from '@/components/auth/GoogleSignInButton';
 import { PasswordStrengthIndicator, isPasswordStrong } from '@/components/auth/PasswordStrengthIndicator';
-import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Separator } from '@/components/ui/separator';
 import { Checkbox } from '@/components/ui/checkbox';
+import { cn } from '@/lib/utils';
+import { AccountField, OrDivider, PasswordInput, accountInput, accountLink, primaryButton } from '@/components/account/ui';
 import { useAuth } from '@/hooks/useAuth';
 import { useToast } from '@/hooks/use-toast';
 
@@ -24,6 +23,9 @@ export default function Register() {
   const { register, loginWithGoogle } = useAuth();
   const navigate = useNavigate();
   const { toast } = useToast();
+  const widgetTheme = useWidgetTheme();
+  // v2: avisa a diferença enquanto digita; a validação no envio continua.
+  const mismatch = !!confirmPassword && confirmPassword !== password;
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -76,54 +78,55 @@ export default function Register() {
 
   return (
     <AuthLayout title="Criar Conta" subtitle="Crie sua conta para salvar suas fichas">
-      <form onSubmit={handleSubmit} className="space-y-4">
-        <div className="space-y-2">
-          <Label htmlFor="name">Nome</Label>
+      <form onSubmit={handleSubmit} className="flex flex-col gap-3.5">
+        <AccountField label="Nome" htmlFor="name">
           <Input
             id="name"
+            autoComplete="name"
             placeholder="Seu nome"
             value={name}
             onChange={e => setName(e.target.value)}
             required
+            className={accountInput}
           />
-        </div>
+        </AccountField>
 
-        <div className="space-y-2">
-          <Label htmlFor="email">Email</Label>
+        <AccountField label="Email" htmlFor="email">
           <Input
             id="email"
             type="email"
+            autoComplete="email"
             placeholder="seu@email.com"
             value={email}
             onChange={e => setEmail(e.target.value)}
             required
+            className={accountInput}
           />
-        </div>
+        </AccountField>
 
-        <div className="space-y-2">
-          <Label htmlFor="password">Senha</Label>
-          <Input
+        <AccountField label="Senha" htmlFor="password">
+          <PasswordInput
             id="password"
-            type="password"
+            autoComplete="new-password"
             placeholder="Crie uma senha forte"
             value={password}
             onChange={e => setPassword(e.target.value)}
             required
           />
           <PasswordStrengthIndicator password={password} />
-        </div>
+        </AccountField>
 
-        <div className="space-y-2">
-          <Label htmlFor="confirmPassword">Confirmar Senha</Label>
-          <Input
+        <AccountField label="Confirmar Senha" htmlFor="confirmPassword" error={mismatch && 'As senhas não coincidem.'}>
+          <PasswordInput
             id="confirmPassword"
-            type="password"
+            autoComplete="new-password"
             placeholder="Repita a senha"
             value={confirmPassword}
             onChange={e => setConfirmPassword(e.target.value)}
+            aria-invalid={mismatch || undefined}
             required
           />
-        </div>
+        </AccountField>
 
         {/* reCAPTCHA */}
         <div className="flex justify-center">
@@ -132,43 +135,37 @@ export default function Register() {
             sitekey={import.meta.env.VITE_RECAPTCHA_SITE_KEY}
             onChange={setCaptchaToken}
             onExpired={() => setCaptchaToken(null)}
-            theme="dark"
+            theme={widgetTheme}
           />
         </div>
 
-        <div className="flex items-center space-x-2">
-          <Checkbox 
-            id="terms" 
+        <div className="flex min-h-[44px] items-center gap-2.5">
+          <Checkbox
+            id="terms"
             checked={acceptedTerms}
             onCheckedChange={(checked) => setAcceptedTerms(checked as boolean)}
+            className="h-5 w-5"
           />
-          <Label htmlFor="terms" className="text-sm font-normal">
-            Li e aceito os <Link to="/terms-of-use" target="_blank" className="text-primary hover:underline">Termos de Uso</Link>
-          </Label>
+          <label htmlFor="terms" className="cursor-pointer text-base">
+            Li e aceito os <Link to="/terms-of-use" target="_blank" className={accountLink}>Termos de Uso</Link>
+          </label>
         </div>
 
-        <Button
+        <button
           type="submit"
-          className="w-full"
+          className={cn(primaryButton, 'w-full')}
           disabled={loading || !isPasswordStrong(password) || !captchaToken || !acceptedTerms}
         >
           {loading ? 'Criando conta...' : 'Criar Conta'}
-        </Button>
+        </button>
 
-        <div className="relative my-4">
-          <Separator />
-          <span className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 bg-card px-2 text-xs text-muted-foreground">
-            ou
-          </span>
-        </div>
+        <OrDivider />
 
         <GoogleSignInButton label="Registrar com Google" onSuccess={handleGoogleSuccess} onError={handleGoogleError} disabled={loading || !acceptedTerms} />
 
-        <p className="text-center text-sm text-muted-foreground">
+        <p className="mt-1 text-center text-muted-foreground">
           Já tem uma conta?{' '}
-          <Link to="/login" className="text-primary hover:underline">
-            Entrar
-          </Link>
+          <Link to="/login" className={accountLink}>Entrar</Link>
         </p>
       </form>
     </AuthLayout>

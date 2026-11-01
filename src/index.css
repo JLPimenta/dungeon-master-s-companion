@@ -18,7 +18,7 @@
     --popover-foreground: 220 20% 18%;
 
     --primary: 43 74% 45%;
-    --primary-foreground: 40 30% 98%;
+    --primary-foreground: 34 53% 7%;  /* v2: texto escuro sobre dourado (#1A1408); o branco não passava 3:1 */
 
     --secondary: 42 20% 88%;
     --secondary-foreground: 220 20% 18%;
@@ -49,6 +49,18 @@
 
     --font-heading: 'Cinzel', serif;
     --font-body: 'Crimson Text', serif;
+
+    /* Redesign v2 (docs/redesign-v2/02-arquitetura.md) */
+    --surface: 42 39% 88%;          /* barras: superior, navegação, trilho */
+    --surface-raised: 42 30% 98%;   /* barras flutuantes */
+    --hairline: 42 25% 82%;         /* borda discreta de cartões */
+    --primary-strong: 42 79% 30%;   /* dourado sobre fundo dourado claro */
+    --primary-text: 42 79% 30%;     /* dourado como TEXTO: #8A6510, contraste ≥ 4,5:1 no pergaminho */
+    --hp: 3 55% 42%;
+    --hp-temp: 209 40% 42%;
+    --hp-temp-foreground: 209 50% 32%;
+    --danger-text: 0 60% 41%;       /* vermelho como TEXTO (#A82A2A) */
+    --success: 141 45% 34%;         /* confirmação, regras de senha atendidas (#2F7D4A) */
   }
 
   .dark {
@@ -89,6 +101,47 @@
     --sidebar-accent-foreground: 40 20% 82%;
     --sidebar-border: 43 30% 20%;
     --sidebar-ring: 43 74% 49%;
+
+    /* Redesign v2 */
+    --surface: 218 21% 10%;
+    --surface-raised: 219 20% 17%;
+    --hairline: 219 15% 19%;
+    --primary-strong: 43 78% 64%;
+    --primary-text: 43 74% 49%;
+    --hp: 3 51% 48%;
+    --hp-temp: 209 31% 52%;
+    --hp-temp-foreground: 209 46% 70%;
+    --danger-text: 4 65% 66%;       /* #E2766F: o --destructive escuro não passa 4,5:1 sobre o cartão */
+    --success: 126 28% 61%;         /* #7FB685 */
+  }
+}
+
+@layer utilities {
+  /* Barra de rolagem que só aparece durante a rolagem (useScrollbarReveal). */
+  .scroll-reveal {
+    scrollbar-width: thin;
+    scrollbar-color: transparent transparent;
+  }
+  .scroll-reveal[data-scrolling] {
+    scrollbar-color: hsl(var(--border)) transparent;
+  }
+  .scroll-reveal::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+  .scroll-reveal::-webkit-scrollbar-thumb {
+    background: transparent;
+    border-radius: 3px;
+  }
+  .scroll-reveal[data-scrolling]::-webkit-scrollbar-thumb {
+    background: hsl(var(--border));
+  }
+  /* Esconde a barra de rolagem por completo (faixas de pílulas, atalhos). */
+  .scrollbar-none {
+    scrollbar-width: none;
+  }
+  .scrollbar-none::-webkit-scrollbar {
+    display: none;
   }
 }
 

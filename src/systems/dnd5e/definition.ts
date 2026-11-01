@@ -11,4 +11,5 @@ export const dnd5eSystem = defineSystem<Dnd5eSheet>({
   createDefault: createDefaultDnd5eSheet,
   SheetComponent: Dnd5eSheetLayout,
   buildCard: buildDnd5eCard,
+  ownsChrome: true,
 });

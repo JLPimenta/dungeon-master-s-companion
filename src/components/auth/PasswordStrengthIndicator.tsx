@@ -1,4 +1,4 @@
-import { Check, X } from 'lucide-react';
+import { cn } from '@/lib/utils';
 
 interface Rule {
   label: string;
@@ -12,20 +12,22 @@ const rules: Rule[] = [
   { label: 'Número',                test: p => /[0-9]/.test(p) },
 ];
 
+// eslint-disable-next-line react-refresh/only-export-components
 export function getPasswordStrength(password: string): number {
   return rules.filter(r => r.test(password)).length;
 }
 
+// eslint-disable-next-line react-refresh/only-export-components
 export function isPasswordStrong(password: string): boolean {
   return getPasswordStrength(password) === rules.length;
 }
 
 const strengthConfig = [
-  { label: 'Muito fraca', color: 'bg-destructive' },
+  { label: 'Muito fraca', color: 'bg-danger-text' },
   { label: 'Fraca',       color: 'bg-orange-500' },
   { label: 'Média',       color: 'bg-yellow-500' },
-  { label: 'Forte',       color: 'bg-green-500' },
-  { label: 'Forte',       color: 'bg-green-500' },
+  { label: 'Forte',       color: 'bg-success' },
+  { label: 'Forte',       color: 'bg-success' },
 ];
 
 interface Props {
@@ -39,36 +41,27 @@ export function PasswordStrengthIndicator({ password }: Props) {
   const { label, color } = strengthConfig[strength];
 
   return (
-    <div className="mt-2 space-y-2">
-      {/* Bar */}
-      <div className="flex gap-1">
+    <div className="mt-1.5 flex flex-col gap-1.5">
+      <div className="flex gap-1" aria-hidden="true">
         {[0, 1, 2, 3].map(i => (
           <div
             key={i}
-            className={`h-1 flex-1 rounded-full transition-all duration-300 ${
-              i < strength ? color : 'bg-border'
-            }`}
+            className={cn('h-[5px] flex-1 rounded-full transition-colors duration-300', i < strength ? color : 'bg-border')}
           />
         ))}
       </div>
-      <p className="text-xs text-muted-foreground">
-        Força: <span className="font-medium text-foreground">{label}</span>
+      <p className="text-sm text-muted-foreground" aria-live="polite">
+        Força: <strong className="font-semibold text-foreground">{label}</strong>
       </p>
 
-      {/* Checklist */}
-      <ul className="space-y-1">
+      <ul className="grid grid-cols-2 gap-x-3 gap-y-0.5">
         {rules.map(rule => {
           const ok = rule.test(password);
           return (
-            <li key={rule.label} className="flex items-center gap-1.5 text-xs">
-              {ok ? (
-                <Check className="h-3.5 w-3.5 text-green-500 shrink-0" />
-              ) : (
-                <X className="h-3.5 w-3.5 text-muted-foreground shrink-0" />
-              )}
-              <span className={ok ? 'text-foreground' : 'text-muted-foreground'}>
-                {rule.label}
-              </span>
+            <li key={rule.label} className={cn('text-sm', ok ? 'text-foreground' : 'text-muted-foreground')}>
+              <span aria-hidden="true" className={ok ? 'text-success' : undefined}>{ok ? '✓ ' : '× '}</span>
+              <span className="sr-only">{ok ? 'Atendido: ' : 'Pendente: '}</span>
+              {rule.label}
             </li>
           );
         })}

@@ -1,8 +1,6 @@
 import type { CharacterCardData, SheetListItem } from '@/systems/types';
 import { AVAILABLE_SYSTEMS, findSystem } from '@/systems/registry';
-import { Card, CardContent } from '@/components/ui/card';
-import { ConfirmDeleteButton } from '@/components/ui/confirm-delete-button';
-import { Swords, Shield } from 'lucide-react';
+import { Globe, Shield, Sword, Trash2 } from 'lucide-react';
 
 interface Props {
   character: SheetListItem;
@@ -10,66 +8,73 @@ interface Props {
   onDelete: () => void;
 }
 
-const DETAIL_ICONS = { class: Swords, origin: Shield } as const;
+const DETAIL_ICONS = { class: Sword, origin: Shield } as const;
 
 /**
  * Card genérico: o conteúdo vem de `card`, calculado pelo sistema da ficha
  * (no servidor, ou no cliente quando o item não traz `card`).
+ *
+ * Redesign v2: o cartão inteiro abre a ficha; a lixeira fica sempre visível
+ * (no toque não existe "passar o mouse") e abre o diálogo de exclusão.
  */
 export function CharacterCard({ character, onClick, onDelete }: Props) {
   const system = findSystem(character);
   const card: CharacterCardData | undefined =
     character.card ?? system?.buildCard(character as never);
   const showSystemBadge = AVAILABLE_SYSTEMS.length > 1 || !system;
+  const name = character.name || 'Sem Nome';
 
   return (
-    <Card
-      className="group relative cursor-pointer border-border/60 bg-card transition-all duration-200 hover:border-primary/50 hover:shadow-[0_0_20px_hsl(43_74%_49%/0.08)] active:scale-[0.98]"
-      onClick={onClick}
-    >
-      <CardContent className="p-5">
-        {/* Delete button */}
-        <div onClick={(e) => e.stopPropagation()}>
-          <ConfirmDeleteButton
-            iconOnly
-            className="absolute right-2 top-2 h-8 w-8 text-muted-foreground opacity-0 transition-opacity hover:text-destructive group-hover:opacity-100"
-            onConfirm={onDelete}
-            title="Excluir ficha"
-          />
-        </div>
-
+    <article className="group relative flex flex-col rounded-xl border border-hairline bg-card transition-[border-color,box-shadow] duration-200 hover:border-primary/50 hover:shadow-[0_0_20px_hsl(var(--primary)/0.08)]">
+      <button
+        type="button"
+        onClick={onClick}
+        aria-label={`Abrir ficha de ${name}`}
+        className="flex flex-1 flex-col gap-2.5 rounded-xl px-4 pb-3.5 pt-4 text-left transition-transform focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring active:scale-[0.99]"
+      >
         {showSystemBadge && (
-          <span className="mb-2 inline-block rounded-full border border-primary/30 px-2 py-0.5 text-[0.7rem] uppercase tracking-wider text-primary/80">
+          <span className="self-start rounded-full border border-primary/40 bg-primary/10 px-2 py-0.5 font-heading text-[11px] font-bold uppercase tracking-[0.08em] text-primary-text">
             {system?.shortLabel ?? 'Sistema não suportado'}
           </span>
         )}
 
-        {/* Name */}
-        <h3 className="mb-3 pr-8 text-xl font-semibold text-primary" style={{ fontFamily: 'var(--font-heading)' }}>
-          {character.name || 'Sem Nome'}
-        </h3>
+        <span className="pr-10 font-heading text-xl font-bold leading-tight text-primary-text">{name}</span>
 
-        {/* Info rows */}
         {card && card.details.length > 0 && (
-          <div className="space-y-1.5 text-sm">
+          <span className="flex flex-col gap-1 text-[15px]">
             {card.details.map(detail => {
-              const Icon = DETAIL_ICONS[detail.kind] ?? Swords;
+              const Icon = DETAIL_ICONS[detail.kind] ?? Sword;
               return (
-                <div key={`${detail.kind}-${detail.text}`} className="flex items-center gap-2 text-foreground">
-                  <Icon className="h-3.5 w-3.5 text-primary/70" />
-                  <span>{detail.text}</span>
-                </div>
+                <span key={`${detail.kind}-${detail.text}`} className="flex items-center gap-2 text-foreground">
+                  <Icon className="h-[15px] w-[15px] shrink-0 text-primary-text" aria-hidden="true" />
+                  <span className="min-w-0 truncate">{detail.text}</span>
+                </span>
               );
             })}
-          </div>
+          </span>
         )}
 
-        {/* Footer stats */}
-        <div className="mt-4 flex items-center gap-4 border-t border-border/40 pt-3 text-xs text-muted-foreground">
-          <span>Nível {character.level}</span>
+        <span className="mt-auto flex flex-wrap items-center gap-x-4 gap-y-1 border-t border-hairline pt-2.5 text-sm text-muted-foreground">
+          <span>Nível <strong className="font-heading text-foreground">{character.level}</strong></span>
           {card?.stats.map(stat => <span key={stat}>{stat}</span>)}
-        </div>
-      </CardContent>
-    </Card>
+          {character.isShared && (
+            <span className="ml-auto flex items-center gap-1 text-primary-text">
+              <Globe className="h-[13px] w-[13px]" aria-hidden="true" />
+              Pública
+            </span>
+          )}
+        </span>
+      </button>
+
+      <button
+        type="button"
+        onClick={e => { e.stopPropagation(); onDelete(); }}
+        aria-label={`Excluir ficha de ${name}`}
+        title="Excluir ficha"
+        className="absolute right-2 top-2 flex h-10 w-10 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:bg-destructive/10 hover:text-danger-text focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+      >
+        <Trash2 className="h-[17px] w-[17px]" />
+      </button>
+    </article>
   );
 }

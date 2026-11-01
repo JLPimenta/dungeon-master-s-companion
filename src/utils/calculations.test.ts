@@ -9,6 +9,9 @@ import {
   getSpellAttackBonus,
   getPassivePerception,
   getAttunementSlots,
+  parseHitDiceCount,
+  getHitDiceRemaining,
+  getTotalWeight,
 } from './calculations';
 
 describe('getModifier', () => {
@@ -141,5 +144,43 @@ describe('getAttunementSlots', () => {
     expect(getAttunementSlots(2)).toBe(2);
     expect(getAttunementSlots(3)).toBe(3);
     expect(getAttunementSlots(6)).toBe(6);
+  });
+});
+
+describe('parseHitDiceCount', () => {
+  it.each([
+    ['11d8', 11],
+    ['1d10', 1],
+    ['d8', 1],
+    ['3d10 + 2d8', 5],
+    [' 12 ', 12],
+    ['', 0],
+    ['abc', 0],
+  ])('"%s" → %i', (text, expected) => {
+    expect(parseHitDiceCount(text)).toBe(expected);
+  });
+
+  it('aceita null e undefined', () => {
+    expect(parseHitDiceCount(null)).toBe(0);
+    expect(parseHitDiceCount(undefined)).toBe(0);
+  });
+});
+
+describe('getHitDiceRemaining', () => {
+  it('subtrai os usados sem ficar negativo', () => {
+    expect(getHitDiceRemaining('11d8', 3)).toBe(8);
+    expect(getHitDiceRemaining('2d8', 5)).toBe(0);
+    expect(getHitDiceRemaining('4d8', -1)).toBe(4);
+  });
+});
+
+describe('getTotalWeight', () => {
+  it('soma peso × quantidade com 1 casa decimal', () => {
+    expect(getTotalWeight([{ weight: 1.5, quantity: 3 }, { weight: 0.25, quantity: 1 }])).toBe(4.8);
+  });
+
+  it('lista vazia ou ausente pesa 0', () => {
+    expect(getTotalWeight([])).toBe(0);
+    expect(getTotalWeight(undefined)).toBe(0);
   });
 });

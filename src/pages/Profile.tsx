@@ -1,12 +1,13 @@
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
 import { useToast } from '@/hooks/use-toast';
-import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Separator } from '@/components/ui/separator';
+import { cn } from '@/lib/utils';
+import {
+  AccountField, PasswordInput, accountInput, dangerButton, dangerDialogContent, dialogCancel, dialogConfirm,
+  dialogDescription, dialogFooter, dialogTitle, outlineButton, primaryButton, sectionTitle,
+} from '@/components/account/ui';
 import { PasswordStrengthIndicator, isPasswordStrong } from '@/components/auth/PasswordStrengthIndicator';
 import { LogoutDialog } from '@/components/auth/LogoutDialog';
 import { useUserPreferences } from '@/hooks/useUserPreferences';
@@ -25,6 +26,15 @@ import {
 } from '@/components/ui/alert-dialog';
 import { ArrowLeft, Trash2, Laptop, Moon, Sun } from 'lucide-react';
 
+const THEMES = [
+  { value: 'light', label: 'Claro', icon: Sun },
+  { value: 'dark', label: 'Escuro', icon: Moon },
+  { value: 'system', label: 'Sistema', icon: Laptop },
+] as const;
+
+const card = 'rounded-xl border border-hairline bg-card px-5 py-[18px]';
+const saveButton = cn(primaryButton, 'h-[46px] self-start text-[13px]');
+
 export default function Profile() {
   const { preferences, updatePreferences, autoSaveEnabled, currentTheme } = useUserPreferences();
   const { user, updateProfile, changePassword, deleteAccount } = useAuth();
@@ -40,6 +50,8 @@ export default function Profile() {
   const [changingPassword, setChangingPassword] = useState(false);
 
   const [deleting, setDeleting] = useState(false);
+  // v2: avisa a diferença enquanto digita; a validação no envio continua.
+  const mismatch = !!confirmNewPassword && confirmNewPassword !== newPassword;
 
   const handleSaveProfile = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -93,183 +105,164 @@ export default function Profile() {
 
 
   return (
-    <div className="min-h-screen bg-background p-4 md:p-8">
-      <div className="mx-auto max-w-2xl space-y-6">
-        <div className="flex items-center gap-4">
-          <Button variant="ghost" size="icon" onClick={() => navigate('/')}>
-            <ArrowLeft className="h-5 w-5" />
-          </Button>
-          <h1
-            className="text-2xl font-bold text-foreground"
-            style={{ fontFamily: 'var(--font-heading)' }}
+    <div className="min-h-screen bg-background">
+      <main className="mx-auto flex max-w-[672px] flex-col gap-5 px-4 pb-16 pt-5">
+        <div className="flex items-center gap-2.5">
+          <Link
+            to="/"
+            aria-label="Voltar ao início"
+            className="flex h-11 w-11 items-center justify-center rounded-lg text-foreground transition-colors hover:bg-secondary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
           >
-            Meu Perfil
-          </h1>
+            <ArrowLeft className="h-5 w-5" />
+          </Link>
+          <h1 className="font-heading text-2xl font-bold tracking-[0.04em] text-primary-text">Meu Perfil</h1>
         </div>
 
-        {/* Profile Info */}
-        <Card>
-          <CardHeader>
-            <CardTitle className="text-lg">Informações Pessoais</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <form onSubmit={handleSaveProfile} className="space-y-4">
-              <div className="space-y-2">
-                <Label htmlFor="name">Nome</Label>
-                <Input
-                  id="name"
-                  value={name}
-                  onChange={e => setName(e.target.value)}
-                  required
-                />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="email">Email</Label>
-                <Input
-                  id="email"
-                  value={user?.email ?? ''}
-                  disabled
-                  className="opacity-60"
-                />
-                <p className="text-xs text-muted-foreground">O email não pode ser alterado.</p>
-              </div>
-              <Button type="submit" disabled={saving}>
-                {saving ? 'Salvando...' : 'Salvar Alterações'}
-              </Button>
-            </form>
-          </CardContent>
-        </Card>
+        {/* Informações pessoais */}
+        <section className={card} aria-labelledby="profile-info">
+          <h2 id="profile-info" className={cn(sectionTitle, 'mb-3.5')}>Informações Pessoais</h2>
+          <form onSubmit={handleSaveProfile} className="flex flex-col gap-3.5">
+            <AccountField label="Nome" htmlFor="name">
+              <Input
+                id="name"
+                autoComplete="name"
+                value={name}
+                onChange={e => setName(e.target.value)}
+                required
+                className={accountInput}
+              />
+            </AccountField>
+            <AccountField label="Email" htmlFor="email" hint="O email não pode ser alterado.">
+              <Input
+                id="email"
+                value={user?.email ?? ''}
+                disabled
+                className={accountInput}
+              />
+            </AccountField>
+            <button type="submit" disabled={saving} className={saveButton}>
+              {saving ? 'Salvando...' : 'Salvar Alterações'}
+            </button>
+          </form>
+        </section>
 
-        {/* Change Password */}
-        <Card>
-          <CardHeader>
-            <CardTitle className="text-lg">Alterar Senha</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <form onSubmit={handleChangePassword} className="space-y-4">
-              <div className="space-y-2">
-                <Label htmlFor="currentPassword">Senha Atual</Label>
-                <Input
-                  id="currentPassword"
-                  type="password"
-                  value={currentPassword}
-                  onChange={e => setCurrentPassword(e.target.value)}
-                  required
-                />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="newPassword">Nova Senha</Label>
-                <Input
-                  id="newPassword"
-                  type="password"
-                  placeholder="Crie uma senha forte"
-                  value={newPassword}
-                  onChange={e => setNewPassword(e.target.value)}
-                  required
-                />
-                <PasswordStrengthIndicator password={newPassword} />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="confirmNewPassword">Confirmar Nova Senha</Label>
-                <Input
-                  id="confirmNewPassword"
-                  type="password"
-                  value={confirmNewPassword}
-                  onChange={e => setConfirmNewPassword(e.target.value)}
-                  required
-                />
-              </div>
-              <Button type="submit" disabled={changingPassword}>
-                {changingPassword ? 'Alterando...' : 'Alterar Senha'}
-              </Button>
-            </form>
-          </CardContent>
-        </Card>
+        {/* Alterar senha */}
+        <section className={card} aria-labelledby="profile-password">
+          <h2 id="profile-password" className={cn(sectionTitle, 'mb-3.5')}>Alterar Senha</h2>
+          <form onSubmit={handleChangePassword} className="flex flex-col gap-3.5">
+            <AccountField label="Senha Atual" htmlFor="currentPassword">
+              <PasswordInput
+                id="currentPassword"
+                autoComplete="current-password"
+                value={currentPassword}
+                onChange={e => setCurrentPassword(e.target.value)}
+                required
+              />
+            </AccountField>
+            <AccountField label="Nova Senha" htmlFor="newPassword">
+              <PasswordInput
+                id="newPassword"
+                autoComplete="new-password"
+                placeholder="Crie uma senha forte"
+                value={newPassword}
+                onChange={e => setNewPassword(e.target.value)}
+                required
+              />
+              <PasswordStrengthIndicator password={newPassword} />
+            </AccountField>
+            <AccountField label="Confirmar Nova Senha" htmlFor="confirmNewPassword" error={mismatch && 'As senhas não coincidem.'}>
+              <PasswordInput
+                id="confirmNewPassword"
+                autoComplete="new-password"
+                value={confirmNewPassword}
+                onChange={e => setConfirmNewPassword(e.target.value)}
+                aria-invalid={mismatch || undefined}
+                required
+              />
+            </AccountField>
+            <button type="submit" disabled={changingPassword} className={saveButton}>
+              {changingPassword ? 'Alterando...' : 'Alterar Senha'}
+            </button>
+          </form>
+        </section>
 
-        <Card>
-          <CardHeader>
-            <CardTitle className="text-lg">Configurações</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-6">
-              <div className="flex items-center justify-between space-x-2">
-                <div className="space-y-1">
-                  <Label htmlFor="autosave"  className="text-base">Salvamento Automático</Label>
-                  <p className="text-sm text-muted-foreground">
-                    Salva automaticamente as alterações da ficha de personagem no servidor.
-                  </p>
-                </div>
-                <Switch
-                  id="autosave"
-                  checked={autoSaveEnabled}
-                  onCheckedChange={checked => updatePreferences({ autoSave: checked })}
-                />
-              </div>
-
-              <div className="space-y-3">
-                <Label className="text-base">Tema Visual</Label>
-                <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-                  <Button
-                    type="button"
-                    variant={currentTheme === 'light' ? 'default' : 'outline'}
-                    className="w-full gap-2"
-                    onClick={() => updatePreferences({ theme: 'light' })}
-                  >
-                    <Sun className="h-4 w-4" /> Claro
-                  </Button>
-                  <Button
-                    type="button"
-                    variant={currentTheme === 'dark' ? 'default' : 'outline'}
-                    className="w-full gap-2"
-                    onClick={() => updatePreferences({ theme: 'dark' })}
-                  >
-                    <Moon className="h-4 w-4" /> Escuro
-                  </Button>
-                  <Button
-                    type="button"
-                    variant={currentTheme === 'system' ? 'default' : 'outline'}
-                    className="w-full gap-2"
-                    onClick={() => updatePreferences({ theme: 'system' })}
-                  >
-                    <Laptop className="h-4 w-4" /> Sistema
-                  </Button>
-                </div>
-              </div>
+        {/* Configurações */}
+        <section className={card} aria-labelledby="profile-settings">
+          <h2 id="profile-settings" className={cn(sectionTitle, 'mb-3.5')}>Configurações</h2>
+          <div className="flex items-center gap-3.5">
+            <div className="flex-1">
+              <label htmlFor="autosave" id="autosave-label" className="block text-[17px] font-semibold">Salvamento Automático</label>
+              <p id="autosave-desc" className="text-[15px] text-muted-foreground">
+                Salva automaticamente as alterações da ficha de personagem no servidor.
+                Desligado, a ficha pergunta “deseja salvá-las?” a cada alteração.
+              </p>
             </div>
-          </CardContent>
-        </Card>
+            <Switch
+              id="autosave"
+              aria-describedby="autosave-desc"
+              checked={autoSaveEnabled}
+              onCheckedChange={checked => updatePreferences({ autoSave: checked })}
+              className="h-7 w-12 [&>span]:h-6 [&>span]:w-6 [&>span]:data-[state=checked]:translate-x-5"
+            />
+          </div>
 
-        <Separator />
+          <div className="my-[18px] h-px bg-hairline" />
 
-        {/* Actions */}
-        <div className="flex items-center justify-between">
+          <div id="theme-label" className="mb-2 text-[17px] font-semibold">Tema Visual</div>
+          <div role="radiogroup" aria-labelledby="theme-label" className="grid grid-cols-3 gap-2">
+            {THEMES.map(t => {
+              const on = currentTheme === t.value;
+              return (
+                <button
+                  key={t.value}
+                  type="button"
+                  role="radio"
+                  aria-checked={on}
+                  onClick={() => updatePreferences({ theme: t.value })}
+                  className={cn(
+                    'flex h-[46px] items-center justify-center gap-2 rounded-lg border text-base transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring',
+                    on ? 'border-primary bg-primary/10 font-semibold text-primary-text' : 'border-border text-foreground hover:bg-secondary',
+                  )}
+                >
+                  <t.icon className="h-4 w-4" aria-hidden="true" /> {t.label}
+                </button>
+              );
+            })}
+          </div>
+          <p className="mt-2 text-sm italic text-muted-foreground">
+            Claro usa o pergaminho; Escuro, o couro e ferro. Sistema segue o aparelho.
+          </p>
+        </section>
+
+        <div className="h-px bg-hairline" />
+
+        {/* Ações */}
+        <div className="flex flex-wrap justify-between gap-2.5">
           <LogoutDialog>
-            <Button variant="outline">
-              Sair da Conta
-            </Button>
+            <button type="button" className={outlineButton}>Sair da Conta</button>
           </LogoutDialog>
 
           <AlertDialog>
             <AlertDialogTrigger asChild>
-              <Button variant="destructive" className="gap-2">
-                <Trash2 className="h-4 w-4" />
+              <button type="button" className={dangerButton}>
+                <Trash2 />
                 Excluir Minha Conta
-              </Button>
+              </button>
             </AlertDialogTrigger>
-            <AlertDialogContent>
-              <AlertDialogHeader>
-                <AlertDialogTitle>Tem certeza?</AlertDialogTitle>
-                <AlertDialogDescription>
+            <AlertDialogContent className={cn(dangerDialogContent, 'max-w-[440px]')}>
+              <AlertDialogHeader className="space-y-0 text-left">
+                <AlertDialogTitle className={cn(dialogTitle, 'text-danger-text')}>Tem certeza?</AlertDialogTitle>
+                <AlertDialogDescription className={dialogDescription}>
                   Esta ação é irreversível. Todos os seus dados, incluindo fichas de personagem,
                   serão permanentemente excluídos.
                 </AlertDialogDescription>
               </AlertDialogHeader>
-              <AlertDialogFooter>
-                <AlertDialogCancel>Cancelar</AlertDialogCancel>
+              <AlertDialogFooter className={dialogFooter}>
+                <AlertDialogCancel className={dialogCancel}>Cancelar</AlertDialogCancel>
                 <AlertDialogAction
                   onClick={handleDeleteAccount}
                   disabled={deleting}
-                  className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                  className={cn(dialogConfirm, 'bg-destructive text-destructive-foreground hover:bg-destructive/90')}
                 >
                   {deleting ? 'Excluindo...' : 'Sim, excluir minha conta'}
                 </AlertDialogAction>
@@ -277,7 +270,7 @@ export default function Profile() {
             </AlertDialogContent>
           </AlertDialog>
         </div>
-      </div>
+      </main>
     </div>
   );
 }

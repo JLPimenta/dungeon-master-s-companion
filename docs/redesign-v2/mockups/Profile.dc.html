@@ -1,0 +1,171 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<title>Meu Perfil</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600;700&amp;family=Crimson+Text:ital,wght@0,400;0,600;0,700;1,400&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+</style>
+</helmet>
+<div style="position: relative; width: 100%; height: 100vh; min-height: 640px; overflow: hidden; background: {{c.bg}}; color: {{c.text}}; font-family: 'Crimson Text', Georgia, serif; font-size: 16px; line-height: 1.4">
+<div onScroll="{{onScroll}}" style="height: 100%; overflow-y: auto; scrollbar-width: thin; scrollbar-color: {{sbColor}} transparent">
+<main style="max-width: 672px; margin: 0 auto; padding: 20px 16px 64px; display: flex; flex-direction: column; gap: 20px">
+
+<div style="display: flex; align-items: center; gap: 10px">
+<a href="Home.dc.html" aria-label="Voltar ao início" style="width: 44px; height: 44px; border-radius: 8px; color: {{c.text}}; display: flex; align-items: center; justify-content: center"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m12 19-7-7 7-7"></path><path d="M19 12H5"></path></svg></a>
+<h1 style="margin: 0; font-family: 'Cinzel', serif; font-weight: 700; font-size: 24px; letter-spacing: 0.04em; color: {{c.gold}}">Meu Perfil</h1>
+</div>
+
+<!-- Informações pessoais -->
+<section style="background: {{c.card}}; border: 1px solid {{c.border}}; border-radius: 12px; padding: 18px 20px">
+<h2 style="margin: 0 0 14px; font-family: 'Cinzel', serif; font-weight: 700; font-size: 15px; letter-spacing: 0.1em; color: {{c.gold}}">INFORMAÇÕES PESSOAIS</h2>
+<div style="display: flex; flex-direction: column; gap: 14px">
+<label style="display: flex; flex-direction: column; gap: 4px">Nome<input type="text" value="{{name}}" onChange="{{onName}}" style="{{inputStyle}}"></label>
+<label style="display: flex; flex-direction: column; gap: 4px">Email<input type="email" value="[seu-email@exemplo.com]" disabled="disabled" style="{{inputDisabled}}"><span style="font-size: 14px; color: {{c.muted}}">O email não pode ser alterado.</span></label>
+<button type="button" onClick="{{saveProfile}}" style="{{primaryBtn}}">Salvar Alterações</button>
+</div>
+</section>
+
+<!-- Alterar senha -->
+<section style="background: {{c.card}}; border: 1px solid {{c.border}}; border-radius: 12px; padding: 18px 20px">
+<h2 style="margin: 0 0 14px; font-family: 'Cinzel', serif; font-weight: 700; font-size: 15px; letter-spacing: 0.1em; color: {{c.gold}}">ALTERAR SENHA</h2>
+<div style="display: flex; flex-direction: column; gap: 14px">
+<label style="display: flex; flex-direction: column; gap: 4px">Senha Atual<input type="password" value="{{cur}}" onChange="{{onCur}}" style="{{inputStyle}}"></label>
+<div style="display: flex; flex-direction: column; gap: 4px">
+<label for="np">Nova Senha</label>
+<input id="np" type="password" placeholder="Crie uma senha forte" value="{{pw}}" onChange="{{onPw}}" style="{{inputStyle}}">
+<sc-if value="{{hasPw}}" hint-placeholder-val="{{ false }}">
+<div style="margin-top: 6px; display: flex; flex-direction: column; gap: 6px">
+<div style="display: flex; gap: 4px"><sc-for list="{{bars}}" as="b" hint-placeholder-count="4"><span style="{{b}}"></span></sc-for></div>
+<span style="font-size: 14px; color: {{c.muted}}">Força: <strong style="color: {{c.text}}">{{strengthLabel}}</strong></span>
+<ul style="margin: 0; padding: 0; list-style: none; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 2px 12px">
+<sc-for list="{{rules}}" as="r" hint-placeholder-count="4"><li style="{{r.style}}"><span aria-hidden="true">{{r.mark}}</span>{{r.label}}</li></sc-for>
+</ul>
+</div>
+</sc-if>
+</div>
+<label style="display: flex; flex-direction: column; gap: 4px">Confirmar Nova Senha<input type="password" value="{{pw2}}" onChange="{{onPw2}}" style="{{inputStyle}}">
+<sc-if value="{{mismatch}}" hint-placeholder-val="{{ false }}"><span style="font-size: 14px; color: {{c.danger}}">As senhas não coincidem.</span></sc-if>
+</label>
+<button type="button" onClick="{{changePw}}" style="{{primaryBtn}}">Alterar Senha</button>
+</div>
+</section>
+
+<!-- Configurações -->
+<section style="background: {{c.card}}; border: 1px solid {{c.border}}; border-radius: 12px; padding: 18px 20px">
+<h2 style="margin: 0 0 14px; font-family: 'Cinzel', serif; font-weight: 700; font-size: 15px; letter-spacing: 0.1em; color: {{c.gold}}">CONFIGURAÇÕES</h2>
+<div style="display: flex; align-items: center; gap: 14px">
+<div style="flex: 1">
+<div id="autosave-label" style="font-size: 17px; font-weight: 600">Salvamento Automático</div>
+<div style="font-size: 15px; color: {{c.muted}}">Salva automaticamente as alterações da ficha de personagem no servidor. Desligado, a ficha pergunta “deseja salvá-las?” a cada alteração.</div>
+</div>
+<button type="button" role="switch" aria-checked="{{autoAria}}" aria-labelledby="autosave-label" onClick="{{toggleAuto}}" style="{{switchTrack}}"><span style="{{switchThumb}}"></span></button>
+</div>
+<div style="height: 1px; background: {{c.border}}; margin: 18px 0"></div>
+<div id="theme-label" style="font-size: 17px; font-weight: 600; margin-bottom: 8px">Tema Visual</div>
+<div role="radiogroup" aria-labelledby="theme-label" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 8px">
+<sc-for list="{{themes}}" as="t" hint-placeholder-count="3"><button type="button" role="radio" aria-checked="{{t.checked}}" onClick="{{t.pick}}" style="{{t.style}}">{{t.label}}</button></sc-for>
+</div>
+<p style="margin: 8px 0 0; font-size: 14px; color: {{c.muted}}; font-style: italic">Claro usa o pergaminho; Escuro, o couro e ferro. Sistema segue o aparelho.</p>
+</section>
+
+<div style="height: 1px; background: {{c.border}}"></div>
+
+<div style="display: flex; flex-wrap: wrap; gap: 10px; justify-content: space-between">
+<button type="button" onClick="{{openLogout}}" style="height: 46px; padding: 0 18px; border-radius: 8px; border: 1px solid {{c.borderStrong}}; background: transparent; color: {{c.text}}; font: inherit; cursor: pointer">Sair da Conta</button>
+<button type="button" onClick="{{openDelete}}" style="height: 46px; padding: 0 18px; border-radius: 8px; border: 0; background: {{c.dangerFill}}; color: #FFF6F4; font: inherit; font-weight: 600; display: flex; align-items: center; gap: 8px; cursor: pointer"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 6h18"></path><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"></path><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>Excluir Minha Conta</button>
+</div>
+</main>
+</div>
+
+<sc-if value="{{toastOn}}" hint-placeholder-val="{{ false }}">
+<div role="status" style="position: absolute; left: 50%; bottom: 24px; transform: translateX(-50%); z-index: 45; max-width: calc(100% - 24px); box-sizing: border-box; background: {{c.card}}; border: 1px solid {{c.goldBorder}}; border-radius: 8px; box-shadow: 0 8px 24px rgba(0,0,0,0.35); padding: 10px 14px; text-align: center">{{toast}}</div>
+</sc-if>
+
+<sc-if value="{{logoutOpen}}" hint-placeholder-val="{{ false }}">
+<div style="position: absolute; inset: 0; z-index: 40; display: flex; align-items: center; justify-content: center; padding: 16px">
+<button type="button" aria-label="Cancelar" onClick="{{closeDialogs}}" style="position: absolute; inset: 0; border: 0; background: {{c.overlay}}; cursor: pointer"></button>
+<div role="alertdialog" aria-label="Sair da conta" style="position: relative; width: 420px; max-width: 100%; box-sizing: border-box; background: {{c.card}}; border: 1px solid {{c.goldBorder}}; border-radius: 12px; padding: 20px">
+<h2 style="margin: 0; font-family: 'Cinzel', serif; font-weight: 700; font-size: 18px; color: {{c.gold}}">Sair da conta?</h2>
+<p style="margin: 8px 0 20px; color: {{c.text2}}">Você será redirecionado para a página de login.</p>
+<div style="display: flex; justify-content: flex-end; gap: 8px">
+<button type="button" onClick="{{closeDialogs}}" style="height: 44px; padding: 0 16px; border-radius: 8px; border: 1px solid {{c.borderStrong}}; background: transparent; color: {{c.text}}; font: inherit; cursor: pointer">Cancelar</button>
+<a href="Auth.dc.html" style="height: 44px; padding: 0 18px; border-radius: 8px; background: {{c.goldFill}}; color: {{c.onGold}}; font-weight: 600; display: flex; align-items: center; text-decoration: none">Sair</a>
+</div>
+</div>
+</div>
+</sc-if>
+
+<sc-if value="{{deleteOpen}}" hint-placeholder-val="{{ false }}">
+<div style="position: absolute; inset: 0; z-index: 40; display: flex; align-items: center; justify-content: center; padding: 16px">
+<button type="button" aria-label="Cancelar" onClick="{{closeDialogs}}" style="position: absolute; inset: 0; border: 0; background: {{c.overlay}}; cursor: pointer"></button>
+<div role="alertdialog" aria-label="Excluir conta" style="position: relative; width: 440px; max-width: 100%; box-sizing: border-box; background: {{c.card}}; border: 1px solid {{c.dangerBorder}}; border-radius: 12px; padding: 20px">
+<h2 style="margin: 0; font-family: 'Cinzel', serif; font-weight: 700; font-size: 18px; color: {{c.danger}}">Tem certeza?</h2>
+<p style="margin: 8px 0 20px; color: {{c.text2}}">Esta ação é irreversível. Todos os seus dados, incluindo fichas de personagem, serão permanentemente excluídos.</p>
+<div style="display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 8px">
+<button type="button" onClick="{{closeDialogs}}" style="height: 44px; padding: 0 16px; border-radius: 8px; border: 1px solid {{c.borderStrong}}; background: transparent; color: {{c.text}}; font: inherit; cursor: pointer">Cancelar</button>
+<button type="button" style="height: 44px; padding: 0 16px; border-radius: 8px; border: 0; background: {{c.dangerFill}}; color: #FFF6F4; font: inherit; font-weight: 600; cursor: pointer">Sim, excluir minha conta</button>
+</div>
+</div>
+</div>
+</sc-if>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"theme":{"editor":"enum","options":["dark","light","system"],"default":"dark"},"demo":{"editor":"enum","options":["","password","delete"],"default":""},"$preview":{"width":1440,"height":900}}'>
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    const d = props.demo || '';
+    this.state = { theme: props.theme || 'dark', name: 'João Luiz', cur: d === 'password' ? 'senhaatual' : '', pw: d === 'password' ? 'Grimor' : '', pw2: '', auto: false, toast: '', logoutOpen: false, deleteOpen: d === 'delete', scrolling: false };
+  }
+  componentWillUnmount() { clearTimeout(this._t); clearTimeout(this._tt); }
+  renderVals() {
+    const st = this.state, set = (p) => this.setState(p);
+    let mode = st.theme;
+    if (mode === 'system') { try { mode = window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark'; } catch (e) { mode = 'dark'; } }
+    const c = mode === 'light' ? {
+      bg: '#F4EFE4', card: '#FBF9F4', input: '#FFFFFF', inputOff: '#EDE6D6', border: '#DDD3C0', borderStrong: '#CBBE9F', text: '#252B37', text2: '#3A4150', muted: '#5F6879',
+      gold: '#8A6510', goldFill: '#C8961E', onGold: '#1A1408', goldBg: '#F5E9C8', goldBorder: '#C8A24A', danger: '#A82A2A', dangerFill: '#B83030', dangerBorder: '#E3B4B4', overlay: 'rgba(40,32,20,0.45)', thumb: '#C8A24A',
+      s: ['#B83030', '#C0661A', '#9A7A0A', '#2F7D4A', '#2F7D4A'], off: '#DDD3C0', track: '#CBBE9F', knob: '#FFFFFF'
+    } : {
+      bg: '#12151B', card: '#1A1F28', input: '#12151B', inputOff: '#1E222A', border: '#2A2E38', borderStrong: '#3A3424', text: '#E6DCC8', text2: '#D3C9B5', muted: '#A0977F',
+      gold: '#D9A62E', goldFill: '#D9A62E', onGold: '#1A1408', goldBg: '#2B2414', goldBorder: '#6B5524', danger: '#E2766F', dangerFill: '#B8423C', dangerBorder: '#5A2E2A', overlay: 'rgba(6,8,12,0.72)', thumb: '#6B5524',
+      s: ['#E2766F', '#E0954A', '#D9C04A', '#7FB685', '#7FB685'], off: '#2E333E', track: '#3A3F4A', knob: '#12151B'
+    };
+    const RULES = [['Mínimo 8 caracteres', p => p.length >= 8], ['Letra maiúscula', p => /[A-Z]/.test(p)], ['Letra minúscula', p => /[a-z]/.test(p)], ['Número', p => /[0-9]/.test(p)]];
+    const strength = RULES.filter(r => r[1](st.pw)).length;
+    const toast = (m) => { clearTimeout(this._tt); set({ toast: m }); this._tt = setTimeout(() => this.setState({ toast: '' }), 2400); };
+    const input = 'height: 46px; width: 100%; box-sizing: border-box; border: 1px solid ' + c.borderStrong + '; border-radius: 8px; background: ' + c.input + '; color: ' + c.text + '; font: inherit; padding: 0 12px';
+    const THEMES = [['light', 'Claro'], ['dark', 'Escuro'], ['system', 'Sistema']];
+    return {
+      c, sbColor: st.scrolling ? c.thumb : 'transparent',
+      onScroll: () => { if (!this.state.scrolling) set({ scrolling: true }); clearTimeout(this._t); this._t = setTimeout(() => this.setState({ scrolling: false }), 900); },
+      inputStyle: input, inputDisabled: input + '; background: ' + c.inputOff + '; color: ' + c.muted + '; cursor: not-allowed',
+      primaryBtn: 'align-self: flex-start; height: 46px; padding: 0 20px; border-radius: 8px; border: 0; background: ' + c.goldFill + '; color: ' + c.onGold + '; font-family: \'Cinzel\', serif; font-size: 13px; font-weight: 700; letter-spacing: 0.06em; cursor: pointer',
+      name: st.name, onName: (e) => set({ name: e.target.value }), saveProfile: () => toast('Perfil atualizado com sucesso!'),
+      cur: st.cur, onCur: (e) => set({ cur: e.target.value }), pw: st.pw, onPw: (e) => set({ pw: e.target.value }), pw2: st.pw2, onPw2: (e) => set({ pw2: e.target.value }),
+      hasPw: !!st.pw, strengthLabel: ['Muito fraca', 'Fraca', 'Média', 'Forte', 'Forte'][strength],
+      bars: [0, 1, 2, 3].map(i => 'flex: 1; height: 5px; border-radius: 3px; background: ' + (i < strength ? c.s[strength] : c.off)),
+      rules: RULES.map(([label, t]) => { const ok = t(st.pw); return { label, mark: ok ? '✓ ' : '× ', style: 'font-size: 14px; color: ' + (ok ? c.text : c.muted) }; }),
+      mismatch: !!st.pw2 && st.pw2 !== st.pw,
+      changePw: () => { if (strength === 4 && st.pw === st.pw2 && st.cur) { set({ cur: '', pw: '', pw2: '' }); toast('Senha alterada com sucesso!'); } else toast(strength < 4 ? 'A nova senha não atende todos os requisitos.' : 'As senhas não coincidem.'); },
+      autoAria: st.auto ? 'true' : 'false', toggleAuto: () => set({ auto: !st.auto }),
+      switchTrack: 'position: relative; width: 52px; height: 30px; flex-shrink: 0; border-radius: 15px; border: 0; cursor: pointer; padding: 0; background: ' + (st.auto ? c.goldFill : c.track),
+      switchThumb: 'position: absolute; top: 3px; left: ' + (st.auto ? '25px' : '3px') + '; width: 24px; height: 24px; border-radius: 50%; background: ' + c.knob + '; transition: left 0.15s',
+      themes: THEMES.map(([k, label]) => { const on = st.theme === k; return { label, checked: on ? 'true' : 'false', pick: () => set({ theme: k }), style: 'height: 46px; border-radius: 8px; font: inherit; cursor: pointer; ' + (on ? 'border: 1px solid ' + c.gold + '; background: ' + c.goldBg + '; color: ' + c.gold + '; font-weight: 600' : 'border: 1px solid ' + c.borderStrong + '; background: transparent; color: ' + c.text) }; }),
+      toastOn: !!st.toast, toast: st.toast,
+      logoutOpen: st.logoutOpen, deleteOpen: st.deleteOpen,
+      openLogout: () => set({ logoutOpen: true }), openDelete: () => set({ deleteOpen: true }), closeDialogs: () => set({ logoutOpen: false, deleteOpen: false })
+    };
+  }
+}
+</script>
+</body>
+</html>

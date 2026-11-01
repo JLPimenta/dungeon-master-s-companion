@@ -1,5 +1,6 @@
 import { Navigate } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
+import { FullscreenLoader } from '@/components/brand/FullscreenLoader';
 
 interface ProtectedRouteProps {
   children: React.ReactNode;
@@ -14,11 +15,7 @@ export function ProtectedRoute({ children }: ProtectedRouteProps) {
   }
 
   if (isLoading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-background">
-        <p className="text-muted-foreground">Carregando...</p>
-      </div>
-    );
+    return <FullscreenLoader label="Carregando..." />;
   }
 
   if (!isAuthenticated) {

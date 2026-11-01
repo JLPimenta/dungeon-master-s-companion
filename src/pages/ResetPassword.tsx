@@ -2,9 +2,9 @@ import { useState } from 'react';
 import { Link, useSearchParams, useNavigate } from 'react-router-dom';
 import { AuthLayout } from '@/components/auth/AuthLayout';
 import { PasswordStrengthIndicator, isPasswordStrong } from '@/components/auth/PasswordStrengthIndicator';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
+import { cn } from '@/lib/utils';
+import { AccountField, PasswordInput, ResultIcon, accountLink, outlineButton, primaryButton } from '@/components/account/ui';
+import { AlertTriangle } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
 import { useToast } from '@/hooks/use-toast';
 
@@ -17,6 +17,7 @@ export default function ResetPassword() {
   const { resetPassword } = useAuth();
   const navigate = useNavigate();
   const { toast } = useToast();
+  const mismatch = !!confirmPassword && confirmPassword !== password;
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -43,13 +44,12 @@ export default function ResetPassword() {
   if (!token) {
     return (
       <AuthLayout title="Link Inválido">
-        <div className="flex flex-col items-center gap-4 text-center">
-          <p className="text-sm text-muted-foreground">
+        <div className="flex flex-col items-center gap-3.5 text-center">
+          <ResultIcon tone="danger"><AlertTriangle /></ResultIcon>
+          <p className="text-foreground/85">
             O link de redefinição de senha é inválido ou expirou.
           </p>
-          <Button variant="outline" asChild>
-            <Link to="/forgot-password">Solicitar novo link</Link>
-          </Button>
+          <Link to="/forgot-password" className={cn(outlineButton, 'w-full')}>Solicitar novo link</Link>
         </div>
       </AuthLayout>
     );
@@ -57,40 +57,37 @@ export default function ResetPassword() {
 
   return (
     <AuthLayout title="Redefinir Senha" subtitle="Crie uma nova senha para sua conta">
-      <form onSubmit={handleSubmit} className="space-y-4">
-        <div className="space-y-2">
-          <Label htmlFor="password">Nova Senha</Label>
-          <Input
+      <form onSubmit={handleSubmit} className="flex flex-col gap-3.5">
+        <AccountField label="Nova Senha" htmlFor="password">
+          <PasswordInput
             id="password"
-            type="password"
+            autoComplete="new-password"
             placeholder="Crie uma nova senha forte"
             value={password}
             onChange={e => setPassword(e.target.value)}
             required
           />
           <PasswordStrengthIndicator password={password} />
-        </div>
+        </AccountField>
 
-        <div className="space-y-2">
-          <Label htmlFor="confirmPassword">Confirmar Nova Senha</Label>
-          <Input
+        <AccountField label="Confirmar Nova Senha" htmlFor="confirmPassword" error={mismatch && 'As senhas não coincidem.'}>
+          <PasswordInput
             id="confirmPassword"
-            type="password"
+            autoComplete="new-password"
             placeholder="Repita a nova senha"
             value={confirmPassword}
             onChange={e => setConfirmPassword(e.target.value)}
+            aria-invalid={mismatch || undefined}
             required
           />
-        </div>
+        </AccountField>
 
-        <Button type="submit" className="w-full" disabled={loading || !isPasswordStrong(password)}>
+        <button type="submit" className={cn(primaryButton, 'w-full')} disabled={loading || !isPasswordStrong(password)}>
           {loading ? 'Redefinindo...' : 'Redefinir Senha'}
-        </Button>
+        </button>
 
-        <p className="text-center text-sm text-muted-foreground">
-          <Link to="/login" className="text-primary hover:underline">
-            Voltar para Login
-          </Link>
+        <p className="text-center">
+          <Link to="/login" className={accountLink}>Voltar para Login</Link>
         </p>
       </form>
     </AuthLayout>

@@ -4,6 +4,8 @@ import type { AnySheet } from '@/systems/types';
 import { findSystem } from '@/systems/registry';
 import { Button } from '@/components/ui/button';
 import { Eye, ArrowLeft } from 'lucide-react';
+import { FullscreenLoader } from '@/components/brand/FullscreenLoader';
+import { SheetChromeProvider, isFullscreenSupported, type SheetChrome } from '@/systems/shared/chrome/SheetChromeContext';
 
 const BASE_URL = import.meta.env.VITE_API_URL;
 
@@ -16,6 +18,13 @@ export default function SharedCharacterSheetPage() {
   const [sheet, setSheet] = useState<AnySheet | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
+  const [isFullscreen, setIsFullscreen] = useState(false);
+
+  useEffect(() => {
+    const onChange = () => setIsFullscreen(!!document.fullscreenElement);
+    document.addEventListener('fullscreenchange', onChange);
+    return () => document.removeEventListener('fullscreenchange', onChange);
+  }, []);
 
   useEffect(() => {
     if (!id) {
@@ -43,11 +52,7 @@ export default function SharedCharacterSheetPage() {
   }, [id]);
 
   if (loading) {
-    return (
-      <div className="flex min-h-screen items-center justify-center">
-        <div className="h-8 w-8 animate-spin rounded-full border-2 border-primary border-t-transparent" />
-      </div>
-    );
+    return <FullscreenLoader />;
   }
 
   const system = sheet ? findSystem(sheet) : undefined;
@@ -62,6 +67,28 @@ export default function SharedCharacterSheetPage() {
           Ir para o início
         </Button>
       </div>
+    );
+  }
+
+  // Layout do redesign v2: desenha a própria barra superior, banner e selo de somente leitura.
+  if (system.ownsChrome) {
+    const chrome: SheetChrome = {
+      readOnly: true,
+      onBack: () => navigate(-1),
+      fullscreen: isFullscreenSupported()
+        ? {
+            active: isFullscreen,
+            onToggle: () => {
+              if (document.fullscreenElement) void document.exitFullscreen();
+              else void document.documentElement.requestFullscreen();
+            },
+          }
+        : undefined,
+    };
+    return (
+      <SheetChromeProvider value={chrome}>
+        <system.SheetComponent sheet={sheet} onChange={noop} readOnly />
+      </SheetChromeProvider>
     );
   }
 

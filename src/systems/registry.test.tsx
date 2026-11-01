@@ -1,4 +1,4 @@
-import { render, screen } from '@testing-library/react';
+import { fireEvent, render, screen } from '@testing-library/react';
 import { AVAILABLE_SYSTEMS, findSystem, resolveSystem } from './registry';
 import { dnd55System } from './dnd5_5e/definition';
 import { CharacterCard } from '@/components/dashboard/CharacterCard';
@@ -7,6 +7,10 @@ import type { SheetListItem, SystemId } from './types';
 describe('registry de sistemas', () => {
   it('registra os três sistemas', () => {
     expect(AVAILABLE_SYSTEMS.map(s => s.id)).toEqual(['dnd5_5e', 'tormenta20', 'dnd5e']);
+  });
+
+  it('todos os sistemas usam a casca do redesign v2 (sem barra antiga duplicada)', () => {
+    for (const s of AVAILABLE_SYSTEMS) expect({ id: s.id, ownsChrome: s.ownsChrome }).toEqual({ id: s.id, ownsChrome: true });
   });
 
   it('trata ficha sem `system` como 5.5e (fichas anteriores à migração)', () => {
@@ -52,7 +56,7 @@ describe('CharacterCard', () => {
     render(<CharacterCard character={item} onClick={() => {}} onDelete={() => {}} />);
     expect(screen.getByText('Guerreiro')).toBeInTheDocument();
     expect(screen.getByText('PV 31/44')).toBeInTheDocument();
-    expect(screen.getByText('Nível 5')).toBeInTheDocument();
+    expect(screen.getByText((_, el) => el?.tagName === 'SPAN' && el.textContent === 'Nível 5')).toBeInTheDocument();
   });
 
   it('calcula o card no cliente quando o item não traz `card` (localStorage / API antiga)', () => {
@@ -76,5 +80,25 @@ describe('CharacterCard', () => {
     render(<CharacterCard character={item} onClick={() => {}} onDelete={() => {}} />);
     expect(screen.getByText('Tormenta20')).toBeInTheDocument();
     expect(screen.getByText('PM 3/6')).toBeInTheDocument();
+  });
+
+  it('mostra o selo "Pública" só em fichas compartilhadas', () => {
+    const item: SheetListItem = { ...base, system: 'dnd5_5e', card: { details: [], stats: [] } };
+    const { rerender } = render(<CharacterCard character={item} onClick={() => {}} onDelete={() => {}} />);
+    expect(screen.queryByText('Pública')).not.toBeInTheDocument();
+    rerender(<CharacterCard character={{ ...item, isShared: true }} onClick={() => {}} onDelete={() => {}} />);
+    expect(screen.getByText('Pública')).toBeInTheDocument();
+  });
+
+  it('a lixeira está sempre no DOM, pede exclusão e não abre a ficha', () => {
+    const item: SheetListItem = { ...base, system: 'dnd5_5e', card: { details: [], stats: [] } };
+    const onClick = vi.fn();
+    const onDelete = vi.fn();
+    render(<CharacterCard character={item} onClick={onClick} onDelete={onDelete} />);
+    fireEvent.click(screen.getByRole('button', { name: 'Excluir ficha de Thorin' }));
+    expect(onDelete).toHaveBeenCalledTimes(1);
+    expect(onClick).not.toHaveBeenCalled();
+    fireEvent.click(screen.getByRole('button', { name: 'Abrir ficha de Thorin' }));
+    expect(onClick).toHaveBeenCalledTimes(1);
   });
 });

@@ -82,6 +82,14 @@ export interface SystemDefinition<T extends SheetEnvelope = AnySheet> {
      * Gêmeo de `buildCard` no backend — manter em sincronia.
      */
     buildCard: (sheet: Partial<T> & SheetEnvelope) => CharacterCardData;
+
+    /**
+     * true: o layout desenha a barra superior, a navegação e a barra
+     * "deseja salvá-las?" usando `useSheetChrome()`
+     * (src/systems/shared/chrome/SheetChromeContext.tsx). A página então não
+     * desenha a barra de ferramentas antiga. Ausente/false: tudo como antes.
+     */
+    ownsChrome?: boolean;
 }
 
 /** Mantém a inferência de T ao declarar um sistema. */

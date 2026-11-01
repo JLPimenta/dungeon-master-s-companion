@@ -1,9 +1,9 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { AuthLayout } from '@/components/auth/AuthLayout';
-import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
+import { cn } from '@/lib/utils';
+import { AccountField, ResultIcon, accountInput, accountLink, outlineButton, primaryButton } from '@/components/account/ui';
 import { useAuth } from '@/hooks/useAuth';
 import { useToast } from '@/hooks/use-toast';
 import { Mail } from 'lucide-react';
@@ -31,15 +31,13 @@ export default function ForgotPassword() {
   if (sent) {
     return (
       <AuthLayout title="Email Enviado" subtitle="Verifique sua caixa de entrada">
-        <div className="flex flex-col items-center gap-4 text-center">
-          <Mail className="h-12 w-12 text-primary" />
-          <p className="text-sm text-muted-foreground">
-            Se o email <strong>{email}</strong> estiver cadastrado, você receberá um link para
+        <div className="flex flex-col items-center gap-3.5 text-center">
+          <ResultIcon><Mail /></ResultIcon>
+          <p className="text-foreground/85">
+            Se o email <strong className="text-foreground">{email}</strong> estiver cadastrado, você receberá um link para
             redefinir sua senha.
           </p>
-          <Button variant="outline" asChild className="mt-2">
-            <Link to="/login">Voltar para Login</Link>
-          </Button>
+          <Link to="/login" className={cn(outlineButton, 'w-full')}>Voltar para Login</Link>
         </div>
       </AuthLayout>
     );
@@ -47,27 +45,26 @@ export default function ForgotPassword() {
 
   return (
     <AuthLayout title="Esqueceu sua Senha?" subtitle="Informe seu email para recuperar o acesso">
-      <form onSubmit={handleSubmit} className="space-y-4">
-        <div className="space-y-2">
-          <Label htmlFor="email">Email</Label>
+      <form onSubmit={handleSubmit} className="flex flex-col gap-3.5">
+        <AccountField label="Email" htmlFor="email">
           <Input
             id="email"
             type="email"
+            autoComplete="email"
             placeholder="seu@email.com"
             value={email}
             onChange={e => setEmail(e.target.value)}
             required
+            className={accountInput}
           />
-        </div>
+        </AccountField>
 
-        <Button type="submit" className="w-full" disabled={loading}>
+        <button type="submit" className={cn(primaryButton, 'w-full')} disabled={loading}>
           {loading ? 'Enviando...' : 'Enviar Link de Recuperação'}
-        </Button>
+        </button>
 
-        <p className="text-center text-sm text-muted-foreground">
-          <Link to="/login" className="text-primary hover:underline">
-            Voltar para Login
-          </Link>
+        <p className="text-center">
+          <Link to="/login" className={accountLink}>Voltar para Login</Link>
         </p>
       </form>
     </AuthLayout>

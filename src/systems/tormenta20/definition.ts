@@ -11,4 +11,5 @@ export const tormenta20System = defineSystem<T20Sheet>({
   createDefault: createDefaultT20Sheet,
   SheetComponent: T20SheetLayout,
   buildCard: buildT20Card,
+  ownsChrome: true,
 });

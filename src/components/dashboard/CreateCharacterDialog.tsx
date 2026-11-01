@@ -1,11 +1,12 @@
 import { useState } from 'react';
 import {
-  Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter,
+  Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription,
 } from '@/components/ui/dialog';
-import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
 import { cn } from '@/lib/utils';
+import {
+  accountInput, dialogContent, dialogDescription, dialogTitle, outlineButton, primaryButton,
+} from '@/components/account/ui';
 import { AVAILABLE_SYSTEMS } from '@/systems/registry';
 import { DEFAULT_SYSTEM_ID, type SystemId } from '@/systems/types';
 
@@ -38,19 +39,19 @@ export function CreateCharacterDialog({ open, onOpenChange, onConfirm, loading }
 
   return (
     <Dialog open={open} onOpenChange={handleOpenChange}>
-      <DialogContent className="sm:max-w-md">
+      <DialogContent className={cn(dialogContent, 'max-h-[calc(100dvh-32px)] max-w-[460px] overflow-y-auto')}>
         <form onSubmit={handleSubmit}>
-          <DialogHeader>
-            <DialogTitle>Criar Nova Ficha</DialogTitle>
-            <DialogDescription>
+          <DialogHeader className="space-y-0 text-left">
+            <DialogTitle className={dialogTitle}>Criar Nova Ficha</DialogTitle>
+            <DialogDescription className="mt-1 text-base text-muted-foreground">
               {showSystemPicker
                 ? 'Dê um nome ao seu personagem e escolha o sistema de jogo.'
                 : 'Dê um nome ao seu personagem para começar.'}
             </DialogDescription>
           </DialogHeader>
-          <div className="my-6 space-y-5">
-            <div>
-              <Label htmlFor="char-name">Nome do Personagem</Label>
+          <div className="mt-[18px] flex flex-col gap-4">
+            <div className="flex flex-col gap-1">
+              <label htmlFor="char-name" className="text-[15px]">Nome do Personagem</label>
               <Input
                 id="char-name"
                 value={name}
@@ -58,14 +59,14 @@ export function CreateCharacterDialog({ open, onOpenChange, onConfirm, loading }
                 placeholder="Ex: Thorin Escudo de Carvalho"
                 autoFocus
                 tabIndex={1}
-                className="mt-2"
+                className={cn(accountInput, 'h-11')}
               />
             </div>
 
             {showSystemPicker && (
-              <div>
-                <Label id="char-system-label">Sistema</Label>
-                <div role="radiogroup" aria-labelledby="char-system-label" className="mt-2 grid gap-2">
+              <div className="flex flex-col gap-1.5">
+                <span id="char-system-label" className="text-[15px]">Sistema</span>
+                <div role="radiogroup" aria-labelledby="char-system-label" className="flex flex-col gap-2">
                   {AVAILABLE_SYSTEMS.map(s => (
                     <button
                       key={s.id}
@@ -74,30 +75,30 @@ export function CreateCharacterDialog({ open, onOpenChange, onConfirm, loading }
                       aria-checked={system === s.id}
                       onClick={() => setSystem(s.id)}
                       className={cn(
-                        'rounded-md border p-3 text-left transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring',
+                        'min-h-[48px] rounded-lg border px-3 py-2.5 text-left transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring',
                         system === s.id
                           ? 'border-primary bg-primary/10'
                           : 'border-border hover:border-primary/40',
                       )}
                     >
-                      <span className="block text-sm font-semibold text-primary" style={{ fontFamily: 'var(--font-heading)' }}>
-                        {s.label}
-                      </span>
-                      <span className="mt-0.5 block text-xs text-muted-foreground">{s.description}</span>
+                      <span className="block font-heading text-sm font-bold text-primary-text">{s.label}</span>
+                      {s.description && (
+                        <span className="mt-0.5 block text-sm text-muted-foreground">{s.description}</span>
+                      )}
                     </button>
                   ))}
                 </div>
               </div>
             )}
           </div>
-          <DialogFooter>
-            <Button type="button" variant="outline" onClick={() => handleOpenChange(false)} tabIndex={3}>
+          <div className="mt-5 flex flex-wrap justify-end gap-2">
+            <button type="button" onClick={() => handleOpenChange(false)} tabIndex={3} className={cn(outlineButton, 'h-11')}>
               Cancelar
-            </Button>
-            <Button type="submit" disabled={!name.trim() || loading} tabIndex={2}>
+            </button>
+            <button type="submit" disabled={!name.trim() || loading} tabIndex={2} className={cn(primaryButton, 'h-11 font-body text-base font-semibold tracking-normal')}>
               {loading ? 'Criando…' : 'Criar'}
-            </Button>
-          </DialogFooter>
+            </button>
+          </div>
         </form>
       </DialogContent>
     </Dialog>

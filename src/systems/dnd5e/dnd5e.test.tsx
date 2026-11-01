@@ -40,19 +40,26 @@ describe('D&D 5e — dados', () => {
 
 describe('D&D 5e — ficha', () => {
   it('reaproveita as seções da família D&D com os rótulos do 5e', () => {
+    // Nos testes a tela é a de celular (matchMedia sempre falso): abas.
     renderSheet(createDefaultDnd5eSheet('Bruenor'));
     expect(screen.getByText('Atributos')).toBeInTheDocument();
-    expect(screen.getByText('Blefar')).toBeInTheDocument();
     expect(screen.getByText('Inspiração')).toBeInTheDocument();
     expect(screen.queryByText('Inspiração Heroica')).not.toBeInTheDocument();
+    fireEvent.click(screen.getByRole('button', { name: 'Perícias' }));
+    expect(screen.getByText('Blefar')).toBeInTheDocument();
+    expect(screen.getByText('Idiomas e proficiências')).toBeInTheDocument();
+    fireEvent.click(screen.getByRole('button', { name: 'Traços' }));
     expect(screen.getByText('Personalidade')).toBeInTheDocument();
     expect(screen.getByText('Ideais')).toBeInTheDocument();
+    expect(screen.getByText('Características e habilidades')).toBeInTheDocument();
   });
 
   it('limita itens sintonizados a 3 (regra de 2014), mesmo com proficiência maior', () => {
     renderSheet({ ...createDefaultDnd5eSheet('Bruenor'), level: 17 });
-    fireEvent.click(screen.getByText('Inventário'));
-    expect(screen.getByText(/Itens Sintonizados \(0\/3\)/)).toBeInTheDocument();
+    fireEvent.click(screen.getByRole('button', { name: 'Mais' }));
+    fireEvent.click(screen.getByRole('button', { name: 'Mochila' }));
+    expect(screen.getByText('0 / 3')).toBeInTheDocument();
+    expect(screen.getByText('Tesouro')).toBeInTheDocument();
   });
 
   it('o 5.5e mantém a regra da casa (sintonização = proficiência)', () => {
@@ -62,25 +69,38 @@ describe('D&D 5e — ficha', () => {
         <dnd55System.SheetComponent sheet={sheet} onChange={() => {}} />
       </TooltipProvider>,
     );
-    fireEvent.click(screen.getByText('Inventário'));
-    expect(screen.getByText(/Itens Sintonizados \(0\/6\)/)).toBeInTheDocument();
+    // Redesign v2 (nos testes a tela é a de celular): Inspiração na aba Combate,
+    // itens sintonizados em Mais › Mochila, com o limite ao lado do título.
     expect(screen.getByText('Inspiração Heroica')).toBeInTheDocument();
+    fireEvent.click(screen.getByRole('button', { name: 'Mais' }));
+    fireEvent.click(screen.getByRole('button', { name: 'Mochila' }));
+    expect(screen.getByText('Itens sintonizados')).toBeInTheDocument();
+    expect(screen.getByText('0 / 6')).toBeInTheDocument();
   });
 
-  it('visualização compartilhada oculta inventário, notas e campos personalizados', () => {
+  it('visualização compartilhada oculta inventário, tesouro, notas e campos personalizados', () => {
     renderSheet(createDefaultDnd5eSheet('Bruenor'), true);
-    expect(screen.queryByText('Inventário')).not.toBeInTheDocument();
-    expect(screen.queryByText('Notas da Campanha')).not.toBeInTheDocument();
-    expect(screen.queryByText('Campos Personalizáveis')).not.toBeInTheDocument();
-    expect(screen.getByText('Perícias')).toBeInTheDocument();
+    fireEvent.click(screen.getByRole('button', { name: 'Mais' }));
+    expect(screen.queryByRole('button', { name: 'Mochila' })).not.toBeInTheDocument();
+    expect(screen.queryByText('Tesouro')).not.toBeInTheDocument();
+    expect(screen.queryByText('Notas da campanha')).not.toBeInTheDocument();
+    expect(screen.queryByText('Campos personalizáveis')).not.toBeInTheDocument();
+    expect(screen.getByText('Descrição do personagem')).toBeInTheDocument();
   });
 
-  it('listas que crescem ficam fora do grid de colunas (evita espaço vazio na coluna oposta)', () => {
-    const { container } = renderSheet(createDefaultDnd5eSheet('Bruenor'));
-    const grid = container.querySelector('[class*="lg:grid-cols-[280px_1fr]"]')!;
-    expect(grid).not.toBeNull();
-    for (const title of ['Características e Habilidades', 'Inventário', 'Conjuração']) {
-      expect(grid.textContent).not.toContain(title);
+  it('computador: listas que crescem ficam fora do grid de colunas (evita espaço vazio na coluna oposta)', () => {
+    const real = window.matchMedia;
+    window.matchMedia = ((q: string) => ({ ...real(q), matches: true })) as typeof window.matchMedia;
+    try {
+      const { container } = renderSheet(createDefaultDnd5eSheet('Bruenor'));
+      const grid = container.querySelector('[class*="grid-cols-[300px_minmax(0,1fr)]"]')!;
+      expect(grid).not.toBeNull();
+      expect(grid.textContent).toContain('Personalidade');
+      for (const title of ['Características e habilidades', 'Inventário', 'Conjuração']) {
+        expect(grid.textContent).not.toContain(title);
+      }
+    } finally {
+      window.matchMedia = real;
     }
   });
 });
