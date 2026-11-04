@@ -8,11 +8,15 @@ interface AuthLayoutProps {
   subtitle?: string;
 }
 
-/** Telas de conta (redesign v2): marca no topo e cartão central de até 440 px. */
+/**
+ * Telas de conta (redesign v2): marca no topo e cartão central de até 350 px.
+ * A largura vem do reCAPTCHA, fixo em 304 px: 304 + 44 de respiro + 2 de borda. Assim campos,
+ * botões e widgets do Google têm a mesma largura no desktop, em vez de o captcha ficar menor que os campos.
+ */
 export function AuthLayout({ children, title, subtitle }: AuthLayoutProps) {
   return (
     <div className="flex min-h-screen flex-col items-center bg-background px-4 py-8">
-      <div className="my-auto flex w-full max-w-[440px] flex-col gap-5">
+      <div className="my-auto flex w-full max-w-[350px] flex-col gap-5">
         <div className="flex flex-col items-center gap-2 text-center text-primary-text">
           <GrimorioMark size={64} />
           <span className="font-heading text-[26px] font-bold tracking-[0.08em]">Grimório</span>

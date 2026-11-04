@@ -6,7 +6,7 @@ Regra geral: **não reescreva a lógica** de `Login.tsx`, `Register.tsx`, `Forgo
 
 ## Visual comum
 
-- Fundo `--background`; cartão central `--card` com borda `--border`, raio 12 px, largura máxima 440 px nas telas de conta.
+- Fundo `--background`; cartão central `--card` com borda `--border`, raio 12 px, largura máxima 350 px nas telas de conta (a largura do reCAPTCHA, 304 px, mais o respiro e a borda do cartão).
 - Marca no topo das telas de conta: `GrimorioMark` 64 px + "Grimório" (Cinzel 700, 26 px, `letter-spacing: 0.08em`, `--primary-text`). Ver [05-marca.md](05-marca.md).
 - Títulos de cartão em Cinzel; subtítulo em `--muted-foreground`.
 - Campos com 44–48 px de altura e texto de 16 px (evita o zoom automático do iOS).
